@@ -8,23 +8,33 @@ db = SQLAlchemy()
 from flask_httpauth import HTTPBasicAuth
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
+from datetime import timedelta
 
 
 auth = HTTPBasicAuth()
-
-
 
 class ProgramClass(db.Model):
 
   __tablename__ = 'programs'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   id_user = db.Column(db.Integer, nullable=False)
-  id_species = db.Column(db.Integer, nullable=True, )
+  id_species = db.Column(db.Integer, nullable=True )
   program_name = db.Column(db.String(80), nullable=False)
   published = db.Column(db.Boolean, nullable=False)
+  products = db.relationship('ProgramFieldsClass', backref='program')
   
   def __repr__(self):
         return '<program %r>' % self.program_name
+  
+class ProgramFieldsClass(db.Model):
+
+  __tablename__ = 'program_fields'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_program = db.Column(db.Integer,db.ForeignKey('programs._id'), nullable=False)
+  id_field = db.Column(db.Integer, nullable=False )
+  
+  
+  
   
 class taskTypeClass(db.Model):
 
@@ -41,13 +51,14 @@ class ProgramTaskClass(db.Model):
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   id_program = db.Column(db.Integer, nullable=False)
   id_type = db.Column(db.Integer, nullable=True)
-  fecha_inicio=db.Column(db.DateTime, nullable=True)
+  start_date=db.Column(db.DateTime, nullable=True)
   id_phenological_stage=db.Column(db.Integer, nullable=True)
   validity_period=db.Column(db.Integer, nullable=True)
   dosage=db.Column(db.Integer, nullable=True)
   dosage_unit=db.Column(db.String(40), nullable=True)
   objective=db.Column(db.String(200), nullable=True)
   wetting=db.Column(db.Integer, nullable=True)
+  products = db.relationship('TaskProductClass', backref='task')
 
   
   
@@ -66,7 +77,7 @@ class TaskProductClass(db.Model):
 
   __tablename__ = 'task_product'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  id_task = db.Column(db.Integer, nullable=False)
+  id_task = db.Column(db.Integer,db.ForeignKey('program_tasks._id'), nullable=False)
   id_product = db.Column(ARRAY(db.Integer), nullable=False)
   
 class ProductClass(db.Model):
@@ -97,7 +108,7 @@ class userClass(db.Model):
         return check_password_hash(self.password_hash, password)
     
   def generate_auth_token(self, expires_in = 600):
-        return create_access_token(identity=self._id)
+        return create_access_token(identity=self._id,expires_delta=timedelta(minutes=45))
 
   @staticmethod
   def verify_auth_token(token):
@@ -106,9 +117,6 @@ class userClass(db.Model):
         except:
             return 
         return userClass.query.get(current_user)
-  
-
-  
   
 class SpeciesClass(db.Model):
 
@@ -149,7 +157,7 @@ class MarketProgramClass(db.Model):
 
   __tablename__ = 'market_program'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  market_id = db.Column(db.Integer, nullable=False)
+  market_id = db.Column(db.Integer,db.ForeignKey('programs._id'), nullable=False)
   program_id=db.Column(db.Integer, nullable=False)
 
 class MarketClass(db.Model):

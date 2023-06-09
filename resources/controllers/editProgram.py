@@ -15,43 +15,17 @@ from flask_jwt_extended import jwt_required,get_jwt_identity
 
 class EditProgramApi(Resource):
   
-  @jwt_required()
-  def post(self):
-  
-    try:
-      
-      
-      user_id =  get_jwt_identity()
-      user_id = request.form.get("program_id")
 
-      data={}
-      data["user_id"]=user_id
-      data["program_id"]=user_id
-      
-      data["products"]=getTable("products")
-      data["markets"] =getTable("market")
-      data["species"] =getTable("species")
-      data["phenological_stages"] =getTable("phenological_stages")
-      
-      response={'status':200,'data':data}
-  
-      
-      if response.get('status') == 200:
-        #return {'response': json.dumps(response.get('data'), default=datetimeJSONConverter)}, 200
-        return {'response': response}, 200
-      
-      else: 
-        return {'error': response.get('data')}, 400
-
-    except Exception as e:
-      print(e)
-      raise InternalServerError
     
   @jwt_required()
   def get(self):
   
     try:
-      status=200
+      response={}
+      response['status']=200
+      response['message']=0
+      
+
       
       user_id =  get_jwt_identity()
       program_id = request.args.get('id_program')
@@ -59,11 +33,11 @@ class EditProgramApi(Resource):
 
 
       data={}
-      data["user_id"]=user_id
-      data["program_id"]=program_id
+      
+      
+     
 
-
-      programs,tasks=getProgramDetails(user_id,program_id)
+      programs,assigned_fields,tasks=getProgramDetails(user_id,program_id)
       dic_result = {}
 
       for program in programs:
@@ -84,17 +58,21 @@ class EditProgramApi(Resource):
       programs_format= [{'_id': id,'id_user': dict["id_user"],'program_name': dict["program_name"],'species_name': dict["species_name"] , 'markets': dict["markets"],'published': dict["published"]} for id, dict in dic_result.items()]
       program=""
       if len(programs_format)==0:
-        status=400
+        response['status']=400
+        response['message']=1
         
       else:
         program=programs_format[0]
       data["program_details"]=program
       
+      data["assigned_fields"]=assigned_fields
+      
       #pt._id as _id,id_type,fecha_inicio,id_phenological_stage,validity_period,dosage,dosage_unit,objective,wetting,id_product
 
       dic_result = {}
-
+      task_ids= []
       for program in tasks:
+        task_ids.append(program['_id'])
         id = program['_id']
         id_product = program['id_product']
         
@@ -115,17 +93,13 @@ class EditProgramApi(Resource):
       programs_format= [{'_id': id,'id_type': dict["id_type"],'start_date': dict["start_date"],'id_phenological_stage': dict["id_phenological_stage"] , 'products': dict["products"],'validity_period': dict["validity_period"],'dosage': dict["dosage"],'objective': dict["objective"],'wetting': dict["wetting"]} for id, dict in dic_result.items()]
       
      
-      data["tasks_details"]=programs_format
+      data["tasks"]=list(set(task_ids))
 
 
       #####
       
-      data["products"]=getTable("products")
-      data["markets"] =getTable("market")
-      data["species"] =getTable("species")
-      data["phenological_stages"] =getTable("phenological_stages")
       
-      response={'status':status,'data':data}
+      response['data']=data
       
       
       if response.get('status') == 200:
@@ -133,8 +107,9 @@ class EditProgramApi(Resource):
         return {'response': response}, 200
       
       else: 
-        return {'error': response.get('data')}, 400
+        return {'error': response}, 400
 
     except Exception as e:
-      print(e)
-      raise InternalServerError
+      response['status']=400
+      response['message']=2
+      return {'error': response}, 500

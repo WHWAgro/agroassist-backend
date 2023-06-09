@@ -9,6 +9,8 @@ from resources.errors import  InternalServerError
 from database.models.Program import userClass,db
 from resources.services.programServices import *
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import jwt_required,get_jwt_identity
+from sqlalchemy.orm import class_mapper
 
 
 
@@ -19,7 +21,9 @@ class CreateUserApi(Resource):
   def post(self):
   
     try:
-      
+      response={}
+      response['status']=200
+      response['message']=0
       user_name = request.form.get("user_name")
       email = request.form.get("email")
       phone = request.form.get("phone")
@@ -28,29 +32,33 @@ class CreateUserApi(Resource):
       
 
       if user_name is None or password is None or email is None:
-        return {'error': {'status':400}}, 400
+        response['status']=400
+        response['message']=1
     
       # Check for existing users
       if userClass.query.filter_by(email = email).first():
-        return {'error': {'status':400}}, 400
-    
-      user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password)
-      db.session.add(user)
-      db.session.commit()
+        response['status']=400
+        response['message']=2
+      else:
+        user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password)
+        db.session.add(user)
+        db.session.commit()
       
-      
-      response={'status':200,'user':email}
+      data={}
+      data['user']=email
+      response['data']=data
       
       if response.get('status') == 200:
 
         return {'response': response}, 200
       
       else: 
-        return {'error': response}, 400
+        
+        return {'response': response}, 400
 
     except Exception as e:
       print(e)
-      raise InternalServerError
+      return {'response': response},500
     
 
 class LoginUserApi(Resource):
@@ -59,24 +67,53 @@ class LoginUserApi(Resource):
   def post(self):
   
     try:
+
+      response={}
+      response['status']=200
+      response['message']=0
+
+
+
       email=request.form.get("email")
       password = request.form.get("password")
       data={}
-      response={'status':200}
+      data["email"]=email
+     
       if verify_password(email,password)==True:
         token = g.user.generate_auth_token(600)
+
+        
         
         data= { 'token': token, 'duration': 600 }
-        
+
+        data["products"]=getTable("products")
+        data["markets"] =getTable("market")
+        data["species"] =getTable("species")
+        data["phenological_stages"] =getTable("phenological_stages")
+        data["task_types"]=getTable("task_types")
+        data["company"]=getTable("company")
+        data["products"]=getTable("products")
+        user = userClass.query.filter_by(email=email).first()
+        if user:
+            columns = [c.key for c in class_mapper(userClass).columns]
+            user_dict = {column: getattr(user, column) for column in columns}
+            data["user_data"]= user_dict
+        response['data']=data
         
         
         if response.get('status') == 200:
 
-            return {'response': response,'data':data}, 200
+            return {'response': response}, 200
       
+        
+
       else: 
-        return {'error': "Unauthorized access"}, 400
+        response['status']=400
+        response['message']=1
+        return {'response': response}, 400
 
     except Exception as e:
       print(e)
-      raise InternalServerError
+      response['status']=500
+      response['message']=2
+      return {'response': response}, 500
