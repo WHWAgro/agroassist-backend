@@ -29,7 +29,7 @@ class ProgramApi(Resource):
       data={}
       
 
-      programs,assigned_fields,tasks=getProgramDetails(user_id,program_id)
+      programs,assigned_companies,tasks=getProgramDetails(user_id,program_id)
       dic_result = {}
 
       for program in programs:
@@ -45,9 +45,9 @@ class ProgramApi(Resource):
             dic_result[id]["id_species"] = program['id_species']
             dic_result[id]["markets"] = [market]
             dic_result[id]["published"] = program['published']
-
+            dic_result[id]["updated_at"] = str(program['updated_at'])
       
-      programs_format= [{'_id': id,'id_user': dict["id_user"],'program_name': dict["program_name"],'id_species': dict["id_species"] , 'markets': list(filter(None,set(dict["markets"]))),'published': dict["published"]} for id, dict in dic_result.items()]
+      programs_format= [{'_id': id,'id_user': dict["id_user"],'program_name': dict["program_name"],'id_species': dict["id_species"] , 'markets': list(filter(None,set(dict["markets"]))),'published': dict["published"],'updated_at':dict["updated_at"]} for id, dict in dic_result.items()]
       program=""
       if len(programs_format)==0:
         response['status']=400
@@ -57,45 +57,27 @@ class ProgramApi(Resource):
         program=programs_format[0]
       data["program_details"]=program
       
-      data["assigned_fields"]=assigned_fields
+      
       
       #pt._id as _id,id_type,fecha_inicio,id_phenological_stage,validity_period,dosage,dosage_unit,objective,wetting,id_product
 
-      dic_result = {}
+      
       task_ids= []
-      for program in tasks:
-        task_ids.append(program['_id'])
-        id = program['_id']
-        id_product = program['id_product']
-        
-        if id in dic_result:
-            dic_result[id]["products"].append(id_product)
-        else:
-            dic_result[id]={}
-            dic_result[id]["id_type"] = program["id_type"] 
-            dic_result[id]["start_date"] = program['start_date']
-            dic_result[id]["id_phenological_stage"] = program['id_phenological_stage']
-            dic_result[id]["products"] = [id_product]
-            dic_result[id]["validity_period"] = program['validity_period']
-            dic_result[id]["dosage"] = program['dosage']
-            dic_result[id]["dosage_unit"] = program['dosage_unit']
-            dic_result[id]["objective"] = program['objective']
-            dic_result[id]["wetting"] = program['wetting']
-      
-      programs_format= [{'_id': id,'id_type': dict["id_type"],'start_date': dict["start_date"],'id_phenological_stage': dict["id_phenological_stage"] , 'products': dict["products"],'validity_period': dict["validity_period"],'dosage': dict["dosage"],'objective': dict["objective"],'wetting': dict["wetting"]} for id, dict in dic_result.items()]
-      
-    
-      data["tasks"]=list(filter(None,set(task_ids)))
+      for task in tasks:
+        task_ids.append(task['_id'])
+     
+      data["moments"]=list(filter(None,set(task_ids)))
 
 
       #####
       dic_result = {}
-      task_ids= []
-      for program in assigned_fields:
-        task_ids.append(program['_id'])
+      companies_ids= []
+      data["assigned_companies"]=assigned_companies
+      for companies in assigned_companies:
+        companies_ids.append(companies['_id'])
 
     
-      data["assigned_fields"]=list(filter(None,set(task_ids)))
+      data["assigned_companies"]=list(filter(None,set(companies_ids)))
 
 
 
@@ -118,6 +100,7 @@ class ProgramApi(Resource):
       response['status']=400
       response['message']=2
       return {'response': response}, 500
+  
   @jwt_required()
   def put(self):
   
@@ -128,20 +111,26 @@ class ProgramApi(Resource):
         body = request.get_json()
 
         
-
+        
         id_program=request.args.get('id_program')
         program = updateProgram(id_program,body)    
 
+        print("hola")
+        print(id_program)
       
         data={}
-        data['id_program']=program
+        data['id_program']=id_program
         response['data']=data
         
-        if response.get('status') == 200:
+        if response.get('status') == 200 and program != False:
+            print("dds")
 
             return {'response': response}, 200
         
         else: 
+            
+            response['status']=400
+            response['message']=1
             
             return {'response': response}, 400
 
@@ -163,8 +152,9 @@ class ProgramApi(Resource):
       
       
       user_id =  get_jwt_identity()
-      program_name = request.form.get("program_name")
-      species = request.form.get("species")
+      body = request.get_json()
+      program_name = body["program_name"]
+      species = body["species"]
 
       print(program_name)
       print(species)
@@ -307,9 +297,10 @@ class ProgramSelectionApi(Resource):
             dic_result[id]["species_name"] = program['species_name']
             dic_result[id]["markets"] = [market]
             dic_result[id]["published"] = program['published']
+            dic_result[id]["updated_at"] = str(program['updated_at'])
 
       
-      programs_format= [{'_id': id,'id_user': dict["id_user"],'program_name': dict["program_name"],'species_name': dict["species_name"] , 'markets': dict["markets"],'published': dict["published"]} for id, dict in dic_result.items()]
+      programs_format= [{'_id': id,'id_user': dict["id_user"],'program_name': dict["program_name"],'species_name': dict["species_name"] , 'markets':list(filter(None, dict["markets"])),'published': dict["published"],'updated_at':dict["updated_at"]} for id, dict in dic_result.items()]
 
       data["programs"]=programs_format
      

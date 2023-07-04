@@ -10,6 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from database.models.Program import db
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 UPLOAD_FOLDER = '/public/storage'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg','pdf'}
@@ -26,6 +27,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object('config.Config')
 api = Api(app)
 api = Api(app, errors=errors)
+
+CORS(app,resources={r"/*": {"origins": "*"}})
 
 
 

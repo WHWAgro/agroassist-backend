@@ -24,7 +24,7 @@ def initialize_routes(api):
  
  api.add_resource(ProgramApi, '/api/v1.0/program')
 
- api.add_resource(TaskApi, '/api/v1.0/task')
+ api.add_resource(TaskApi, '/api/v1.0/moment')
  
 
  api.add_resource(CreateUserApi, '/api/v1.0/user')

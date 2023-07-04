@@ -21,19 +21,18 @@ class ProgramClass(db.Model):
   id_species = db.Column(db.Integer, nullable=True )
   program_name = db.Column(db.String(80), nullable=False)
   published = db.Column(db.Boolean, nullable=False)
-  products = db.relationship('ProgramFieldsClass', backref='program')
+  fields = db.relationship('ProgramCompaniesClass', backref='program')
+  updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
   
   def __repr__(self):
         return '<program %r>' % self.program_name
   
-class ProgramFieldsClass(db.Model):
+class ProgramCompaniesClass(db.Model):
 
-  __tablename__ = 'program_fields'
+  __tablename__ = 'program_companies'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   id_program = db.Column(db.Integer,db.ForeignKey('programs._id'), nullable=False)
-  id_field = db.Column(db.Integer, nullable=False )
-  
-  
+  id_company = db.Column(db.Integer, nullable=False )
   
   
 class taskTypeClass(db.Model):
@@ -50,18 +49,25 @@ class ProgramTaskClass(db.Model):
   __tablename__ = 'program_tasks'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   id_program = db.Column(db.Integer, nullable=False)
-  id_type = db.Column(db.Integer, nullable=True)
+  id_moment_type = db.Column(db.Integer, nullable=False)
   start_date=db.Column(db.DateTime, nullable=True)
-  id_phenological_stage=db.Column(db.Integer, nullable=True)
-  validity_period=db.Column(db.Integer, nullable=True)
-  dosage=db.Column(db.Integer, nullable=True)
-  dosage_unit=db.Column(db.String(40), nullable=True)
-  objective=db.Column(db.String(200), nullable=True)
+  moment_value=db.Column(db.Integer, nullable=True)
   wetting=db.Column(db.Integer, nullable=True)
-  products = db.relationship('TaskProductClass', backref='task')
+  observations=db.Column(db.String(400), nullable=True)
+  objectives = db.relationship('TaskObjectivesClass', backref='task')  
+  
+  def __repr__(self):
+        return '<task %r>' % self.program_name
+  
+class TaskObjectivesClass(db.Model):
 
-  
-  
+  __tablename__ = 'task_objectives'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_task = db.Column(db.Integer,db.ForeignKey('program_tasks._id'), nullable=False)
+  id_objective = db.Column(db.Integer, nullable=True)
+  id_product = db.Column(db.String(400), nullable=True)
+  dosage=db.Column(db.String(400), nullable=True)
+  max_applications=db.Column(db.String(400), nullable=True)
   
   def __repr__(self):
         return '<task %r>' % self.program_name
@@ -73,21 +79,41 @@ class PhenologicalStageClass(db.Model):
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   phenological_stage_name = db.Column(db.String(80), nullable=False)
 
-class TaskProductClass(db.Model):
+class ProductTypeClass(db.Model):
 
-  __tablename__ = 'task_product'
+  __tablename__ = 'product_types'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  id_task = db.Column(db.Integer,db.ForeignKey('program_tasks._id'), nullable=False)
-  id_product = db.Column(ARRAY(db.Integer), nullable=False)
+  product_type_name = db.Column(db.String(80), nullable=False)
+
   
 class ProductClass(db.Model):
   __tablename__ = 'products'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   product_name = db.Column(db.String(80), nullable=False)
-  
+  lower_dosage = db.Column(db.Integer)
+  upper_dosage = db.Column(db.Integer)
+  dosage_unit = db.Column(db.Integer)
+  id_product_type=db.Column(db.Integer)
+  id_objective=db.Column(db.Integer, nullable=True)
+
   def __repr__(self):
         return '<product %r>' % self.product_name
+  
+class ObjectiveClass(db.Model):
+  __tablename__ = 'objectives'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  objective_name = db.Column(db.String(80), nullable=False)
 
+  def __repr__(self):
+        return '<objective %r>' % self.objective_name
+
+class UnitClass(db.Model):
+  __tablename__ = 'units'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  unit_name = db.Column(db.String(80), nullable=False)
+
+  def __repr__(self):
+        return '<unit %r>' % self.unit_name
   
 class userClass(db.Model):
 
@@ -108,7 +134,7 @@ class userClass(db.Model):
         return check_password_hash(self.password_hash, password)
     
   def generate_auth_token(self, expires_in = 600):
-        return create_access_token(identity=self._id,expires_delta=timedelta(minutes=45))
+        return create_access_token(identity=self._id,expires_delta=timedelta(minutes=3600))
 
   @staticmethod
   def verify_auth_token(token):
@@ -123,9 +149,7 @@ class SpeciesClass(db.Model):
   __tablename__ = 'species'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   
-  #speed = db.Column(db.Integer, nullable=False)
-  #statechange = db.Column(db.Integer, nullable=False)
-  #unixtime = db.Column(db.Integer, nullable=False)
+ 
   species_name = db.Column(db.String(80), nullable=False)
   
   
@@ -137,9 +161,7 @@ class CompanyClass(db.Model):
   __tablename__ = 'company'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   
-  #speed = db.Column(db.Integer, nullable=False)
-  #statechange = db.Column(db.Integer, nullable=False)
-  #unixtime = db.Column(db.Integer, nullable=False)
+  
   company_name = db.Column(db.String(80), nullable=False)
   
   
@@ -157,8 +179,8 @@ class MarketProgramClass(db.Model):
 
   __tablename__ = 'market_program'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  market_id = db.Column(db.Integer,db.ForeignKey('programs._id'), nullable=False)
-  program_id=db.Column(db.Integer, nullable=False)
+  market_id = db.Column(db.Integer, nullable=False)
+  program_id=db.Column(db.Integer,db.ForeignKey('programs._id'), nullable=False)
 
 class MarketClass(db.Model):
 

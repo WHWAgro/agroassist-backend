@@ -60,11 +60,10 @@ class TaskApi(Resource):
         response={}
         response['status']=200
         response['message']=0
-        id_task=request.args.get('id_task')
+        id_moment=request.args.get('id_moment')
 
-        print(1222)
-        tasks=getTaskDetails(id_task)
-        print(44444)
+        tasks=getTaskDetails(id_moment)
+        
         dic_result = {}
         if tasks==False:
             response['status']=400
@@ -73,36 +72,45 @@ class TaskApi(Resource):
             return {'response': response}, 400
         for task in tasks:
             id = task['_id']
-            products = task['id_product']
-            
+            products = ast.literal_eval(task['id_product'])
+            dosage = ast.literal_eval(task['dosage'])
+            max_applications = ast.literal_eval(task['max_applications'])
+            objectives= task['id_objective']
             if id in dic_result:
+                dic_result[id]["objectives"].append(objectives)
                 dic_result[id]["products"].append(products)
+                dic_result[id]["dosage"].append(dosage)
+                dic_result[id]["max_applications"].append(max_applications)
             else:
                 dic_result[id]={}
                 dic_result[id]["id_program"] = task['id_program']
-                dic_result[id]["id_type"] = task["id_type"] 
-                dic_result[id]["start_date"] = task['start_date']
-                dic_result[id]["id_phenological_stage"] = task['id_phenological_stage']
+                dic_result[id]["id_moment_type"] = task["id_moment_type"] 
+                dic_result[id]["start_date"] = str(task['start_date'])
+                dic_result[id]["moment_value"] = task['moment_value']
+                dic_result[id]["objectives"] = [objectives]
                 dic_result[id]["products"] = [products]
-                dic_result[id]["validity_period"] = task['validity_period']
-                dic_result[id]["dosage"] = task['dosage']
-                dic_result[id]["dosage_unit"] = task['dosage_unit']
-                dic_result[id]["objective"] = task['objective']
+                dic_result[id]["dosage"] = [dosage]
+                dic_result[id]["max_applications"] = [max_applications]
+                
                 dic_result[id]["wetting"] = task['wetting']
+                dic_result[id]["observations"] = task['observations']
 
         print(dic_result)
 
 
+
         
         data={}
-        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_type': dict["id_type"],'start_date': dict["start_date"],'id_phenological_stage': dict["id_phenological_stage"] , 'products': list(filter(None,dict["products"])),'validity_period': dict["validity_period"],'dosage': dict["dosage"],'objective': dict["objective"],'wetting': dict["wetting"]} for id, dict in dic_result.items()]
+        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'max_applications': list(filter(None,dict["max_applications"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
+        
+        
         if len(tasks_format)==0:
             response['status']=400
             response['message']=1
         
         else:
             task=tasks_format[0]
-            data["task_details"]=task
+            data["moment_details"]=task
             
             
       
@@ -143,7 +151,7 @@ class TaskApi(Resource):
       
       
         data={}
-        data['id_task']=task
+        data['id_moment']=task
         response['data']=data
         
         if response.get('status') == 200:
@@ -173,12 +181,12 @@ class TaskApi(Resource):
 
         
 
-        id_task=request.args.get('id_task')
-        task = updateTask(id_task,body)    
+        id_moment=request.args.get('id_moment')
+        task = updateTask(id_moment,body)    
 
       
         data={}
-        data['id_task']=task
+        data['id_moment']=task
         response['data']=data
         
         if response.get('status') == 200:
@@ -207,10 +215,10 @@ class TaskApi(Resource):
       
 
       
-      id_task=request.args.get('id_task')
+      id_moment=request.args.get('id_moment')
 
       
-      deleted = deleteTask(id_task)
+      deleted = deleteTask(id_moment)
       if deleted== False:
         response['status']=400 
         response['message']=1

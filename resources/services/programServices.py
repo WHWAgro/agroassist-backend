@@ -1,13 +1,14 @@
 import json
-from database.models.Program import ProgramFieldsClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskProductClass, db,auth
+from database.models.Program import ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
 import time
 from sqlalchemy.orm import class_mapper
+import ast
 
 
-def getTable(table):
+def getTable(table,field=None,value=None):
    
     
     try:
@@ -15,6 +16,40 @@ def getTable(table):
         query="""SELECT *
                 FROM """+table+"""
              """
+        
+        if field!=None:
+            query="""SELECT *
+                FROM """+table+"""
+                WHERE """+field+"""="""+str(value)+"""
+             """
+
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+
+def getUserCompanies(user):
+   
+    
+    try:
+        
+
+        query="""SELECT c._id,c.company_name as company_name 
+                    FROM user_company as  uc
+                    left join company as c
+                    on c._id=uc.company_id
+                where uc.user_id ="""+str(user)+"""
+             """
+        
+
         rows=[]
         with db.engine.begin() as conn:
             result = conn.execute(text(query)).fetchall()
@@ -26,8 +61,7 @@ def getTable(table):
 
     except Exception as e:
         print(e)
-        return False
-    
+        return False  
 
 def verify_password(username_or_token, password):
     # first try token
@@ -45,7 +79,7 @@ def getPrograms(id_usuario):
     
     try:
         
-        query="""SELECT p._id as _id,id_user,program_name,species_name,market_name,published FROM programs as p
+        query="""SELECT p._id as _id,id_user,program_name,species_name,market_name,published,updated_at FROM programs as p
                 left join species as s on p.id_species= s._id
                 left join market_program as mp on p._id=mp.program_id
                 left join market as m on m._id=mp.market_id
@@ -98,7 +132,7 @@ def getProgramDetails(id_usuario,id_programa):
     
     try:
         
-        query="""SELECT p._id as _id,id_species,id_user,program_name,species_name,market_id,published FROM programs as p
+        query="""SELECT p._id as _id,id_species,id_user,program_name,species_name,market_id,published,updated_at FROM programs as p
                 left join species as s on p.id_species= s._id
                 left join market_program as mp on p._id=mp.program_id
                 left join market as m on m._id=mp.market_id
@@ -106,18 +140,16 @@ def getProgramDetails(id_usuario,id_programa):
                 AND p._id = """+ str(id_programa)+"""
                 
              """
-        query_tasks="""SELECT pt._id as _id,id_type,start_date,id_phenological_stage,validity_period,dosage,dosage_unit,objective,wetting,id_product
+        query_tasks="""SELECT pt._id as _id
                 FROM programs as p
                 left join program_tasks as pt on p._id=pt.id_program
-                left join task_product as tp on pt._id=tp.id_task
                 WHERE p.id_user = """+ str(id_usuario)+"""
                 AND p._id = """+ str(id_programa)+"""
-                
              """
         
-        query_fields="""SELECT pf.id_field as _id
+        query_companies="""SELECT pf.id_company as _id
                 FROM programs as p
-                left join program_fields as pf on p._id=pf.id_program
+                left join program_companies as pf on p._id=pf.id_program
                 
                 WHERE p.id_user = """+ str(id_usuario)+"""
                 AND p._id = """+ str(id_programa)+"""
@@ -131,7 +163,7 @@ def getProgramDetails(id_usuario,id_programa):
         with db.engine.begin() as conn:
             result = conn.execute(text(query)).fetchall()
             result_tasks= conn.execute(text(query_tasks)).fetchall()
-            result_fields= conn.execute(text(query_fields)).fetchall()
+            result_fields= conn.execute(text(query_companies)).fetchall()
             for row in result:
                 row_as_dict = row._mapping
                 
@@ -153,33 +185,33 @@ def getProgramDetails(id_usuario,id_programa):
         return False
     
 
-def getTaskDetails(id_task):
+def getTaskDetails(id_moment):
     
     try:
         
         
-        query_tasks="""SELECT pt._id as _id,id_program,id_type,start_date,id_phenological_stage,validity_period,dosage,dosage_unit,objective,wetting,id_product
+        query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,start_date,moment_value,wetting,observations,id_objective,id_product,dosage,max_applications
                 FROM program_tasks as pt 
-                left join task_product as tp on pt._id=tp.id_task
-                where pt._id = """+ str(id_task)+"""
+                left join task_objectives as tp on pt._id=tp.id_task
+                where pt._id = """+ str(id_moment)+"""
                 
              """
         
         
-        print(11111)
+        
         rows_tasks=[]
         with db.engine.begin() as conn:
             
             result_tasks= conn.execute(text(query_tasks)).fetchall()
 
-            print(result_tasks)
+            
             
             
             for row in result_tasks:
                 row_as_dict = row._mapping
                 
                 rows_tasks.append(dict(row_as_dict))
-        print(22222)
+        print(rows_tasks)
         
         return rows_tasks
 
@@ -205,16 +237,19 @@ def createTask(body):
     
     try:
     
-        task = ProgramTaskClass( id_program=body.get('id_program'), id_type=body.get('id_type'),start_date=body.get('start_date'),id_phenological_stage=body.get('id_phenological_stage'),validity_period=body.get('validity_period'),dosage=body.get('dosage'),objective=body.get('objective'),wetting=body.get('wetting'))
+        task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'))
         db.session.add(task)
         print(task._id)
-       
+        
        
 
         db.session.commit()
-        for product in body.get('products'):
-          product=   TaskProductClass(id_task=task._id, id_product=product)
-          db.session.add(product)
+        print(task._id)
+        for idx, objective in enumerate(body.get('objectives')):
+         
+          
+          taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),max_applications=str(body.get('max_applications')[idx]))
+          db.session.add(taskObjective)
         db.session.commit()
         return task._id
     except Exception as e:
@@ -230,27 +265,22 @@ def updateTask(task_id,body):
         if task is None:
             return False
         
-        TaskProductClass.query.filter_by(id_task=task._id).delete()
+        TaskObjectivesClass.query.filter_by(id_task=task._id).delete()
 
         
-        task.id_program = body.get('id_program')
-        task.id_type = body.get('id_type')
-        task.start_date = body.get('start_date')
-        task.id_phenological_stage = body.get('id_phenological_stage')
-        task.validity_period = body.get('validity_period')
-        task.dosage = body.get('dosage')
-        task.objective = body.get('objective')
-        task.wetting = body.get('wetting')
+        task.id_program=body.get('id_program')
+        task.id_moment_type=body.get('id_moment_type')
+        task.start_date=body.get('start_date')
+        task.moment_value=body.get('moment_value')
+        task.wetting=body.get('wetting')
+        task.observations=body.get('observations')
 
-        
-        
-        print('hola!!!!')
+
     
-        product_ids = body.get('products')
-        for product_id in product_ids:
-            
-            task_product = TaskProductClass(id_task=task._id, id_product=product_id)
-            db.session.add(task_product)
+        for idx, objective in enumerate(body.get('objectives')):
+          
+          taskObjective =  TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),max_applications=str(body.get('max_applications')[idx]))
+          db.session.add(taskObjective)
         db.session.add(task)
         db.session.commit()
         return task._id
@@ -273,7 +303,7 @@ def updateProgram(program_id, body):
 
         
         MarketProgramClass.query.filter_by(program_id=program._id).delete()
-        ProgramFieldsClass.query.filter_by(id_program=program._id).delete()
+        ProgramCompaniesClass.query.filter_by(id_program=program._id).delete()
  
         program.id_user = program_details.get('id_user')
         program.program_name = program_details.get('program_name')
@@ -286,10 +316,10 @@ def updateProgram(program_id, body):
             new_market_program = MarketProgramClass(market_id=market_id, program_id=program._id)
             db.session.add(new_market_program)
 
-
-        assigned_fields = body.get('assigned_fields')
-        for field_id in assigned_fields:
-            program_field = ProgramFieldsClass(id_program=program._id, id_field=field_id)
+        
+        assigned_companies = body.get('assigned_companies')
+        for id in assigned_companies:
+            program_field = ProgramCompaniesClass(id_program=program._id, id_company=id)
             db.session.add(program_field)
 
         db.session.add(program)
@@ -347,13 +377,13 @@ def deleteProgram(id_program,id_user):
         print(e)
         return False
     
-def deleteTask(id_task):
+def deleteTask(id_moment):
     
     try:
         
-        task = ProgramTaskClass.query.filter_by(_id=id_task).first()
+        task = ProgramTaskClass.query.filter_by(_id=id_moment).first()
         if task:
-            for product in task.products:
+            for product in task.objectives:
                 db.session.delete(product)
             db.session.delete(task)
             db.session.commit()

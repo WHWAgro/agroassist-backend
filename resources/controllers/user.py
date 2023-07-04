@@ -36,10 +36,13 @@ class CreateUserApi(Resource):
         response['message']=1
     
       # Check for existing users
+     
       if userClass.query.filter_by(email = email).first():
+        
         response['status']=400
         response['message']=2
       else:
+        
         user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password)
         db.session.add(user)
         db.session.commit()
@@ -83,25 +86,27 @@ class LoginUserApi(Resource):
         token = g.user.generate_auth_token(600)
 
         
-        
-        data= { 'token': token, 'duration': 600 }
-
-        data["products"]=getTable("products")
-        data["markets"] =getTable("market")
-        data["species"] =getTable("species")
-        data["phenological_stages"] =getTable("phenological_stages")
-        data["task_types"]=getTable("task_types")
-        data["company"]=getTable("company")
-        data["products"]=getTable("products")
         user = userClass.query.filter_by(email=email).first()
         if user:
             columns = [c.key for c in class_mapper(userClass).columns]
             user_dict = {column: getattr(user, column) for column in columns}
             data["user_data"]= user_dict
-        response['data']=data
+            print(user_dict)
+            data= { 'token': token, 'duration': 600 }
+
+            data["products"]=getTable("products")
+            data["markets"] =getTable("market")
+            data["species"] =getTable("species")
+            data["phenological_stages"] =getTable("phenological_stages")
+            data["moment_types"]=getTable("task_types")
+            data["company"]=getUserCompanies(user_dict["_id"])
+            data["products"]=getTable("products")
+            data["objectives"]=getTable("objectives")
+            data["units"]=getTable("units")
+            data["product_types"]=getTable("product_types")
+            response['data']=data
         
         
-        if response.get('status') == 200:
 
             return {'response': response}, 200
       
