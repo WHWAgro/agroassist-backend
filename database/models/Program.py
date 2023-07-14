@@ -93,7 +93,11 @@ class ProductClass(db.Model):
   lower_dosage = db.Column(db.Integer)
   upper_dosage = db.Column(db.Integer)
   dosage_unit = db.Column(db.Integer)
+  format = db.Column(db.Integer)
+  format_unit = db.Column(db.Integer)
   id_product_type=db.Column(db.Integer)
+  chemical_compounds = db.Column(db.String(180), nullable=True)
+  max_applications = db.Column(db.Integer)
   id_objective=db.Column(db.Integer, nullable=True)
 
   def __repr__(self):

@@ -90,10 +90,10 @@ class LoginUserApi(Resource):
         if user:
             columns = [c.key for c in class_mapper(userClass).columns]
             user_dict = {column: getattr(user, column) for column in columns}
-            data["user_data"]= user_dict
+            
             print(user_dict)
             data= { 'token': token, 'duration': 600 }
-
+            data["user_data"]= user_dict
             data["products"]=getTable("products")
             data["markets"] =getTable("market")
             data["species"] =getTable("species")

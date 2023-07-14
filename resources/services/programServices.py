@@ -35,6 +35,37 @@ def getTable(table,field=None,value=None):
     except Exception as e:
         print(e)
         return False
+    
+def getMoments(id_program,start,end):
+   
+    
+    try:
+        
+        query="""SELECT wetting,id_product,dosage,id_objective
+                FROM program_tasks  pt
+                left join task_objectives  ta
+                    on pt._id=ta.id_task
+                WHERE id_program = """+ str(id_program)+"""
+                AND start_date >= DATE('"""+ start+"""')
+                AND start_date < DATE('"""+ end+"""')
+                
+             """
+        
+
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                
+                rows.append(dict(row_as_dict))
+           
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
 
 def getUserCompanies(user):
    
