@@ -85,6 +85,8 @@ class ProductTypeClass(db.Model):
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   product_type_name = db.Column(db.String(80), nullable=False)
 
+
+
   
 class ProductClass(db.Model):
   __tablename__ = 'products'
@@ -93,8 +95,8 @@ class ProductClass(db.Model):
   lower_dosage = db.Column(db.Integer)
   upper_dosage = db.Column(db.Integer)
   dosage_unit = db.Column(db.Integer)
-  format = db.Column(db.Integer)
-  format_unit = db.Column(db.Integer)
+  container_size = db.Column(db.Integer)
+  container_unit = db.Column(db.Integer)
   id_product_type=db.Column(db.Integer)
   chemical_compounds = db.Column(db.String(180), nullable=True)
   max_applications = db.Column(db.Integer)
@@ -118,6 +120,13 @@ class UnitClass(db.Model):
 
   def __repr__(self):
         return '<unit %r>' % self.unit_name
+  
+class ContainerUnitClass(db.Model):
+  __tablename__ = 'container_units'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  container_unit_name = db.Column(db.String(80), nullable=False)
+
+
   
 class userClass(db.Model):
 

@@ -102,7 +102,8 @@ class LoginUserApi(Resource):
             data["company"]=getUserCompanies(user_dict["_id"])
             data["products"]=getTable("products")
             data["objectives"]=getTable("objectives")
-            data["units"]=getTable("units")
+            data["dosage_units"]=getTable("units")
+            data["container_units"]=getTable("container_units")
             data["product_types"]=getTable("product_types")
             response['data']=data
         
