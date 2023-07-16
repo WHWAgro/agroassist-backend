@@ -16,7 +16,7 @@ class QuoterApi(Resource):
   
 
   @jwt_required()
-  def get(self):
+  def post(self):
   
     try:
       response={}
@@ -66,7 +66,7 @@ class QuoterApi(Resource):
                 
                 el={"product_id":id, "objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":program,"dosage":products_list[str(id)]["dosage"]}
                 
-                el["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"]/valid[0]["format"]+0.5)
+                el["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"]/valid[0]["container_size"]+0.5)
                 el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
                 alternatives=list(filter(lambda product: product['chemical_compounds'] == compound, elements))
                 alternatives_list=[]
@@ -74,7 +74,7 @@ class QuoterApi(Resource):
                    if alternative["_id"]==id:
                       continue
                    lol={"product_id":alternative["_id"],}
-                   lol["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"]/alternative["format"]+0.5)
+                   lol["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"]/alternative["container_size"]+0.5)
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
                 final_list.append(el)
