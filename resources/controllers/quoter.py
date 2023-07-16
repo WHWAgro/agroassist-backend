@@ -16,7 +16,7 @@ class QuoterApi(Resource):
   
 
   @jwt_required()
-  def post(self):
+  def get(self):
   
     try:
       response={}
@@ -24,13 +24,16 @@ class QuoterApi(Resource):
       response['message']=0
       
       user_id =  get_jwt_identity()
-      body = request.get_json()
-      programs = body.get('programs')
-      date_begin = body.get('start_date')
-      date_end = body.get('end_date')
+      
+
+      programs = request.args.get('programs').split(",")
+      date_begin = request.args.get('start_date')
+      date_end = request.args.get('end_date')
       
 
       print(programs)
+      print(date_begin)
+      print(date_end)
 
       
       elements=getTable("products")
