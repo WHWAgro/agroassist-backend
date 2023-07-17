@@ -77,9 +77,9 @@ class QuoterApi(Resource):
                 for alternative in alternatives:
                    if alternative["_id"]==id:
                       continue
-                   lol={"product_id":alternative["_id"],"objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":int(program),"dosage":products_list[str(id)]["dosage"]}
+                   lol={"product_id":alternative["_id"]}
                    lol["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"]/alternative["container_size"]+0.5)
-                   lol["valid_hectares"]=products_list[str(id)]["valid_hectares"]
+                   
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
                 final_list.append(el)

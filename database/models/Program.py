@@ -67,7 +67,9 @@ class TaskObjectivesClass(db.Model):
   id_objective = db.Column(db.Integer, nullable=True)
   id_product = db.Column(db.String(400), nullable=True)
   dosage=db.Column(db.String(400), nullable=True)
+  dosage_parts_per_unit=db.Column(db.String(400), nullable=True)
   max_applications=db.Column(db.String(400), nullable=True)
+  
   
   def __repr__(self):
         return '<task %r>' % self.program_name
@@ -95,6 +97,7 @@ class ProductClass(db.Model):
   lower_dosage = db.Column(db.Integer)
   upper_dosage = db.Column(db.Integer)
   dosage_unit = db.Column(db.Integer)
+  dosage_type = db.Column(db.Integer)
   container_size = db.Column(db.Integer)
   container_unit = db.Column(db.Integer)
   id_product_type=db.Column(db.Integer)
