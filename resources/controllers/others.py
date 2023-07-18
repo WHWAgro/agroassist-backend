@@ -74,14 +74,14 @@ class TaskApi(Resource):
             id = task['_id']
             products = ast.literal_eval(task['id_product'])
             dosage = ast.literal_eval(task['dosage'])
-            max_applications = ast.literal_eval(task['max_applications'])
+            
             dosage_parts_per_unit=ast.literal_eval(task['dosage_parts_per_unit'])
             objectives= task['id_objective']
             if id in dic_result:
                 dic_result[id]["objectives"].append(objectives)
                 dic_result[id]["products"].append(products)
                 dic_result[id]["dosage"].append(dosage)
-                dic_result[id]["max_applications"].append(max_applications)
+                
                 dic_result[id]["dosage_parts_per_unit"].append(dosage_parts_per_unit)
             else:
                 dic_result[id]={}
@@ -92,7 +92,7 @@ class TaskApi(Resource):
                 dic_result[id]["objectives"] = [objectives]
                 dic_result[id]["products"] = [products]
                 dic_result[id]["dosage"] = [dosage]
-                dic_result[id]["max_applications"] = [max_applications]
+                
                 dic_result[id]["dosage_parts_per_unit"]=[dosage_parts_per_unit]
                 
                 dic_result[id]["wetting"] = task['wetting']
@@ -104,7 +104,7 @@ class TaskApi(Resource):
 
         
         data={}
-        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'max_applications': list(filter(None,dict["max_applications"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
+        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
         
         
         if len(tasks_format)==0:

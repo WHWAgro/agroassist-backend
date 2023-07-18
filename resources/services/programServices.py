@@ -221,7 +221,7 @@ def getTaskDetails(id_moment):
     try:
         
         
-        query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,start_date,moment_value,wetting,observations,id_objective,id_product,dosage,max_applications,dosage_parts_per_unit
+        query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,start_date,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
                 FROM program_tasks as pt 
                 left join task_objectives as tp on pt._id=tp.id_task
                 where pt._id = """+ str(id_moment)+"""
@@ -279,7 +279,7 @@ def createTask(body):
         for idx, objective in enumerate(body.get('objectives')):
          
           
-          taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),max_applications=str(body.get('max_applications')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
+          taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
           db.session.add(taskObjective)
         db.session.commit()
         return task._id
@@ -310,7 +310,7 @@ def updateTask(task_id,body):
     
         for idx, objective in enumerate(body.get('objectives')):
           
-          taskObjective =  TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),max_applications=str(body.get('max_applications')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
+          taskObjective =  TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
           db.session.add(taskObjective)
         db.session.add(task)
         db.session.commit()
