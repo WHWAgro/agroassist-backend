@@ -1,11 +1,12 @@
 import json
-from database.models.Program import ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import QuoterClass,QuoteClass,QuoteProductClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
 import time
 from sqlalchemy.orm import class_mapper
 import ast
+import uuid
 
 
 def getTable(table,field=None,value=None):
@@ -435,3 +436,117 @@ def create_logic():
      except Exception as e:
         print(e)
         return False
+
+def createQuoter(body,user_id):
+    
+    try:
+    
+        
+        quoter=QuoterClass(id_user=user_id,id_programs=str(body.get('programs_id')), start_date=body.get('start_date'), end_date=body.get('end_date'),total_hectares=body.get('total_hectares'))
+        db.session.add(quoter)
+        
+        print(quoter._id)
+        db.session.commit()
+        
+        
+        
+        
+        
+        for provider_quote in body.get('quotes'):
+        
+            quote = QuoteClass( id_quoter=quoter._id,provider_name=provider_quote['provider_name'])
+            db.session.add(quote)
+            db.session.commit()
+            
+
+            for product in provider_quote["products"]:
+                cluster_id=uuid.uuid4()
+                quote_product=QuoteProductClass(id_quote=quote._id,cluster_id=cluster_id,cluster_master=True,product_id=product['product_id'],
+                                          product_needed=product['product_needed'],product_needed_unit=product['product_needed_unit'],
+                                          valid_hectares=product['valid_hectares'],container_size=product['container_size'],container_cost_clp=product['container_cost_clp'],container_unit=product['container_unit'], checked=product['checked'])
+                db.session.add(quote_product)
+                
+                
+                for alternative in product['alternatives']:
+                    quote_alternative=QuoteProductClass(id_quote=quote._id,cluster_id=cluster_id,cluster_master=False,product_id=alternative['product_id'],
+                                          product_needed=alternative['product_needed'],product_needed_unit=product['product_needed_unit'],
+                                          valid_hectares=alternative['valid_hectares'],container_size=alternative['container_size'],container_cost_clp=alternative['container_cost_clp'],container_unit=alternative['container_unit'], checked=alternative['checked'])
+                    db.session.add(quote_alternative)
+                    
+        db.session.commit()
+
+        
+        
+        return quoter._id
+    
+    except Exception as e:
+        print(e)
+        return False
+
+
+def getQuoter(id_usuario,quoter_id):
+    
+    try:
+        
+ 
+        
+
+        query="""SELECT q.id_programs,q.start_date,q.end_date,q.total_hectares, qs.provider_name,qp.id_quote as quote_id,qp._id as id_quote_product,qp.cluster_id,qp.cluster_master,qp.product_id,qp.product_needed,qp.product_needed_unit,qp.valid_hectares
+                    ,qp.container_size,qp.container_cost_clp,qp.container_unit,qp.checked
+                FROM quoter as q
+                left join quote as qs on q._id = qs.id_quoter
+                left join quote_product as qp on qp.id_quote=qs._id
+                WHERE q.id_user = """+ str(id_usuario)+"""
+                AND q._id = """+ str(quoter_id)+"""
+                """
+        
+       
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+                print(rows)
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+
+
+
+
+
+
+
+def getQuoters(id_usuario):
+    
+    try:
+        
+        query="""SELECT *
+                from quoter
+                WHERE id_user = """+ str(id_usuario)+"""
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            print(result)
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+
+    

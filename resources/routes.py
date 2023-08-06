@@ -3,7 +3,7 @@ from .controllers.programSelection import ProgramSelectionApi,ProgramApi,Program
 from .controllers.user import CreateUserApi,LoginUserApi
 from .controllers.tryc import CreationApi
 from .controllers.others import FieldsListApi,TaskApi
-from .controllers.quoter import QuoterApi
+from .controllers.quoter import QuoterApi,QuoterInitApi,QuoterSelectionApi
 
 
 
@@ -33,7 +33,9 @@ def initialize_routes(api):
  api.add_resource(CreationApi, '/api/v1.0/create')
 
 
- api.add_resource(QuoterApi, '/api/v1.0/quoter/info')
+ api.add_resource(QuoterInitApi, '/api/v1.0/quoter/info')
+ api.add_resource(QuoterApi, '/api/v1.0/quoter/')
+ api.add_resource(QuoterSelectionApi, '/api/v1.0/quoter/list')
  #api.add_resource(AlternativesApi, '/api/v1.0/quoter/alternatives')
  
  

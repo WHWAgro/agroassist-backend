@@ -27,6 +27,47 @@ class ProgramClass(db.Model):
   def __repr__(self):
         return '<program %r>' % self.program_name
   
+class QuoterClass(db.Model):
+
+  __tablename__ = 'quoter'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_user = db.Column(db.Integer, nullable=False)
+  id_programs = db.Column(db.String(400), nullable=True)
+  start_date=db.Column(db.DateTime, nullable=True)
+  end_date=db.Column(db.DateTime, nullable=True)
+  quotes = db.relationship('QuoteClass', backref='quoter')
+  updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+  created_at = db.Column(db.DateTime, server_default=db.func.now())
+  total_hectares = db.Column(db.Double, nullable=True)
+
+class QuoteClass(db.Model):
+
+  __tablename__ = 'quote'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_quoter = db.Column(db.Integer,db.ForeignKey('quoter._id'), nullable=False)
+  provider_name = db.Column(db.String(400), nullable=True)
+  products = db.relationship('QuoteProductClass', backref='quote')
+
+class QuoteProductClass(db.Model):
+
+  __tablename__ = 'quote_product'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_quote = db.Column(db.Integer,db.ForeignKey('quote._id'), nullable=False)
+  cluster_id=db.Column(db.String(400), nullable=True)
+  cluster_master=db.Column(db.Boolean, nullable=True)
+  product_id=db.Column(db.Integer, nullable=False)
+  product_needed=db.Column(db.Integer, nullable=False)
+  product_needed_unit=db.Column(db.Integer, nullable=False)
+  valid_hectares=db.Column(db.Double, nullable=False)
+  container_size=db.Column(db.Double, nullable=False)
+  container_cost_clp=db.Column(db.Integer, nullable=False)
+  container_unit=db.Column(db.Integer, nullable=False)
+  checked=db.Column(db.Boolean, nullable=True)
+  
+ 
+  
+
+  
 class ProgramCompaniesClass(db.Model):
 
   __tablename__ = 'program_companies'
