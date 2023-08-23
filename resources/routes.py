@@ -4,6 +4,7 @@ from .controllers.user import CreateUserApi,LoginUserApi
 from .controllers.tryc import CreationApi
 from .controllers.others import FieldsListApi,TaskApi
 from .controllers.quoter import QuoterApi,QuoterInitApi,QuoterSelectionApi
+from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 
 
 
@@ -37,6 +38,11 @@ def initialize_routes(api):
  api.add_resource(QuoterApi, '/api/v1.0/quoter/')
  api.add_resource(QuoterSelectionApi, '/api/v1.0/quoter/list')
  #api.add_resource(AlternativesApi, '/api/v1.0/quoter/alternatives')
+
+
+ api.add_resource(CalendarApi,'/api/v1.0/calendar/info')
+ api.add_resource(TaskInsApi,'/api/v1.0/calendar/task')
+ api.add_resource(WeatherApi,'/api/v1.0/calendar/forecast')
  
  
 

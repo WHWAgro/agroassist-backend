@@ -1,5 +1,5 @@
 import json
-from database.models.Program import QuoterClass,QuoteClass,QuoteProductClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import TaskClass,QuoterClass,QuoteClass,QuoteProductClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -251,6 +251,41 @@ def getTaskDetails(id_moment):
         print(e)
         return False
     
+def getTask(id_task):
+    
+    try:
+        
+        
+        query_tasks="""SELECT t._id as _id,t.id_moment,t.id_task_type as id_task_type,t.date_start, t.date_end,t.time_indicator as time_indicator,t.status as status, id_moment_type,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
+                FROM program_tasks as pt 
+                left join task_objectives as tp on pt._id=tp.id_task
+                left join tasks t on pt._id= t.id_moment
+                where t._id = """+ str(id_task)+"""
+                
+             """
+        
+        
+        
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def createProgram(program_name,id_user,species):
     
     try:
@@ -320,6 +355,94 @@ def updateTask(task_id,body):
         print(e)
         return False
     
+
+    
+def createTasks(program_id, body):
+    try:
+        program_details = body.get('program_details')
+
+        if program_details is None:
+            return False
+        assigned_companies = body.get('assigned_companies')
+        
+        query="""SELECT m._id as _id, m.id_program, m.start_date, m.end_date, t._id as id_task,t.id_company
+                    FROM program_tasks as m
+                    left join tasks  as t on m._id = t.id_moment
+                    
+                    WHERE m.id_program = """+ str(program_id)+"""
+                    
+                    """
+        rows=[]
+        with db.engine.begin() as conn:
+                result = conn.execute(text(query)).fetchall()
+                
+                for row in result:
+                    row_as_dict = row._mapping
+                    
+                    rows.append(dict(row_as_dict))
+        print(rows)
+
+        tasks={}
+        for el in rows:   
+            tasks[el['_id']]  =el
+        print(tasks)    
+        
+
+        for company_id in assigned_companies:
+            created = [dicc for dicc in rows if dicc['id_company'] ==company_id]
+            created_tasks={}
+            for el in created:
+                created_tasks[el['_id']]  =el
+                
+
+  
+ 
+            for moment_id,task in tasks.items():
+                if moment_id not in created_tasks:
+                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['start_date'],time_indicator='08:00:00' ,status=1,id_company=company_id)
+                    db.session.add(task_instance)
+
+          
+        db.session.commit()
+                    
+
+
+            
+
+        return True
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def updateTaskIns(task_id, body):
+    try:
+        status = body.get('status')
+        time_indicator = body.get('time_indicator')
+
+        
+
+        task = TaskClass.query.get(task_id)
+
+        if task is None:
+            return False
+
+        
+ 
+        task.status = status
+        task.time_indicator = time_indicator
+        
+
+
+        db.session.add(task)
+        db.session.commit()
+
+        return task._id
+
+    except Exception as e:
+        print(e)
+        return False
+
 
 def updateProgram(program_id, body):
     try:
@@ -548,5 +671,57 @@ def getQuoters(id_usuario):
     except Exception as e:
         print(e)
         return False
+    
+def getCompanyFromField(id_field):
+
+    try:
+        
+        query="""SELECT *
+                from field
+                WHERE _id = """+ str(id_field)+"""
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            print(result)
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getTasks(id_company):
+    
+    try:
+        
+        query="""SELECT *
+                from tasks
+                WHERE id_company = """+ str(id_company)+"""
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            print(result)
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
 
     

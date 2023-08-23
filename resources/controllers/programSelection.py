@@ -113,7 +113,9 @@ class ProgramApi(Resource):
         
         
         id_program=request.args.get('id_program')
-        program = updateProgram(id_program,body)    
+        program = updateProgram(id_program,body)  
+
+        create_tasks =  createTasks(id_program,body)
 
         print("hola")
         print(id_program)

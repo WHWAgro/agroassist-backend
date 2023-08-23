@@ -92,6 +92,7 @@ class ProgramTaskClass(db.Model):
   id_program = db.Column(db.Integer, nullable=False)
   id_moment_type = db.Column(db.Integer, nullable=False)
   start_date=db.Column(db.DateTime, nullable=True)
+  end_date=db.Column(db.DateTime, nullable=True)
   moment_value=db.Column(db.Integer, nullable=True)
   wetting=db.Column(db.Integer, nullable=True)
   observations=db.Column(db.String(400), nullable=True)
@@ -114,6 +115,20 @@ class TaskObjectivesClass(db.Model):
   
   def __repr__(self):
         return '<task %r>' % self.program_name
+  
+
+class TaskClass(db.Model):
+
+  __tablename__ = 'tasks'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_moment = db.Column(db.Integer, nullable=False)
+  id_task_type = db.Column(db.Integer, nullable=False)
+  date_start=db.Column(db.DateTime, nullable=True)
+  date_end=db.Column(db.DateTime, nullable=True)
+  time_indicator=db.Column(db.String(80), nullable=False)
+  status=db.Column(db.Integer, nullable=False)
+  id_company=db.Column(db.Integer, nullable=False)
+  
   
 
 class PhenologicalStageClass(db.Model):
