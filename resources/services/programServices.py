@@ -281,7 +281,7 @@ def getTask(id_task):
     try:
         
         
-        query_tasks="""SELECT t._id as _id,t.id_moment,t.id_task_type as id_task_type,t.date_start, t.date_end,t.time_indicator as time_indicator,t.status as status, id_moment_type,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
+        query_tasks="""SELECT t._id as _id,t.id_moment,t.id_task_type as id_task_type,t.date_start, t.date_end,t.time_indicator as time_indicator,t.id_status as id_status, id_moment_type,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
                 FROM program_tasks as pt 
                 left join task_objectives as tp on pt._id=tp.id_task
                 left join tasks t on pt._id= t.id_moment
