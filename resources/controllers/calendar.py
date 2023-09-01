@@ -176,7 +176,7 @@ class TaskInsApi(Resource):
             result['date_end']= str(task_details['date_end'])
             result['id_task_type']= task_details['id_task_type']
             result['time_indicator']= task_details['time_indicator']
-            result['status']= task_details['status']
+            result['id_status']= task_details['id_status']
 
             task_plots=[]
            
