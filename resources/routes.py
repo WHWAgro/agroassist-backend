@@ -2,7 +2,7 @@ from .controllers.editProgram import EditProgramApi
 from .controllers.programSelection import ProgramSelectionApi,ProgramApi,ProgramPublishApi
 from .controllers.user import CreateUserApi,LoginUserApi
 from .controllers.tryc import CreationApi
-from .controllers.others import FieldsListApi,TaskApi
+from .controllers.others import FieldsListApi,TaskApi,PlotListApi
 from .controllers.quoter import QuoterApi,QuoterInitApi,QuoterSelectionApi
 from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 
@@ -43,6 +43,8 @@ def initialize_routes(api):
  api.add_resource(CalendarApi,'/api/v1.0/calendar/info')
  api.add_resource(TaskInsApi,'/api/v1.0/calendar/task')
  api.add_resource(WeatherApi,'/api/v1.0/calendar/forecast')
+
+ api.add_resource(PlotListApi,'/api/v1.0/field/plot')
  
  
 

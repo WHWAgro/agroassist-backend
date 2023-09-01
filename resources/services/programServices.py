@@ -1,5 +1,5 @@
 import json
-from database.models.Program import TaskClass,QuoterClass,QuoteClass,QuoteProductClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import PlotClass,TaskClass,QuoterClass,QuoteClass,QuoteProductClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -142,6 +142,31 @@ def getFields(id_company):
         
         
         results = FieldClass.query.filter_by(company_id=id_company).all()
+
+        result_list = []
+        for result in results:
+            result_dict = {}
+            for key, value in result.__dict__.items():
+                if not key.startswith('_'):
+                    result_dict[key] = value
+                elif key=='_id':
+                    result_dict[key] = value
+            result_list.append(result_dict)
+        
+        return result_list
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def getPlots(id_field):
+    
+    try:
+        
+        
+        
+        results = PlotClass.query.filter_by(id_field=id_field).all()
 
         result_list = []
         for result in results:
@@ -303,8 +328,12 @@ def createProgram(program_name,id_user,species):
 def createTask(body):
     
     try:
-    
-        task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'))
+        
+        if 'end_date' not in body :
+            body['end_date']=body.get('start_date')
+        print("hola")
+
+        task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
         db.session.add(task)
         print(task._id)
         
@@ -395,11 +424,15 @@ def createTasks(program_id, body):
                 created_tasks[el['_id']]  =el
                 
 
+            
   
  
             for moment_id,task in tasks.items():
+                if 'end_date' not in task:
+                    task['end_date']=task['start_date']
+
                 if moment_id not in created_tasks:
-                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['start_date'],time_indicator='08:00:00' ,status=1,id_company=company_id)
+                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='08:00:00' ,status=1,id_company=company_id)
                     db.session.add(task_instance)
 
           
@@ -722,6 +755,34 @@ def getTasks(id_company):
         print(e)
         return False
     
+
+def getTaskPlots(id_task):
+        
+
+    try:
+        
+        query="""SELECT plots._id
+                    FROM programs
+                    JOIN program_tasks ON programs._id = program_tasks.id_program
+                    JOIN tasks ON program_tasks._id = tasks.id_moment
+                    join plots on plots.id_program =programs._id
+                    WHERE tasks._id = """+ str(id_task)+"""
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
 
 
     

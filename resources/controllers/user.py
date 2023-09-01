@@ -106,6 +106,8 @@ class LoginUserApi(Resource):
             data["product_types"]=getTable("product_types")
             data["dosage_units"]=getTable("units")
             data["dosage_parts_per_unit"]={ "1":{"1":"gr/100L","2":"kg/100L","3":"g/Ha",4:"g/Ha"}, "2":{"5":"cc/100L","6":"L/100L","7":"cc/Ha","8":"L/Ha"}}
+            data["task_status"]=[{'_id':1,'status_name':'Pendiente'},{'_id':2,'status_name':'Completada'},{'_id':3,'status_name':'Orden Generada'},{'_id':4,'status_name':'En Proceso'}]
+            
             response['data']=data
         
         

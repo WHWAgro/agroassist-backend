@@ -126,9 +126,17 @@ class TaskClass(db.Model):
   date_start=db.Column(db.DateTime, nullable=True)
   date_end=db.Column(db.DateTime, nullable=True)
   time_indicator=db.Column(db.String(80), nullable=False)
-  status=db.Column(db.Integer, nullable=False)
+  id_status=db.Column(db.Integer, nullable=False)
   id_company=db.Column(db.Integer, nullable=False)
   
+
+class PlotClass(db.Model):
+
+  __tablename__ = 'plots'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  name = db.Column(db.String(100), nullable=True)
+  id_field = db.Column(db.Integer, nullable=False)
+  id_program = db.Column(db.Integer, nullable=False)
   
 
 class PhenologicalStageClass(db.Model):

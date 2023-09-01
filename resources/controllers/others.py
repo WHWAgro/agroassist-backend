@@ -88,6 +88,10 @@ class TaskApi(Resource):
                 dic_result[id]["id_program"] = task['id_program']
                 dic_result[id]["id_moment_type"] = task["id_moment_type"] 
                 dic_result[id]["start_date"] = str(task['start_date'])
+                if 'end_date' in task:
+                  dic_result[id]["end_date"] = str(task['end_date'])
+                else:
+                  dic_result[id]["end_date"] = str(task['start_date'])
                 dic_result[id]["moment_value"] = task['moment_value']
                 dic_result[id]["objectives"] = [objectives]
                 dic_result[id]["products"] = [products]
@@ -104,7 +108,7 @@ class TaskApi(Resource):
 
         
         data={}
-        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
+        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'end_date': dict["end_date"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
         
         
         if len(tasks_format)==0:
@@ -241,3 +245,46 @@ class TaskApi(Resource):
     except Exception as e:
       print(e)
       return {'response': response},500
+    
+
+
+
+
+
+class PlotListApi(Resource):
+  
+
+    @jwt_required()
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        field_id=request.args.get('id_field')
+
+        
+        plots = getPlots(field_id)
+        print("dsfadsfsfdf")
+        
+        if plots== False:
+          response['status']=400 
+          response['message']=1
+        
+
+        data={}
+        data['plots']=plots
+        response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500
