@@ -432,7 +432,7 @@ def createTasks(program_id, body):
                     task['end_date']=task['start_date']
 
                 if moment_id not in created_tasks:
-                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='08:00:00' ,status=1,id_company=company_id)
+                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='08:00:00' ,id_status=1,id_company=company_id)
                     db.session.add(task_instance)
 
           

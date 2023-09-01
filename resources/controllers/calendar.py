@@ -56,7 +56,7 @@ class CalendarApi(Resource):
         result['date_end']= str(task['date_end'])
         result['id_task_type']= task['id_task_type']
         result['time_indicator']= task['time_indicator']
-        result['status']= task['status']
+        result['id_status']= task['id_status']
         
         task_plots=[]
         aux_plots=getTaskPlots(task['_id'])
