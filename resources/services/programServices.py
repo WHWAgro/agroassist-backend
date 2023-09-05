@@ -761,7 +761,7 @@ def getTaskPlots(id_task):
 
     try:
         
-        query="""SELECT plots._id
+        query="""SELECT plots._id , programs._id as id_program, programs.id_species
                     FROM programs
                     JOIN program_tasks ON programs._id = program_tasks.id_program
                     JOIN tasks ON program_tasks._id = tasks.id_moment

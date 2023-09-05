@@ -177,13 +177,15 @@ class TaskInsApi(Resource):
             result['id_task_type']= task_details['id_task_type']
             result['time_indicator']= task_details['time_indicator']
             result['id_status']= task_details['id_status']
-
+            result['id_program']=None
+            result['id_species']=None
             task_plots=[]
            
             
             aux_plots=getTaskPlots(task_details['_id'])
             if aux_plots !=False and len(aux_plots)>0:
-           
+              result['id_program']= aux_plots[0]['id_program']
+              result['id_species']= aux_plots[0]['id_species']
               for a in aux_plots:
                   task_plots.append(a['_id'])
            
@@ -286,46 +288,47 @@ class WeatherApi(Resource):
       
 
       weather=[
-          {
-            "date": '2023-09-04',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '12', "max": '15' },
-            "wind": "7",
-            "humidity": "96"
-          },
+          
           {
             "date": '2023-09-05',
             "description": 'Lluvia',
             "icon":'rainy',
-            "temperature": { "min": '12', "max": '15' },
-            "wind": "7",
-            "humidity": "40"
+            "temperature": { "min": '13', "max": '14' },
+            "wind": "6",
+            "humidity": "79"
           },
           {
             
             "date": '2023-09-06',
             "description": 'Nublado',
             "icon":'cloudy',
-            "temperature": { "min": '6', "max": '17' },
-            "wind": "11",
-            "humidity": "76"
+            "temperature": { "min": '4', "max": '16' },
+            "wind": "9",
+            "humidity": "86"
           },
           {
             "date": '2023-09-07',
             "description": 'Soleado',
             "icon": 'sunny',
-            "temperature": { "min": '8', "max": '16' },
-            "wind": "9",
+            "temperature": { "min": '6', "max": '16' },
+            "wind": "6",
             "humidity": "2"
           },
           {
             "date": '2023-09-08',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '7', "max": '17' },
+            "temperature": { "min": '9', "max": '17' },
             "wind": "7",
-            "humidity": "3"
+            "humidity": "1"
+          },
+          {
+            "date": '2023-09-09',
+            "description": 'Lluvia',
+            "icon":'rainy',
+            "temperature": { "min": '10', "max": '13' },
+            "wind": "13",
+            "humidity": "93"
           }
           
       ]
