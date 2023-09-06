@@ -9,6 +9,7 @@ import ast
 import uuid
 
 
+
 def getTable(table,field=None,value=None):
    
     
@@ -320,6 +321,31 @@ def createProgram(program_name,id_user,species):
         db.session.commit()
         return program._id
     
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getTaskOrders(id_task):
+    try:
+        
+        query="""SELECT _id,file_name 
+                    FROM task_orders
+                    WHERE id_task = """+ str(id_task)+"""
+                    order by order_number asc
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+        
 
     except Exception as e:
         print(e)

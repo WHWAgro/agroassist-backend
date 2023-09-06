@@ -1,4 +1,4 @@
-from flask import Response, request
+from flask import Response, request,send_file
 from flask_restful import Resource
 import json
 from datetime import datetime
@@ -7,7 +7,8 @@ from datetime import datetime
 from resources.errors import  InternalServerError
 from database.models.Program import ProgramClass,db
 from resources.services.programServices import *
-from flask_jwt_extended import jwt_required,get_jwt_identity
+from resources.services.generatePDF import *
+from flask_jwt_extended import jwt_required,get_jwt_identity,current_user
 from sqlalchemy.orm import class_mapper
 
 
@@ -279,6 +280,114 @@ class PlotListApi(Resource):
         if response.get('status') == 200:
 
           return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500
+      
+
+
+class TaskOrderApi(Resource):
+  
+
+    @jwt_required()
+    def post(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        body = request.get_json()
+        
+        taskOrderFile = generateTaskOrder(body)
+        
+        if taskOrderFile== False:
+          response['status']=400 
+          response['message']=1
+        
+        else:
+
+          data={}
+          data['task_order']=taskOrderFile
+          response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500
+      
+    @jwt_required()
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        id_task= request.args.get('id_task')
+        
+        taskOrderFile = getTaskOrders(id_task)
+        
+        if taskOrderFile== False:
+          response['status']=400 
+          response['message']=1
+        
+        else:
+
+          data={}
+          data['task_orders']=taskOrderFile
+          response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500
+      
+
+class DowloadTaskOrderApi(Resource):
+  
+
+    @jwt_required()
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        
+        
+        
+        file_path='files/'+request.args.get('file_name')
+        
+        
+        if True:
+           return send_file(file_path, as_attachment=True)
         
         else: 
           

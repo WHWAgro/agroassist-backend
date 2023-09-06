@@ -137,7 +137,16 @@ class PlotClass(db.Model):
   name = db.Column(db.String(100), nullable=True)
   id_field = db.Column(db.Integer, nullable=False)
   id_program = db.Column(db.Integer, nullable=False)
+  size = db.Column(db.Integer, nullable=False)
   
+class TaskOrderClass(db.Model):
+
+  __tablename__ = 'task_orders'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_company = db.Column(db.Integer, nullable=False)
+  id_task = db.Column(db.Integer, nullable=False)
+  file_name=db.Column(db.String(100), nullable=True)
+  order_number=db.Column(db.Integer, nullable=False)
 
 class PhenologicalStageClass(db.Model):
 

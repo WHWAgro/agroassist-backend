@@ -188,6 +188,9 @@ class TaskInsApi(Resource):
               result['id_species']= aux_plots[0]['id_species']
               for a in aux_plots:
                   task_plots.append(a['_id'])
+
+            taskOrderFile = getTaskOrders(task_details['_id'])
+            
            
         
             result['plots']=task_plots
@@ -202,7 +205,7 @@ class TaskInsApi(Resource):
             else:
                 for ind,val in tasks_format[0].items():
                     result[ind]=val
-                
+                result['task_orders']=taskOrderFile
                 data["task_details"]=result  
 
       
