@@ -1,4 +1,4 @@
-from flask import Response, request
+from flask import Response, request,send_file
 from flask_restful import Resource
 import json
 from datetime import datetime
@@ -11,6 +11,7 @@ from flask_jwt_extended import jwt_required,get_jwt_identity
 from functools import reduce
 from itertools import chain
 from resources.services.programServices import *
+from resources.services.generatePDF import *
 
 
 class QuoterInitApi(Resource):
@@ -304,3 +305,110 @@ class QuoterSelectionApi(Resource):
       print(e)
       return {'response': response}, 400
      
+
+
+class PurchaseOrderApi(Resource):
+  
+
+    @jwt_required()
+    def post(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        body = request.get_json()
+        
+        taskOrderFile = generatePurchaseOrder(body)
+        
+        if taskOrderFile== False:
+          response['status']=400 
+          response['message']=1
+        
+        else:
+
+          data={}
+          data['purchase_order']=taskOrderFile
+          response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500
+      
+    @jwt_required()
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        id_task= request.args.get('id_quoter')
+        
+        taskOrderFile = getTaskOrders('id_quoter')
+        
+        if taskOrderFile== False:
+          response['status']=400 
+          response['message']=1
+        
+        else:
+
+          data={}
+          data['purchase_orders']=taskOrderFile
+          response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500
+      
+
+class DowloadPurchaseOrderApi(Resource):
+  
+
+    @jwt_required()
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        
+        
+        
+        file_path='files/'+str(request.args.get('file_name'))
+        
+        
+        if True:
+           return send_file(file_path, as_attachment=True)
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500

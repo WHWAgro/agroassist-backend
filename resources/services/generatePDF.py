@@ -4,7 +4,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 import uuid
 import json
-from database.models.Program import TaskOrderClass,PlotClass,TaskClass,QuoterClass,QuoteClass,QuoteProductClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import PurchaseOrderClass,TaskOrderClass,PlotClass,TaskClass,QuoterClass,QuoteClass,QuoteProductClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -19,6 +19,30 @@ def getCompanyTaskOrders(id_company):
         
         query="""SELECT *
                     FROM task_orders
+                    WHERE id_company = """+ str(id_company)+"""
+                    order by order_number desc
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getCompanyPurchaseOrders(id_company):
+    try:
+        
+        query="""SELECT *
+                    FROM purchase_orders
                     WHERE id_company = """+ str(id_company)+"""
                     order by order_number desc
                 
@@ -87,7 +111,7 @@ def generateTaskOrder(body):
         # Section 1: Title
         title_style = getSampleStyleSheet()["Title"]
         title_style.alignment = 0 
-        title = Paragraph("Orden de Compra Nº "+str(order_number), title_style)
+        title = Paragraph("Orden de Aplicación Nº "+str(order_number), title_style)
         pdf_content.append(title)
         print('----------')
         # Section 2: Subtitles (aligned to the left and in gray)
@@ -270,21 +294,55 @@ def generateTaskOrder(body):
 def generatePurchaseOrder(body):
 
     try:
+        print(1)
         # Create a PDF document
 
         myuuid = uuid.uuid4()
-
-        doc = SimpleDocTemplate(str(myuuid)+".pdf", pagesize=letter)
+        doc_name = str(myuuid)+".pdf"
+        doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
         print(str(myuuid)+".pdf")
 
+        company_id=1
+        id_task=body['id_task']
+        order_creator='John Doe'
+        order_number=1
+
+        company_purchase_orders = getCompanyPurchaseOrders(1)
+        print('hola1233')
+        print(company_purchase_orders)
+        if len(company_purchase_orders)>0:
+           order_number = company_purchase_orders[0]['order_number']+1
+        
+        #-----------------------pdf begins here-------------------
+        print('----------')
         # Create a list to hold the content of the PDF
         pdf_content = []
 
+        # Header: "AgroAssist" in green letters
+        header_style = getSampleStyleSheet()["Heading1"]
+        header_style.textColor = colors.green
+        header = Paragraph("AgroAssist", header_style)
+        pdf_content.append(header)
+
         # Section 1: Title
         title_style = getSampleStyleSheet()["Title"]
-        title = Paragraph("Orden de Compra", title_style)
+        title_style.alignment = 0 
+        title = Paragraph("Orden de Compra Nº "+str(order_number), title_style)
         pdf_content.append(title)
-
+        print('----------')
+        # Section 2: Subtitles (aligned to the left and in gray)
+        subtitle_style = getSampleStyleSheet()["Normal"]
+        subtitle_style.alignment = 0  # Align left
+        subtitle_style.textColor = colors.grey
+        print('----------')
+        subtitle1 = Paragraph("Orden emitida por "+order_creator, subtitle_style)
+        today_date = datetime.now().strftime("%Y-%m-%d")  # Example: "2023 September 04"
+        subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
+        pdf_content.extend([subtitle1, Spacer(1, 5), subtitle2, Spacer(1, 5)])
+        print('----------')
+        pdf_content.append(Spacer(1,10))      
+        pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
+        pdf_content.append(Spacer(1,10))
         # Section 2: Information in Two Columns
         # Load JSON data (replace this with your actual JSON data)
         json_data = {
@@ -331,6 +389,11 @@ def generatePurchaseOrder(body):
 
         # Build the PDF document
         doc.build(pdf_content)
+
+        print('hola---------')
+        new_purchase_order = PurchaseOrderClass( id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number)
+        db.session.add(new_purchase_order)
+        db.session.commit()
 
         return(str(myuuid)+".pdf")
     except: 

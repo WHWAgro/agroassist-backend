@@ -148,6 +148,15 @@ class TaskOrderClass(db.Model):
   file_name=db.Column(db.String(100), nullable=True)
   order_number=db.Column(db.Integer, nullable=False)
 
+class PurchaseOrderClass(db.Model):
+
+  __tablename__ = 'purchase_orders'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_company = db.Column(db.Integer, nullable=False)
+  id_task = db.Column(db.Integer, nullable=False)
+  file_name=db.Column(db.String(100), nullable=True)
+  order_number=db.Column(db.Integer, nullable=False)
+
 class PhenologicalStageClass(db.Model):
 
   __tablename__ = 'phenological_stages'
