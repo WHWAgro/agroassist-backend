@@ -322,7 +322,8 @@ class PurchaseOrderApi(Resource):
         body = request.get_json()
         
         taskOrderFile = generatePurchaseOrder(body)
-        
+        print("-----")
+        print(taskOrderFile)
         if taskOrderFile== False:
           response['status']=400 
           response['message']=1

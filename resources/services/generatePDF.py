@@ -303,10 +303,9 @@ def generatePurchaseOrder(body):
         print(str(myuuid)+".pdf")
 
         company_id=1
-        id_task=body['id_task']
         order_creator='John Doe'
         order_number=1
-
+        print("hola")
         company_purchase_orders = getCompanyPurchaseOrders(1)
         print('hola1233')
         print(company_purchase_orders)
@@ -391,10 +390,11 @@ def generatePurchaseOrder(body):
         doc.build(pdf_content)
 
         print('hola---------')
-        new_purchase_order = PurchaseOrderClass( id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number)
+        new_purchase_order = PurchaseOrderClass( id_company=company_id,id_quoter=1,file_name=doc_name,order_number=order_number)
         db.session.add(new_purchase_order)
         db.session.commit()
 
         return(str(myuuid)+".pdf")
-    except: 
+    except Exception as e:
+        print(e) 
         return False
