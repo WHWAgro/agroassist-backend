@@ -277,6 +277,36 @@ def getTaskDetails(id_moment):
         print(e)
         return False
     
+def getFieldMachinery(id_field):
+    
+    try:
+        
+        
+        query_tasks="""SELECT _id,name,model,id_machinery_type
+                FROM machinery  
+                where id_field = """+ str(id_field)+"""
+                
+             """
+        
+        
+        rows_machinery=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_machinery.append(dict(row_as_dict))
+       
+        
+        return rows_machinery
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def getTask(id_task):
     
     try:
@@ -296,8 +326,6 @@ def getTask(id_task):
         with db.engine.begin() as conn:
             
             result_tasks= conn.execute(text(query_tasks)).fetchall()
-
-            
             
             
             for row in result_tasks:
@@ -476,9 +504,6 @@ def createTasks(program_id, body):
     
 def updateTaskIns(task_id, body):
     try:
-        status = body.get('status')
-        time_indicator = body.get('time_indicator')
-
         
 
         task = TaskClass.query.get(task_id)
@@ -486,10 +511,24 @@ def updateTaskIns(task_id, body):
         if task is None:
             return False
 
+        for key,value in body.items():
+            if key=="status":
+                print("cambio de status")
+                task.id_status = value
+            if key=="time_indicator":
+                print("cambio de tiempo")
+                task.time_indicator = value
+            #status = body.get('status')
+            #time_indicator = body.get('time_indicator')
+
         
- 
-        task.status = status
-        task.time_indicator = time_indicator
+
+       
+
+        
+        
+        #task.status = status
+        #task.time_indicator = time_indicator
         
 
 

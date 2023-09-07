@@ -397,3 +397,42 @@ class DowloadTaskOrderApi(Resource):
         print(e)
         response['message']=2
         return {'response': response},500
+      
+
+class MachineryListApi(Resource):
+  
+
+    @jwt_required()
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        field_id=request.args.get('id_field')
+
+        
+        plots = getFieldMachinery(field_id)
+        
+        
+        if plots== False:
+          response['status']=400 
+          response['message']=1
+        
+
+        data={}
+        data['machinery']=plots
+        response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500

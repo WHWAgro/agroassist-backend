@@ -148,6 +148,15 @@ class TaskOrderClass(db.Model):
   file_name=db.Column(db.String(100), nullable=True)
   order_number=db.Column(db.Integer, nullable=False)
 
+class MachineryClass(db.Model):
+
+  __tablename__ = 'machinery'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  id_field = db.Column(db.Integer, nullable=False)
+  name=db.Column(db.String(100), nullable=True)
+  model=db.Column(db.String(100), nullable=True)
+  id_machinery_type=db.Column(db.Integer, nullable=False)
+
 class PurchaseOrderClass(db.Model):
 
   __tablename__ = 'purchase_orders'

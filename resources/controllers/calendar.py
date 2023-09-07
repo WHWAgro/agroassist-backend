@@ -242,9 +242,6 @@ class TaskInsApi(Resource):
         
         id_task=request.args.get('id_task')
         task = updateTaskIns(id_task,body)  
-
-       
-
       
         data={}
        
