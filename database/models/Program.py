@@ -39,6 +39,7 @@ class QuoterClass(db.Model):
   updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
   created_at = db.Column(db.DateTime, server_default=db.func.now())
   total_hectares = db.Column(db.Double, nullable=True)
+  products = db.relationship('QuoterProductClass', backref='quoter')
 
 class QuoteClass(db.Model):
 
@@ -46,23 +47,34 @@ class QuoteClass(db.Model):
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   id_quoter = db.Column(db.Integer,db.ForeignKey('quoter._id'), nullable=False)
   provider_name = db.Column(db.String(400), nullable=True)
-  products = db.relationship('QuoteProductClass', backref='quote')
+  rows = db.relationship('QuoteRowClass', backref='quote')
+  
 
-class QuoteProductClass(db.Model):
+class QuoterProductClass(db.Model):
 
-  __tablename__ = 'quote_product'
+  __tablename__ = 'quoter_products'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  id_quote = db.Column(db.Integer,db.ForeignKey('quote._id'), nullable=False)
+  id_quoter = db.Column(db.Integer,db.ForeignKey('quoter._id'), nullable=False)
   cluster_id=db.Column(db.String(400), nullable=True)
   cluster_master=db.Column(db.Boolean, nullable=True)
+  product_row_id=db.Column(db.Integer, nullable=False)
   product_id=db.Column(db.Integer, nullable=False)
   product_needed=db.Column(db.Integer, nullable=False)
-  product_needed_unit=db.Column(db.Integer, nullable=False)
+  product_stored=db.Column(db.Integer, nullable=False)
+  product_needed_unit_id=db.Column(db.Integer, nullable=False)
   valid_hectares=db.Column(db.Double, nullable=False)
-  container_size=db.Column(db.Double, nullable=False)
-  container_cost_clp=db.Column(db.Integer, nullable=False)
-  container_unit=db.Column(db.Integer, nullable=False)
-  checked=db.Column(db.Boolean, nullable=True)
+
+class QuoteRowClass(db.Model):
+
+  __tablename__ = 'quote_rows'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  quote_id = db.Column(db.Integer,db.ForeignKey('quote._id'), nullable=False)
+  product_row_id=db.Column(db.Integer, nullable=False)
+  container_size=db.Column(db.Integer, nullable=False)
+  container_unit_id=db.Column(db.Integer, nullable=False)
+  container_price_clp=db.Column(db.Integer, nullable=False)
+  checked = db.Column(db.Boolean, nullable=False)
+  
   
  
   

@@ -167,8 +167,37 @@ class QuoterApi(Resource):
 
 
 
-      quoter_rows = getQuoter(user_id,quoter_id)
+      quoter_products =getQuoterProducts(quoter_id)
+
+      print('fdsfdsfdsfdfdfdf$$$$^%^^^')
+     
+
+      
+      products={}
+      for product in quoter_products:
+
+        del product['_id']
+        del product['id_quoter']
+
+        if product['cluster_id'] not in products:
+          products[product['cluster_id']]={'alternatives':[]}
+
+
+        if product['cluster_master']==True:
+          product['alternatives']= products[product['cluster_id']]['alternatives']
+          products[product['cluster_id']]= product
+        else:
+            products[product['cluster_id']]['alternatives'].append(product)
+      print(products) 
+      
       data={}
+
+
+      
+      quoter_rows = getQuoter(user_id,quoter_id)
+
+      
+      
       if quoter_rows== False:
         response['status']=400
         response['message']=1
@@ -179,57 +208,33 @@ class QuoterApi(Resource):
           data['end_date']=str(quoter_rows[0]['end_date'])
           data['total_hectares']=str(quoter_rows[0]['total_hectares'])
           data['quotes']=[]
-          
+          data['products']=[]
+          for key,value in products.items():
+            data['products'].append(value)
+
+          print(data)
           quotes={}
-          clusters=[]
           for row in quoter_rows:
             if row['quote_id'] not in quotes:
-              quotes[row['quote_id']]={'quote_id':row['quote_id'],'provider_name':row['provider_name'],'products':[]}
-            if row['product_id']is not None:
-              if row['cluster_id'] not in clusters:
-                clusters.append(row['cluster_id'])
-                quotes[row['quote_id']]['products'].append({'cluster_id':row['cluster_id'],'quote_product_index': None,  'product_id': None, 'product_needed': None, 'product_needed_unit': None,
-             'valid_hectares': None, 'container_size': None, 'container_cost_clp': None, 'container_unit': None, 'checked': False,'alternatives':[]})
+              quotes[row['quote_id']]={'quote_id':row['quote_id'],'provider_name':row['provider_name'],'rows':[]}
+            
               
-              for cluster in quotes[row['quote_id']]['products']:
-                if cluster['cluster_id']==row['cluster_id']:
-                  if row['cluster_master']==True:
-                    cluster['quote_product_index']=row['id_quote_product']
-                    cluster['product_id']=row['product_id']
-                    cluster['product_needed']=row['product_needed']
-                    cluster['product_needed_unit']=row['product_needed_unit']
-                    cluster['valid_hectares']=row['valid_hectares']
-                    cluster['container_size']=row['container_size']
-                    cluster['container_cost_clp']=row['container_cost_clp']
-                    cluster['container_unit']=row['container_unit']
-                    cluster['checked']=row['checked']
-
-                  else:
-                    
-                    
-                    alternative={}
-                    alternative['quote_product_index']=row['id_quote_product']
-                    alternative['product_id']=row['product_id']
-                    alternative['product_needed']=row['product_needed']
-                    alternative['product_needed_unit']=row['product_needed_unit']
-                    alternative['valid_hectares']=row['valid_hectares']
-                    alternative['container_size']=row['container_size']
-                    alternative['container_cost_clp']=row['container_cost_clp']
-                    alternative['container_unit']=row['container_unit']
-                    alternative['checked']=row['checked']
-
-                    
-                    cluster['alternatives'].append(alternative)
+            quotes[row['quote_id']]['rows'].append({'product_row_id': row['product_row_id'],  
+              'container_size': row['container_size'], 'container_price_clp': row['container_price_clp'], 'container_unit_id': row['container_unit_id'], 'checked': row['checked']})
+              
+          for key,value in quotes.items():
+            data['quotes'].append(value)
+          
+          
 
             
                     
           
-                  break
+        
               
 
 
-          for key,value in quotes.items():
-            data['quotes'].append(value)
+      
 
       
       response['data']=data
