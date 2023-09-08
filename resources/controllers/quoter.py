@@ -191,7 +191,8 @@ class QuoterApi(Resource):
       print(products) 
       
       data={}
-
+      data["usd2clp"]=811.69
+      data["clp2usd"]=0.0012
 
       
       quoter_rows = getQuoter(user_id,quoter_id)
@@ -214,10 +215,12 @@ class QuoterApi(Resource):
 
           print(data)
           quotes={}
+          ci=0
+          colors=['#E3F461', '#C8D8CF', '#AAB9EE', '#FFBB33']
           for row in quoter_rows:
             if row['quote_id'] not in quotes:
-              quotes[row['quote_id']]={'quote_id':row['quote_id'],'provider_name':row['provider_name'],'rows':[]}
-            
+              quotes[row['quote_id']]={'quote_id':row['quote_id'],'provider_name':row['provider_name'],'hex_color':colors[ci],'rows':[]}
+              ci=ci+1
               
             quotes[row['quote_id']]['rows'].append({'product_row_id': row['product_row_id'],  
               'container_size': row['container_size'], 'container_price_clp': row['container_price_clp'], 'container_unit_id': row['container_unit_id'], 'checked': row['checked']})
@@ -230,7 +233,7 @@ class QuoterApi(Resource):
             
                     
           
-        
+     
               
 
 

@@ -672,8 +672,14 @@ def createQuoter(body,user_id):
         print(quoter._id)
         db.session.commit()
 
-        quote = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor')
+        quote = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 1')
         db.session.add(quote)
+        quote2 = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 2')
+        db.session.add(quote2)
+        quote3 = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 3')
+        db.session.add(quote3)
+        quote4 = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 4')
+        db.session.add(quote4)
         db.session.commit()
         row_id=0
         for product in body["products"]:
@@ -686,6 +692,12 @@ def createQuoter(body,user_id):
 
                 quote_row=QuoteRowClass(quote_id=quote._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
                 db.session.add(quote_row)
+                quote_row=QuoteRowClass(quote_id=quote2._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
+                db.session.add(quote_row)
+                quote_row=QuoteRowClass(quote_id=quote3._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
+                db.session.add(quote_row)
+                quote_row=QuoteRowClass(quote_id=quote4._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
+                db.session.add(quote_row)
                 
                 
                 
@@ -697,6 +709,12 @@ def createQuoter(body,user_id):
                     db.session.add(quoter_product_alternative)
 
                     quote_row=QuoteRowClass(quote_id=quote._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
+                    db.session.add(quote_row)
+                    quote_row=QuoteRowClass(quote_id=quote2._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
+                    db.session.add(quote_row)
+                    quote_row=QuoteRowClass(quote_id=quote3._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
+                    db.session.add(quote_row)
+                    quote_row=QuoteRowClass(quote_id=quote4._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
                     db.session.add(quote_row)
                     
         
