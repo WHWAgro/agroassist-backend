@@ -113,6 +113,49 @@ class QuoterInitApi(Resource):
 
 
 class QuoterApi(Resource):
+
+  @jwt_required()
+  def put(self):
+  
+    try:
+      response={}
+      response['status']=200
+      response['message']=0
+      
+      
+      user_id =  get_jwt_identity()
+      body = request.get_json()
+      
+
+      updated = updateQuotes(body)
+      data={}
+      if response.get('status') == 200 and updated != False:
+            print("dds")
+            data['quoter_id']=request.args.get('quoter_id')
+            response['data']=data
+      if updated== False:
+        response['status']=400
+        response['message']=1
+      
+      
+      
+      
+      if response.get('status') == 200:
+
+        return {'response': response}, 200
+      
+      else: 
+        
+        return {'response': response}, 400
+
+    except Exception as e:
+      print(e)
+      return {'response': response},500
+
+
+
+
+
   @jwt_required()
   def post(self):
   
@@ -223,7 +266,7 @@ class QuoterApi(Resource):
               ci=ci+1
               
             quotes[row['quote_id']]['rows'].append({'product_row_id': row['product_row_id'],  
-              'container_size': row['container_size'], 'container_price_clp': row['container_price_clp'], 'container_unit_id': row['container_unit_id'], 'checked': row['checked']})
+              'container_size': row['container_size'], 'container_price_clp': row['container_price_clp'], 'container_unit_id': row['container_unit_id'], 'checked': row['checked'],'_id':row['row_id']})
               
           for key,value in quotes.items():
             data['quotes'].append(value)
@@ -276,6 +319,7 @@ class QuoterSelectionApi(Resource):
       
 
       quoters=getQuoters(user_id)
+      print(quoters)
       if quoters== False:
         response['status']=400
         response['message']=1

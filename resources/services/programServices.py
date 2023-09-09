@@ -520,13 +520,7 @@ def updateTaskIns(task_id, body):
                 task.time_indicator = value
             #status = body.get('status')
             #time_indicator = body.get('time_indicator')
-
-        
-
-       
-
-        
-        
+                
         #task.status = status
         #task.time_indicator = time_indicator
         
@@ -536,6 +530,65 @@ def updateTaskIns(task_id, body):
         db.session.commit()
 
         return task._id
+    
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def updateQuotes( body):
+    try:
+        
+
+        for quote in body['quotes']:
+        
+            updated_quote = QuoteClass.query.get(quote['quote_id'])
+            updated_quote.provider_name = quote['provider_name']
+            db.session.add(updated_quote)
+            for row in quote['rows']:
+                updated_row = QuoteRowClass.query.get(row['_id'])
+                updated_row.container_size = row['container_size']
+                updated_row.container_price_clp = row['container_price_clp']
+                updated_row.container_unit_id = row['container_unit_id']
+                updated_row.checked = row['checked']
+                db.session.add(updated_row)
+            
+        db.session.commit()
+        return True
+        # Update the row fields with the new data
+        for key, value in data.items():
+            setattr(row, key, value)
+
+        # Commit the changes to the database
+        db.session.commit()
+
+
+        task = TaskClass.query.get(task_id)
+
+        if task is None:
+            return False
+
+        for key,value in body.items():
+            if key=="status":
+                print("cambio de status")
+                task.id_status = value
+            if key=="time_indicator":
+                print("cambio de tiempo")
+                task.time_indicator = value
+            #status = body.get('status')
+            #time_indicator = body.get('time_indicator')
+                
+        #task.status = status
+        #task.time_indicator = time_indicator
+        
+
+
+        db.session.add(task)
+        db.session.commit()
+
+        return task._id
+    
 
     except Exception as e:
         print(e)
@@ -776,7 +829,7 @@ def getQuoter(id_usuario,quoter_id):
         
 
         query="""SELECT q.id_programs,qs._id as quote_id,q.start_date,q.end_date,q.total_hectares, qs.provider_name,qp.product_row_id
-                    ,qp.container_size,qp.container_unit_id,qp.container_price_clp,qp.checked
+                    ,qp.container_size,qp.container_unit_id,qp.container_price_clp,qp.checked,qp._id as row_id
                 FROM quoter as q
                 left join quote as qs on q._id = qs.id_quoter
                 left join quote_rows as qp on qp.quote_id=qs._id
