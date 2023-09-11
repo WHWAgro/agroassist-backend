@@ -290,45 +290,45 @@ class WeatherApi(Resource):
       weather=[
           
           {
-            "date": '2023-09-05',
-            "description": 'Lluvia',
-            "icon":'rainy',
-            "temperature": { "min": '13', "max": '14' },
-            "wind": "6",
-            "humidity": "79"
-          },
-          {
-            
-            "date": '2023-09-06',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '4', "max": '16' },
-            "wind": "9",
-            "humidity": "86"
-          },
-          {
-            "date": '2023-09-07',
-            "description": 'Soleado',
-            "icon": 'sunny',
-            "temperature": { "min": '6', "max": '16' },
-            "wind": "6",
-            "humidity": "2"
-          },
-          {
-            "date": '2023-09-08',
+            "date": '2023-09-11',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '9', "max": '17' },
-            "wind": "7",
+            "temperature": { "min": '3', "max": '18' },
+            "wind": "9",
             "humidity": "1"
           },
           {
-            "date": '2023-09-09',
-            "description": 'Lluvia',
-            "icon":'rainy',
-            "temperature": { "min": '10', "max": '13' },
-            "wind": "13",
-            "humidity": "93"
+            
+            "date": '2023-09-12',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '4', "max": '17' },
+            "wind": "15",
+            "humidity": "1"
+          },
+          {
+            "date": '2023-09-13',
+            "description": 'Nublado',
+            "icon": 'cloudy',
+            "temperature": { "min": '10', "max": '17' },
+            "wind": "6",
+            "humidity": "13"
+          },
+          {
+            "date": '2023-09-14',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '9', "max": '19' },
+            "wind": "7",
+            "humidity": "25"
+          },
+          {
+            "date": '2023-09-15',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '10', "max": '22' },
+            "wind": "9",
+            "humidity": "2"
           }
           
       ]
