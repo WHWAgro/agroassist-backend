@@ -390,7 +390,7 @@ def generatePurchaseOrder(body):
         doc.build(pdf_content)
 
         print('hola---------')
-        new_purchase_order = PurchaseOrderClass( id_company=company_id,id_quoter=1,file_name=doc_name,order_number=order_number)
+        new_purchase_order = PurchaseOrderClass( id_company=company_id,id_quote=body['id_quote'],file_name=doc_name,order_number=order_number)
         db.session.add(new_purchase_order)
         db.session.commit()
 

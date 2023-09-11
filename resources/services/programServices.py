@@ -722,8 +722,11 @@ def createQuoter(body,user_id):
         quoter=QuoterClass(id_user=user_id,id_programs=str(body.get('programs_id')), start_date=body.get('start_date'), end_date=body.get('end_date'),total_hectares=body.get('total_hectares'))
         db.session.add(quoter)
         
-        print(quoter._id)
+        
+        
         db.session.commit()
+        print(quoter._id)
+        print("hola")
 
         quote = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 1')
         db.session.add(quote)
@@ -735,10 +738,14 @@ def createQuoter(body,user_id):
         db.session.add(quote4)
         db.session.commit()
         row_id=0
+        clusters={}
         for product in body["products"]:
-                cluster_id=uuid.uuid4()
+                if product['cluster_id'] not in clusters:
+                    cluster=uuid.uuid4()
+                    clusters[product['cluster_id'] ]= cluster
+                
                 row_id=row_id+1
-                quoter_product=QuoterProductClass(id_quoter=quoter._id,cluster_id=cluster_id,cluster_master=True,product_row_id=row_id,product_id=product['product_id'],
+                quoter_product=QuoterProductClass(id_quoter=quoter._id,cluster_id=clusters[product['cluster_id'] ],cluster_master=product['cluster_master'],product_row_id=row_id,product_id=product['product_id'],
                                           product_needed=product['product_needed'],product_stored=product['product_stored'],product_needed_unit_id=product['product_needed_unit_id'],
                                           valid_hectares=product['valid_hectares'])
                 db.session.add(quoter_product)
@@ -754,23 +761,6 @@ def createQuoter(body,user_id):
                 
                 
                 
-                for alternative in product['alternatives']:
-                    row_id=row_id+1
-                    quoter_product_alternative=QuoterProductClass(id_quoter=quoter._id,cluster_id=cluster_id,cluster_master=False,product_row_id=row_id,product_id=alternative['product_id'],
-                                          product_needed=alternative['product_needed'],product_stored=alternative['product_stored'],product_needed_unit_id=alternative['product_needed_unit_id'],
-                                          valid_hectares=alternative['valid_hectares'])
-                    db.session.add(quoter_product_alternative)
-
-                    quote_row=QuoteRowClass(quote_id=quote._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
-                    db.session.add(quote_row)
-                    quote_row=QuoteRowClass(quote_id=quote2._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
-                    db.session.add(quote_row)
-                    quote_row=QuoteRowClass(quote_id=quote3._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
-                    db.session.add(quote_row)
-                    quote_row=QuoteRowClass(quote_id=quote4._id,product_row_id=row_id,container_size=0,container_unit_id=alternative['product_needed_unit_id'],container_price_clp=0,checked=False)
-                    db.session.add(quote_row)
-                    
-        
         
         
         
@@ -835,6 +825,39 @@ def getQuoter(id_usuario,quoter_id):
                 left join quote_rows as qp on qp.quote_id=qs._id
                 WHERE q.id_user = """+ str(id_usuario)+"""
                 AND q._id = """+ str(quoter_id)+"""
+                """
+        
+       
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+                
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def getProviderPurchaseOrders(quote_id):
+    
+    try:
+        
+ 
+        
+
+        query="""SELECT file_name,order_number
+        from purchase_orders
+                WHERE id_quote = """+ str(quote_id)+"""
+                order by order_number
+                
                 """
         
        
