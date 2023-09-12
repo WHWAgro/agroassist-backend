@@ -35,7 +35,7 @@ def initialize_routes(api):
 
 
  api.add_resource(QuoterInitApi, '/api/v1.0/quoter/info')
- api.add_resource(QuoterApi, '/api/v1.0/quoter/')
+ api.add_resource(QuoterApi, '/api/v1.0/quoter')
  api.add_resource(QuoterSelectionApi, '/api/v1.0/quoter/list')
  #api.add_resource(AlternativesApi, '/api/v1.0/quoter/alternatives')
 
