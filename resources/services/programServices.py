@@ -307,6 +307,37 @@ def getFieldMachinery(id_field):
         print(e)
         return False
     
+
+def getFieldWorkers(id_field):
+    
+    try:
+        
+        
+        query_tasks="""SELECT _id,name
+                FROM workers  
+                where id_field = """+ str(id_field)+"""
+                
+             """
+        
+        
+        rows_machinery=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_machinery.append(dict(row_as_dict))
+       
+        
+        return rows_machinery
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def getTask(id_task):
     
     try:

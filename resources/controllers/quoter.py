@@ -14,6 +14,9 @@ from resources.services.programServices import *
 from resources.services.generatePDF import *
 
 
+
+
+
 class QuoterInitApi(Resource):
   
 
@@ -273,12 +276,7 @@ class QuoterApi(Resource):
           for key,value in quotes.items():
             data['quotes'].append(value)
           
-          
-
-            
-                    
-          
-     
+        
               
 
 

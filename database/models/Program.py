@@ -233,7 +233,15 @@ class ContainerUnitClass(db.Model):
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   container_unit_name = db.Column(db.String(80), nullable=False)
 
+class WorkersClass(db.Model):
 
+  __tablename__ = 'workers'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  name = db.Column(db.String(80), nullable=False)
+  email= db.Column(db.String(80), nullable=True)
+  phone_number= db.Column(db.String(80), nullable=True)
+  id_worker_type=db.Column(db.Integer, nullable=True)
+  id_field=db.Column(db.Integer, nullable=True)
   
 class userClass(db.Model):
 
