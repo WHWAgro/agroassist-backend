@@ -54,24 +54,30 @@ class QuoterInitApi(Resource):
         for objective in moments:
             products_list={}
             products_ids=[]
-           
+            id_objective=objective["id_objective"]
             products= list(chain.from_iterable( ast.literal_eval(objective["id_product"])))
             dosages=list(chain.from_iterable( ast.literal_eval(objective["dosage"])))
+            
             for i,product in enumerate(products):
                 if product in products_ids:
                     products_list[str(product)]["valid_hectares"]=products_list[str(product)]["valid_hectares"]+10
                 else:
                     products_ids.append(product)
                     products_list[str(product)]={"valid_hectares":10,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":dosages[i]}
-             
+                    
             
  
             print(products)
             
             print(products_list)
+            print("hola")
+            print(id_objective)
             for id in products_ids:
-                valid=list(filter(lambda product: product['_id'] == id, elements))
+                valid=list(filter(lambda product: product['_id'] == id , elements))
+                print(valid)
+                print("chao")
                 compound=valid[0]["chemical_compounds"]
+                
                 
                 el={"product_id":id, "objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":int(program),"dosage":products_list[str(id)]["dosage"]}
                 
@@ -79,7 +85,7 @@ class QuoterInitApi(Resource):
                 el["product_needed_unit"]=1
                 el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
                 
-                alternatives=list(filter(lambda product: product['chemical_compounds'] == compound, elements))
+                alternatives=list(filter(lambda product: product['chemical_compounds'] == compound and product['id_objective'] == id_objective and product['product_name'] != valid[0]["product_name"] , elements))
                 alternatives_list=[]
                 for alternative in alternatives:
                    if alternative["_id"]==id:
@@ -90,11 +96,11 @@ class QuoterInitApi(Resource):
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
                 final_list.append(el)
-
+              
       data={}
       data["hectares"]=10*len(programs)
-      data["usd2clp"]=811.69
-      data["clp2usd"]=0.0012
+      data["usd2clp"]=884.79
+      data["clp2usd"]=0.0011
       data["products"]=final_list
 
       
