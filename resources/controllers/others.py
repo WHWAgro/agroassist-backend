@@ -50,6 +50,41 @@ class FieldsListApi(Resource):
       response['message']=2
       return {'response': response},500
     
+class FieldsApi(Resource):
+  
+
+  @jwt_required()
+  def post(self):
+  
+    try:
+        response={}
+        response['status']=200
+        response['message']=0
+        body = request.get_json()
+
+        
+
+        field = createField(body)    
+      
+      
+        data={}
+        data['id_field']=field
+        response['data']=data
+        
+        if response.get('status') == 200:
+
+            return {'response': response}, 200
+        
+        else: 
+            
+            return {'response': response}, 400
+
+    except Exception as e:
+      print(e)
+      response['message']=2
+      response['status']=500
+      return {'response': response},500
+    
 
 class TaskApi(Resource):
   

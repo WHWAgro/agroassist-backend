@@ -327,6 +327,7 @@ class FieldClass(db.Model):
   company_id = db.Column(db.Integer, nullable=False)
  
   field_name = db.Column(db.String(80), nullable=False)
+  location = db.Column(db.String(120), nullable=False)
   
   def __repr__(self):
         return '<field %r>' % self.field_name

@@ -302,7 +302,7 @@ class WeatherApi(Resource):
             "date": '2023-09-15',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '9', "max": '2' },
+            "temperature": { "min": '9', "max": '22' },
             "wind": "9",
             "humidity": "2"
           },

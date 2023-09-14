@@ -437,6 +437,26 @@ def createTask(body):
         print(e)
         return False
     
+def createField(body):
+    
+    try:
+        
+       
+
+        field = FieldClass( company_id=body.get('id_company'), field_name=body.get('field_name'))
+        db.session.add(field)
+        print(field._id)
+        
+
+
+        db.session.commit()
+        
+       
+        return field._id
+    except Exception as e:
+        print(e)
+        return False
+    
 def updateTask(task_id,body):
     
     try:
