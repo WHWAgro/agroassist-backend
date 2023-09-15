@@ -96,7 +96,7 @@ class QuoterInitApi(Resource):
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
                 final_list.append(el)
-              
+
       data={}
       data["hectares"]=10*len(programs)
       data["usd2clp"]=884.79
@@ -288,8 +288,13 @@ class QuoterApi(Resource):
 
       
 
-      
+      data['products'].sort(key=lambda x: x['product_row_id'], reverse=False)
+      for product in data['products']:
+        product['alternatives'].sort(key=lambda x: x['product_row_id'], reverse=False)
+      for quote in data['quotes']:
+        quote['rows'].sort(key=lambda x: x['product_row_id'], reverse=False)
       response['data']=data
+      
       
       if response.get('status') == 200:
 

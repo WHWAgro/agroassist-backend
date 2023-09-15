@@ -289,14 +289,7 @@ class WeatherApi(Resource):
 
       weather=[
           
-          {
-            "date": '2023-09-14',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '9', "max": '19' },
-            "wind": "7",
-            "humidity": "66"
-          },
+         
           {
             
             "date": '2023-09-15',
@@ -310,25 +303,33 @@ class WeatherApi(Resource):
             "date": '2023-09-16',
             "description": 'Lluvia',
             "icon": 'rainy',
-            "temperature": { "min": '7', "max": '18' },
-            "wind": "11",
-            "humidity": "67"
+            "temperature": { "min": '7', "max": '17' },
+            "wind": "13",
+            "humidity": "71"
           },
           {
             "date": '2023-09-17',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '3', "max": '17' },
-            "wind": "9",
-            "humidity": "5"
+            "temperature": { "min": '1', "max": '16' },
+            "wind": "11",
+            "humidity": "2"
           },
           {
             "date": '2023-09-18',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '10', "max": '22' },
-            "wind": "7",
+            "temperature": { "min": '4', "max": '16' },
+            "wind": "9",
             "humidity": "0"
+          },
+           {
+            "date": '2023-09-19',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '8', "max": '16' },
+            "wind": "7",
+            "humidity": "2"
           }
           
       ]
