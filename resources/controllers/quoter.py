@@ -294,7 +294,7 @@ class QuoterApi(Resource):
       for quote in data['quotes']:
         quote['rows'].sort(key=lambda x: x['product_row_id'], reverse=False)
       response['data']=data
-      
+      data['quotes'].sort(key=lambda x: x['quote_id'], reverse=False)
       
       if response.get('status') == 200:
 
