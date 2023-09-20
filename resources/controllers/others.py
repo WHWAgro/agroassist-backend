@@ -324,7 +324,46 @@ class PlotListApi(Resource):
         print(e)
         response['message']=2
         return {'response': response},500
-      
+
+class MailApi(Resource):
+  
+
+   
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        email=request.args.get('email')
+
+        
+        exists = mailExists(email)
+        
+        
+        if exists== False:
+          response['status']=400 
+          response['message']=1
+        
+
+        data={}
+        data['email']=False
+        if len(exists)>0:
+           data['email']=True
+        response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500     
 
 
 class TaskOrderApi(Resource):

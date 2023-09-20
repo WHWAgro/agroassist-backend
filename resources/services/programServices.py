@@ -410,6 +410,29 @@ def getTaskOrders(id_task):
         print(e)
         return False
     
+def mailExists(email):
+    try:
+        
+        query="""SELECT _id,email
+                    FROM users
+                    WHERE email = '"""+ str(email)+"""'
+                    
+                
+             """
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def createTask(body):
     
     try:
