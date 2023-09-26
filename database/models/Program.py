@@ -291,7 +291,8 @@ class CompanyClass(db.Model):
   
   
   company_name = db.Column(db.String(80), nullable=False)
-  
+  rut = db.Column(db.String(80), nullable=False)
+  business_activity = db.Column(db.String(80), nullable=True)
   
   def __repr__(self):
         return '<company %r>' % self.company_name

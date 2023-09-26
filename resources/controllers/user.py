@@ -6,7 +6,7 @@ from datetime import datetime
 #from get_project_root import root_path
 from resources.errors import  InternalServerError
 
-from database.models.Program import userClass,db
+from database.models.Program import UserCompanyClass,CompanyClass,userClass,db
 from resources.services.programServices import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import jwt_required,get_jwt_identity
@@ -24,10 +24,15 @@ class CreateUserApi(Resource):
       response={}
       response['status']=200
       response['message']=0
-      user_name = request.form.get("user_name")
-      email = request.form.get("email")
-      phone = request.form.get("phone")
-      password = request.form.get("password")
+      
+      body = request.get_json()
+      user_name = body.get("name")+" "+body.get("surname")
+      email = body.get("email")
+      phone = body.get("phone_number")
+      password = body.get("password")
+      role=body.get("id_user_type")
+
+      
       password=generate_password_hash(password)
       
 
@@ -43,15 +48,24 @@ class CreateUserApi(Resource):
         response['message']=2
       else:
         
-        user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password)
+        user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password,role=role)
         db.session.add(user)
         db.session.commit()
+        if role==1:
+          company_info=body.get("company_info")
+          company = CompanyClass( company_name= company_info['company_name'],rut=company_info['rut'],business_activity=company_info['business_activity'])
+          db.session.add(company)
+          db.session.commit()
+          user_company = UserCompanyClass( company_id=company._id,user_id=user._id)
+          db.session.add(user_company)
+          db.session.commit()
       
-      data={}
-      data['user']=email
-      response['data']=data
+     
       
       if response.get('status') == 200:
+        data={}
+        data['user']=email
+        response['data']=data
 
         return {'response': response}, 200
       
@@ -60,6 +74,7 @@ class CreateUserApi(Resource):
         return {'response': response}, 400
 
     except Exception as e:
+      response['status']=500
       print(e)
       return {'response': response},500
     
