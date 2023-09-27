@@ -125,7 +125,7 @@ class FieldsApi(Resource):
                 else:
                    plot_instance = PlotClass.query.get(_id)
           
-                   if plot is None: 
+                   if plot_instance is None: 
                     response['status']=400
                    else:
                       plot_instance.name=plot.get('name')
@@ -133,7 +133,7 @@ class FieldsApi(Resource):
                       plot_instance.id_species=plot.get('id_species')
                       plot_instance.variety=plot.get('variety')
                       plot_instance.id_program=plot.get('id_program')
-                      db.session.add(field)
+                      db.session.add(plot_instance)
             
                    
                    
@@ -141,8 +141,124 @@ class FieldsApi(Resource):
           else:
               response['status']=400
 
+        if "admin_team" in body:
+          admin_workers=getFieldAdminTeamDetails(id_field)
+          if admin_workers!=False: 
+            id_current = [d["_id"] for d in admin_workers]
+            id_new =[d["_id"] for d in body["admin_team"]]
+            
+            for _id in id_current:
+                if _id not in id_new:
+                  WorkersClass.query.filter_by(_id=_id).delete()
+            
+            
+            for worker in body["admin_team"] :
+                
+                
+                _id=worker['_id']
+                print(_id)
+                
+                if _id is None:
+                   print("hola")
+                   worker_instance = WorkersClass(id_field=id_field,name =worker['name'],email=worker['email'],phone_number=worker['phone_number'],id_worker_type=worker['id_worker_type'])
+                   db.session.add(worker_instance)
+                elif _id not in id_current:
+                   continue
+                else:
+                   worker_instance = WorkersClass.query.get(_id)
           
-                 
+                   if worker_instance is None: 
+                    response['status']=400
+                   else:
+                      worker_instance.name=worker.get('name')
+                      worker_instance.email=worker.get('email')
+                      worker_instance.phone_number=worker.get('phone_number')
+                      worker_instance.id_worker_type=worker.get('id_worker_type')
+                      db.session.add(worker_instance)     
+                   
+            db.session.commit()
+          else:
+              response['status']=400
+
+          
+        if "field_team" in body:
+          field_workers=getFieldFieldTeamDetails(id_field)
+          if field_workers!=False: 
+            id_current = [d["_id"] for d in field_workers]
+            id_new =[d["_id"] for d in body["field_team"]]
+            
+            for _id in id_current:
+                if _id not in id_new:
+                  WorkersClass.query.filter_by(_id=_id).delete()
+            
+            
+            for worker in body["field_team"] :
+                
+                
+                _id=worker['_id']
+                print(_id)
+                
+                if _id is None:
+                   print("hola")
+                   worker_instance = WorkersClass(id_field=id_field,name =worker['name'],phone_number=worker['phone_number'],id_worker_type=3)
+                   db.session.add(worker_instance)
+                elif _id not in id_current:
+                   continue
+                else:
+                   worker_instance = WorkersClass.query.get(_id)
+          
+                   if worker_instance is None: 
+                    response['status']=400
+                   else:
+                      worker_instance.name=worker.get('name')
+                      worker_instance.phone_number=worker.get('phone_number')
+                      db.session.add(worker_instance)     
+                   
+            db.session.commit()
+          else:
+              response['status']=400
+
+
+        if "machinery" in body:
+          field_machinery=getFieldMachineryDetails(id_field)
+          if field_machinery!=False: 
+            id_current = [d["_id"] for d in field_machinery]
+            id_new =[d["_id"] for d in body["machinery"]]
+            
+            for _id in id_current:
+                if _id not in id_new:
+                  MachineryClass.query.filter_by(_id=_id).delete()
+            
+            
+            for machine in body["machinery"] :
+                
+                
+                _id=machine['_id']
+                print(_id)
+                
+                if _id is None:
+                   print("hola")
+                   machine_instance = MachineryClass(id_field=id_field,name =machine['name'],model=machine['model'],id_machinery_type=machine['id_machinery_type'])
+                   db.session.add(machine_instance)
+                elif _id not in id_current:
+                   continue
+                else:
+                   machine_instance = MachineryClass.query.get(_id)
+          
+                   if machine_instance is None: 
+                    response['status']=400
+                   else:
+                      machine_instance.name=machine.get('name')
+                      machine_instance.model=machine.get('model')
+                      machine_instance.id_machinery_type=machine.get('id_machinery_type')
+                      db.session.add(machine_instance)     
+                   
+            db.session.commit()
+          else:
+              response['status']=400
+
+          
+                        
                  
       
         
