@@ -277,6 +277,156 @@ def getTaskDetails(id_moment):
         print(e)
         return False
     
+def getFieldMachineryDetails(id_field):
+    
+    try:
+        
+        query_tasks="""SELECT _id,name,model,id_machinery_type
+                FROM machinery
+                
+                where id_field = """+ str(id_field)+"""
+                
+                
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getFieldFieldTeamDetails(id_field):
+    
+    try:
+        
+        query_tasks="""SELECT _id,name,phone_number,id_worker_type
+                FROM workers
+                
+                where id_field = """+ str(id_field)+"""
+                and id_worker_type in (3)
+                
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+def getFieldAdminTeamDetails(id_field):
+    
+    try:
+        
+        
+        query_tasks="""SELECT _id,name,email,phone_number,id_worker_type
+                FROM workers
+                
+                where id_field = """+ str(id_field)+"""
+                and id_worker_type in (1,2)
+                
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getFieldPlotsDetails(id_field):
+    
+    try:
+        
+        
+        query_tasks="""SELECT _id,name,size,id_species,variety,id_program
+                FROM plots 
+                
+                where id_field = """+ str(id_field)+"""
+                
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getFieldGeneralDetails(id_field):
+    
+    try:
+        
+        
+        query_tasks="""SELECT field_name,location,latitude,longitude
+                FROM field 
+                
+                where _id = """+ str(id_field)+"""
+                
+             """
+        
+        
+        
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def getFieldMachinery(id_field):
     
     try:

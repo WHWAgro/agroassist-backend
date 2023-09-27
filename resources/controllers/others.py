@@ -5,7 +5,7 @@ from datetime import datetime
 #import pandas as pd
 #from get_project_root import root_path
 from resources.errors import  InternalServerError
-from database.models.Program import ProgramClass,db
+from database.models.Program import ProgramClass,FieldClass,PlotClass,MachineryClass,WorkersClass,db
 from resources.services.programServices import *
 from resources.services.generatePDF import *
 from flask_jwt_extended import jwt_required,get_jwt_identity,current_user
@@ -51,6 +51,116 @@ class FieldsListApi(Resource):
       return {'response': response},500
     
 class FieldsApi(Resource):
+
+
+  @jwt_required()
+  def put(self):
+
+
+   
+        
+        #TaskObjectivesClass.query.filter_by(id_task=task._id).delete()
+
+        
+        
+       
+
+
+    
+        #for idx, objective in enumerate(body.get('objectives')):
+          
+          #taskObjective =  TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
+          #db.session.add(taskObjective)
+        #db.session.add(task)
+        #db.session.commit()
+  
+    try:
+        response={}
+        response['status']=200
+        response['message']=0
+        data={}
+        
+        id_field=request.args.get('id_field')
+        body = request.get_json()
+
+        data['id_field']=id_field
+
+        if "general" in body:
+         
+          field = FieldClass.query.get(id_field)
+          
+          if field is None: 
+            response['status']=400
+          else:
+            field.field_name=body["general"].get('field_name')
+            field.location = body["general"].get('location')
+            field.latitude=body["general"].get('latitude')
+            field.longitude=body["general"].get('longitude')
+            db.session.add(field)
+            db.session.commit()
+            
+            
+        if "plots" in body:
+          field_plots=getFieldPlotsDetails(id_field)
+          if field_plots!=False: 
+            id_current = [d["_id"] for d in field_plots]
+            id_new =[d["_id"] for d in body["plots"]]
+            
+            for _id in id_current:
+                if _id not in id_new:
+                  PlotClass.query.filter_by(_id=_id).delete()
+            
+            
+            for plot in body["plots"] :
+                
+                _id=plot['_id']
+                print(_id)
+                
+                if _id is None:
+                   print("hola")
+                   plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=plot['size'],id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'])
+                   db.session.add(plot_instance)
+                elif _id not in id_current:
+                   continue
+                else:
+                   plot_instance = PlotClass.query.get(_id)
+          
+                   if plot is None: 
+                    response['status']=400
+                   else:
+                      plot_instance.name=plot.get('name')
+                      plot_instance.size = plot.get('size')
+                      plot_instance.id_species=plot.get('id_species')
+                      plot_instance.variety=plot.get('variety')
+                      plot_instance.id_program=plot.get('id_program')
+                      db.session.add(field)
+            
+                   
+                   
+            db.session.commit()
+          else:
+              response['status']=400
+
+          
+                 
+                 
+      
+        
+        data={'id_field':id_field}
+        if response.get('status') == 200:
+            response['data']=data
+
+            return {'response': response}, 200
+        
+        else: 
+            
+            return {'response': response}, 400
+
+    except Exception as e:
+      print(e)
+      response['message']=2
+      response['status']=500
+      return {'response': response},500
   
 
   @jwt_required()
@@ -85,6 +195,68 @@ class FieldsApi(Resource):
       response['status']=500
       return {'response': response},500
     
+  @jwt_required()
+  def get(self):
+  
+    try:
+        response={}
+        response['status']=200
+        response['message']=0
+        data={}
+        
+        id_field=request.args.get('id_field')
+        data['id_field']=id_field
+        field_general=getFieldGeneralDetails(id_field)
+        if len(field_general)>0: 
+          data['general']=field_general[0]
+        else:
+           response['status']=400
+
+        field_plots=getFieldPlotsDetails(id_field)
+        if field_plots!=False: 
+          data['plots']=field_plots
+        else:
+           response['status']=400
+
+        field_admin_team=getFieldAdminTeamDetails(id_field)
+        if field_admin_team!=False: 
+          data['admin_team']=field_admin_team
+        else:
+           response['status']=400
+
+        field_field_team=getFieldFieldTeamDetails(id_field)
+        if field_field_team!=False: 
+          data['field_team']=field_field_team
+        else:
+           response['status']=400
+
+        field_machinery_team=getFieldMachineryDetails(id_field)
+        if field_field_team!=False: 
+          data['machinery']=field_machinery_team
+        else:
+           response['status']=400
+
+      
+      
+       
+        
+        
+        
+        if response.get('status') == 200:
+            response['data']=data
+
+            return {'response': response}, 200
+        
+        else: 
+            
+            return {'response': response}, 400
+
+    except Exception as e:
+      print(e)
+      response['message']=2
+      response['status']=500
+      return {'response': response},500
+  
 
 class TaskApi(Resource):
   

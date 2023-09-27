@@ -150,6 +150,9 @@ class PlotClass(db.Model):
   id_field = db.Column(db.Integer, nullable=False)
   id_program = db.Column(db.Integer, nullable=False)
   size = db.Column(db.Integer, nullable=False)
+  id_species = db.Column(db.Integer, nullable=False)
+  variety = db.Column(db.String(100), nullable=True)
+  
   
 class TaskOrderClass(db.Model):
 
@@ -328,10 +331,11 @@ class FieldClass(db.Model):
   company_id = db.Column(db.Integer, nullable=False)
  
   field_name = db.Column(db.String(80), nullable=False)
-  location = db.Column(db.String(120), nullable=False)
+  location = db.Column(db.String(120), nullable=True,default='Rancagua')
+  latitude = db.Column(db.String(100), nullable=True,default='-34.17083')
+  longitude = db.Column(db.String(100), nullable=True,default='-70.74444')
   
-  def __repr__(self):
-        return '<field %r>' % self.field_name
+  
   
   
  
