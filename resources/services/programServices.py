@@ -148,11 +148,12 @@ def getFields(id_company):
         for result in results:
             result_dict = {}
             for key, value in result.__dict__.items():
-                if not key.startswith('_'):
+                if (not key.startswith('_')) and key not in ('latitude','longitude'):
                     result_dict[key] = value
                 elif key=='_id':
                     result_dict[key] = value
             result_list.append(result_dict)
+
         
         return result_list
 

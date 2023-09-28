@@ -2,7 +2,7 @@ from .controllers.editProgram import EditProgramApi
 from .controllers.programSelection import ProgramSelectionApi,ProgramApi,ProgramPublishApi
 from .controllers.user import CreateUserApi,LoginUserApi
 from .controllers.tryc import CreationApi
-from .controllers.others import MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
+from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
 from .controllers.quoter import QuoterApi,QuoterInitApi,QuoterSelectionApi,PurchaseOrderApi,DowloadPurchaseOrderApi
 from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 
@@ -57,6 +57,11 @@ def initialize_routes(api):
  api.add_resource(FieldsApi,'/api/v1.0/field')
 
  api.add_resource(MailApi,'/api/v1.0/email/verify')
+
+
+ api.add_resource(OnboardingApi,'/api/v1.0/field/plot/upload')
+
+ api.add_resource(TemplatesApi,'/api/v1.0/templates/onboarding')
 
  
  
