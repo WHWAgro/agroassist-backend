@@ -292,44 +292,44 @@ class WeatherApi(Resource):
          
           {
             
-            "date": '2023-09-20',
+            "date": '2023-10-02',
             "description": 'Nublado',
             "icon":'cloudy',
-            "temperature": { "min": '9', "max": '18' },
-            "wind": "11",
+            "temperature": { "min": '6', "max": '17' },
+            "wind": "6",
             "humidity": "25"
           },
           {
-            "date": '2023-09-21',
+            "date": '2023-10-03',
             "description": 'Lluvia',
             "icon": 'rainy',
-            "temperature": { "min": '10', "max": '18' },
-            "wind": "11",
-            "humidity": "67"
+            "temperature": { "min": '3', "max": '17' },
+            "wind": "6",
+            "humidity": "65"
           },
           {
-            "date": '2023-09-22',
-            "description": 'Nublado',
-            "icon":'sunny',
-            "temperature": { "min": '7', "max": '18' },
-            "wind": "7",
-            "humidity": "19"
-          },
-          {
-            "date": '2023-09-23',
+            "date": '2023-10-04',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '3', "max": '19' },
-            "wind": "13",
-            "humidity": "2"
+            "temperature": { "min": '4', "max": '20' },
+            "wind": "11",
+            "humidity": "0"
+          },
+          {
+            "date": '2023-10-05',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '5', "max": '20' },
+            "wind": "9",
+            "humidity": "1"
           },
            {
-            "date": '2023-09-24',
+            "date": '2023-10-06',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '1', "max": '17' },
-            "wind": "15",
-            "humidity": "3"
+            "temperature": { "min": '4', "max": '20' },
+            "wind": "9",
+            "humidity": "2"
           }
           
       ]
