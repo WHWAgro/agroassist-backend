@@ -14,6 +14,74 @@ import pandas as pd
 
 
 
+class OnboardingApi(Resource):
+  
+
+    @jwt_required()
+    def post(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+        
+        #print(request.files['id_file'].read().decode('utf-8')
+
+        
+        id_field=request.form['id_field']
+        field_instance = FieldClass.query.get(id_field)
+        print("hola")
+        
+        if field_instance is None: 
+          response['status']=400 
+          response['message']=1
+          print("no existe")
+        else:
+           print("existe")
+           file=request.files['file']
+           df = pd.read_excel(file)
+           df.rename(columns = {df.columns[0]:'name',df.columns[1]:'size',df.columns[2]:'id_species',df.columns[3]:'variety'}, inplace = True)
+           df['id_field']=int(id_field)
+           df['id_species']=1
+           print(df)
+
+           for index, row in df.iterrows():
+
+            new_data = PlotClass(
+                  id_field=row['id_field'],
+                  name=row['name'],
+                  size=float(row['size'].replace(',','.')),
+                  id_species=1,
+                  variety=row['variety']
+                  # Add more columns as needed
+              )
+            print(new_data)
+              # Add the new data to the database session
+            db.session.add(new_data)
+
+        # Commit the changes to the database
+           db.session.commit()
+
+        
+        data={}
+        data['id_field']=int(id_field)
+        
+        
+        if response.get('status') == 200:
+          response['data']=data
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['status']=500
+        response['message']=2
+        return {'response': response},500
+
 class FieldsListApi(Resource):
   
 
@@ -842,70 +910,7 @@ class WorkersListApi(Resource):
         return {'response': response},500
       
 
-class OnboardingApi(Resource):
-  
 
-    @jwt_required()
-    def post(self):
-    
-      try:
-        response={}
-        response['status']=200
-        response['message']=0
-        
-        
-        #print(request.files['id_file'].read().decode('utf-8')
-
-        
-        id_field=request.form['id_field']
-        field_instance = FieldClass.query.get(id_field)
-          
-        
-        if field_instance is None: 
-          response['status']=400 
-          response['message']=1
-        else:
-           file=request.files['file']
-           df = pd.read_excel(file)
-           df.rename(columns = {df.columns[0]:'name',df.columns[1]:'size',df.columns[2]:'id_species',df.columns[3]:'variety'}, inplace = True)
-           df['id_field']=id_field
-           df['id_species']=1
-
-           for index, row in df.iterrows():
-
-            new_data = PlotClass(
-                  id_field=row['id_field'],
-                  name=row['name'],
-                  size=float(row['size'].replace(',','.')),
-                  id_species=1,
-                  variety=row['variety']
-                  # Add more columns as needed
-              )
-              
-              # Add the new data to the database session
-            db.session.add(new_data)
-
-        # Commit the changes to the database
-           db.session.commit()
-
-        
-        data={}
-        data['id_field']=int(id_field)
-        
-        
-        if response.get('status') == 200:
-          response['data']=data
-          return {'response': response}, 200
-        
-        else: 
-          
-          return {'response': response}, 400
-
-      except Exception as e:
-        print(e)
-        response['status']=500
-        response['message']=2
-        return {'response': response},500
       
 
 
