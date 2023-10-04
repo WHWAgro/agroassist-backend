@@ -3,7 +3,7 @@ from .controllers.programSelection import ProgramSelectionApi,ProgramApi,Program
 from .controllers.user import CreateUserApi,LoginUserApi
 from .controllers.tryc import CreationApi
 from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
-from .controllers.quoter import QuoterApi,QuoterInitApi,QuoterSelectionApi,PurchaseOrderApi,DowloadPurchaseOrderApi
+from .controllers.quoter import QuoterProductsApi,QuoterApi,QuoterInitApi,QuoterSelectionApi,PurchaseOrderApi,DowloadPurchaseOrderApi
 from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 
 
@@ -63,6 +63,8 @@ def initialize_routes(api):
 
  api.add_resource(TemplatesApi,'/api/v1.0/templates/onboarding')
 
+ 
+ api.add_resource(QuoterProductsApi,'/api/v1.0/quoter/products/download')
  
  
  

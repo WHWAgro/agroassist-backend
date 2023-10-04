@@ -343,7 +343,7 @@ def generatePurchaseOrder(body):
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
         # Section 2: Information in Two Columns
-        # Load JSON data (replace this with your actual JSON data)
+        # Load JSON data (replace this with your actual JSON data)4
         json_data = {
             "rut": "123456789",
             "direccion": "123 Main Street",
@@ -393,6 +393,110 @@ def generatePurchaseOrder(body):
         new_purchase_order = PurchaseOrderClass( id_company=company_id,id_quote=body['id_quote'],file_name=doc_name,order_number=order_number)
         db.session.add(new_purchase_order)
         db.session.commit()
+
+        return(str(myuuid)+".pdf")
+    except Exception as e:
+        print(e) 
+        return False
+    
+
+def generateQuoterProducts(body):
+
+    try:
+        print(1)
+        # Create a PDF document
+
+        myuuid = uuid.uuid4()
+        doc_name = str(myuuid)+".pdf"
+        doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
+        print(str(myuuid)+".pdf")
+
+        company_id=1
+        order_creator='John Doe'
+        order_number=1
+        print("hola")
+        
+        print('hola1233')
+       
+        
+        #-----------------------pdf begins here-------------------
+        print('----------')
+        # Create a list to hold the content of the PDF
+        pdf_content = []
+
+        # Header: "AgroAssist" in green letters
+        header_style = getSampleStyleSheet()["Heading1"]
+        header_style.textColor = colors.green
+        header = Paragraph("AgroAssist", header_style)
+        pdf_content.append(header)
+
+        # Section 1: Title
+        title_style = getSampleStyleSheet()["Title"]
+        title_style.alignment = 0 
+        title = Paragraph("Productos a cotizar", title_style)
+        pdf_content.append(title)
+        print('----------')
+        # Section 2: Subtitles (aligned to the left and in gray)
+        subtitle_style = getSampleStyleSheet()["Normal"]
+        subtitle_style.alignment = 0  # Align left
+        subtitle_style.textColor = colors.grey
+        
+        today_date = datetime.now().strftime("%Y-%m-%d")  # Example: "2023 September 04"
+        subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
+        pdf_content.extend([ subtitle2, Spacer(1, 5)])
+        print('----------')
+        pdf_content.append(Spacer(1,10))      
+        pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
+        pdf_content.append(Spacer(1,10))
+        # Section 2: Information in Two Columns
+        # Load JSON data (replace this with your actual JSON data)
+        json_data = {
+            "rut": "123456789",
+            "direccion": "123 Main Street",
+            "comuna": "City",
+            "telefono": "555-555-5555",
+            "enviar_a": "John Doe"
+        }
+
+        print("holas")
+
+        product_data=[]
+        print(body)
+        for key,section in body.items():
+            print(section)
+            print(1)
+            print(section["product_id"])
+            print(section["product_needed"])
+            
+            row={"name":"producto "+str(section["product_id"]),"price":str(section["product_needed"]-section["product_stored"])+" cc"}
+            product_data.append(row)
+            for alternative in section["alternatives"]:
+                row={"name":"producto "+str(alternative["product_id"]),"price":str(alternative["product_needed"]-alternative["product_stored"])+" cc"}
+                product_data.append(row)
+        print("chao")  
+
+        # Section 3: Table with Product Names and Prices
+        # Replace this with your actual product data (a list of dictionaries)
+       
+
+        # Create a table for product data
+        product_table_data = [["Producto", "cantidad"]]
+        
+        for product in product_data:
+            product_table_data.append([product["name"], product['price']])
+            
+
+        product_table = Table(product_table_data, colWidths=[300, 80])
+        pdf_content.append(product_table)
+
+        # Add the total price
+        print(pdf_content)
+        
+
+        # Build the PDF document
+        doc.build(pdf_content)
+
+       
 
         return(str(myuuid)+".pdf")
     except Exception as e:

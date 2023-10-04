@@ -476,3 +476,66 @@ class DowloadPurchaseOrderApi(Resource):
         print(e)
         response['message']=2
         return {'response': response},500
+      
+
+
+class QuoterProductsApi(Resource):
+  
+
+    @jwt_required()
+    def get(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        id_quoter = request.args.get('id_quoter')
+        print(id_quoter)
+        quoter_products =getQuoterProducts(id_quoter)
+
+       
+      
+
+        
+        products={}
+        for product in quoter_products:
+
+          del product['_id']
+          del product['id_quoter']
+
+          if product['cluster_id'] not in products:
+            products[product['cluster_id']]={'alternatives':[]}
+
+
+          if product['cluster_master']==True:
+            product['alternatives']= products[product['cluster_id']]['alternatives']
+            products[product['cluster_id']]= product
+          else:
+              products[product['cluster_id']]['alternatives'].append(product)
+
+        print(products)
+        taskOrderFile = generateQuoterProducts(products)
+        print("-----")
+        print(taskOrderFile)
+        if taskOrderFile== False:
+          response['status']=400 
+          response['message']=1
+        
+        else:
+
+          file_path='files/'+taskOrderFile
+        
+        
+          if True:
+            return send_file(file_path, as_attachment=True)
+          
+          else: 
+            
+            return {'response': response}, 400
+        
+      except Exception as e:
+        print(e)
+        response['message']=2
+        return {'response': response},500
