@@ -51,7 +51,7 @@ class OnboardingApi(Resource):
             new_data = PlotClass(
                   id_field=row['id_field'],
                   name=row['name'],
-                  size=float(row['size'].replace(',','.')),
+                  size=float(str(row['size']).replace(',','.')),
                   id_species=1,
                   variety=row['variety']
                   # Add more columns as needed
