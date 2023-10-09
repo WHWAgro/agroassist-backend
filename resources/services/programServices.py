@@ -108,7 +108,7 @@ def verify_password(username_or_token, password):
     return True
 
 
-def getPrograms(id_usuario):
+def getPrograms(id_usuario,company_id):
     
     try:
         
@@ -116,7 +116,11 @@ def getPrograms(id_usuario):
                 left join species as s on p.id_species= s._id
                 left join market_program as mp on p._id=mp.program_id
                 left join market as m on m._id=mp.market_id
+                left join program_companies as pc on p._id=pc.id_program
                 WHERE p.id_user = """+ str(id_usuario)+"""
+                or pc.id_company in """+ str(company_id)+"""
+
+                 
                 
              """
         
@@ -195,23 +199,24 @@ def getProgramDetails(id_usuario,id_programa):
                 left join species as s on p.id_species= s._id
                 left join market_program as mp on p._id=mp.program_id
                 left join market as m on m._id=mp.market_id
-                WHERE p.id_user = """+ str(id_usuario)+"""
-                AND p._id = """+ str(id_programa)+"""
+                
+                WHERE p._id = """+ str(id_programa)+"""
                 
              """
         query_tasks="""SELECT pt._id as _id
                 FROM programs as p
                 left join program_tasks as pt on p._id=pt.id_program
-                WHERE p.id_user = """+ str(id_usuario)+"""
-                AND p._id = """+ str(id_programa)+"""
+                
+                WHERE p._id = """+ str(id_programa)+"""
+                order by pt.start_date asc,pt._id
              """
         
         query_companies="""SELECT pf.id_company as _id
                 FROM programs as p
                 left join program_companies as pf on p._id=pf.id_program
                 
-                WHERE p.id_user = """+ str(id_usuario)+"""
-                AND p._id = """+ str(id_programa)+"""
+                
+                WHERE p._id = """+ str(id_programa)+"""
                 
              """
         
@@ -711,7 +716,7 @@ def createTasks(program_id, body):
                     task['end_date']=task['start_date']
 
                 if moment_id not in created_tasks:
-                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='08:00:00' ,id_status=1,id_company=company_id)
+                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='AM' ,id_status=1,id_company=company_id)
                     db.session.add(task_instance)
 
           
@@ -912,6 +917,19 @@ def deleteTask(id_moment):
     
     try:
         
+
+
+        query="""DELETE FROM tasks
+                    
+                    
+                    WHERE id_moment = """+ str(id_moment)+"""
+                    
+                    """
+        rows=[]
+        with db.engine.begin() as conn:
+                result = conn.execute(text(query))
+        db.session.commit()
+
         task = ProgramTaskClass.query.filter_by(_id=id_moment).first()
         if task:
             for product in task.objectives:

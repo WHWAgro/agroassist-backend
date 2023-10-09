@@ -65,8 +65,13 @@ class ProgramApi(Resource):
       task_ids= []
       for task in tasks:
         task_ids.append(task['_id'])
-     
-      data["moments"]=list(filter(None,set(task_ids)))
+
+      print(task_ids)
+
+      data["moments"]=[]
+      for task_un in task_ids:
+        if task_un not in data["moments"] and task_un is not None:
+          data["moments"].append(task_un)
 
 
       #####
@@ -278,8 +283,15 @@ class ProgramSelectionApi(Resource):
       data={}
       
       
-
-      programs=getPrograms(user_id)
+      user_company=getUserCompanies(user_id)
+      print(user_company)
+      companies="( "
+      for company in user_company:
+        companies=companies+str(company["_id"])+","
+      companies = companies[:-1]
+      companies=companies+" )"
+      print(user_id)
+      programs=getPrograms(user_id,companies)
       
 
       dic_result = {}

@@ -292,44 +292,44 @@ class WeatherApi(Resource):
          
           {
             
-            "date": '2023-10-02',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '6', "max": '17' },
-            "wind": "6",
-            "humidity": "25"
-          },
-          {
-            "date": '2023-10-03',
-            "description": 'Lluvia',
-            "icon": 'rainy',
-            "temperature": { "min": '3', "max": '17' },
-            "wind": "6",
-            "humidity": "65"
-          },
-          {
-            "date": '2023-10-04',
+            "date": '2023-10-09',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '4', "max": '20' },
-            "wind": "11",
+            "temperature": { "min": '8', "max": '22' },
+            "wind": "9",
             "humidity": "0"
           },
           {
-            "date": '2023-10-05',
+            "date": '2023-10-10',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '4', "max": '21' },
+            "wind": "9",
+            "humidity": "3"
+          },
+          {
+            "date": '2023-10-11',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '5', "max": '20' },
-            "wind": "9",
+            "temperature": { "min": '5', "max": '21' },
+            "wind": "11",
             "humidity": "1"
           },
-           {
-            "date": '2023-10-06',
+          {
+            "date": '2023-10-12',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '4', "max": '20' },
-            "wind": "9",
-            "humidity": "2"
+            "temperature": { "min": '5', "max": '22' },
+            "wind": "13",
+            "humidity": "0"
+          },
+           {
+            "date": '2023-10-13',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '6', "max": '23' },
+            "wind": "13",
+            "humidity": "0"
           }
           
       ]
