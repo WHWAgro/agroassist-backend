@@ -186,7 +186,9 @@ class FieldsApi(Resource):
                 print(_id)
                 
                 if _id is None:
-                   print("hola")
+                   if plot["id_program"]=="":
+                      plot["id_program"]=None
+                      
                    plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=plot['size'],id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'])
                    db.session.add(plot_instance)
                 elif _id not in id_current:
@@ -211,6 +213,7 @@ class FieldsApi(Resource):
               response['status']=400
 
         if "admin_team" in body:
+          print("admin")
           admin_workers=getFieldAdminTeamDetails(id_field)
           if admin_workers!=False: 
             id_current = [d["_id"] for d in admin_workers]
@@ -251,7 +254,11 @@ class FieldsApi(Resource):
 
           
         if "field_team" in body:
+          print("field")
           field_workers=getFieldFieldTeamDetails(id_field)
+          for f_w in body["field_team"]:
+             if "_id" not in f_w:
+                f_w["_id"]=None
           if field_workers!=False: 
             id_current = [d["_id"] for d in field_workers]
             id_new =[d["_id"] for d in body["field_team"]]
@@ -264,16 +271,20 @@ class FieldsApi(Resource):
             for worker in body["field_team"] :
                 
                 
-                _id=worker['_id']
-                print(_id)
                 
-                if _id is None:
+                
+                
+                if '_id' not in worker or worker['_id'] is None:
+                   _id=worker['_id']
                    print("hola")
                    worker_instance = WorkersClass(id_field=id_field,name =worker['name'],phone_number=worker['phone_number'],id_worker_type=3)
                    db.session.add(worker_instance)
                 elif _id not in id_current:
                    continue
                 else:
+                   
+
+                   _id=worker['_id']
                    worker_instance = WorkersClass.query.get(_id)
           
                    if worker_instance is None: 
