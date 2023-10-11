@@ -78,8 +78,14 @@ class ProgramApi(Resource):
       dic_result = {}
       companies_ids= []
       data["assigned_companies"]=assigned_companies
+      user_companies=getUserCompanies(user_id)
+      print(user_companies)
+      user_companies_ids=[]
+      for company in user_companies:
+        user_companies_ids.append(company['_id'])
       for companies in assigned_companies:
-        companies_ids.append(companies['_id'])
+        if companies['_id'] in user_companies_ids:
+          companies_ids.append(companies['_id'])
 
     
       data["assigned_companies"]=list(filter(None,set(companies_ids)))
