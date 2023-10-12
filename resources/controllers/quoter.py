@@ -251,10 +251,13 @@ class QuoterApi(Resource):
       
 
       
-      
-      if quoter_rows== False:
+      print(quoter_rows)
+      if quoter_rows== False or len(quoter_rows)==0:
         response['status']=400
         response['message']=1
+        if len(quoter_rows)==0:
+          response['message']="id not available"
+        return {'response': response}, 400
       else:
         if len(quoter_rows)>0:
           data['programs_id']=ast.literal_eval(quoter_rows[0]['id_programs'])
@@ -306,6 +309,8 @@ class QuoterApi(Resource):
 
     except Exception as e:
       print(e)
+      response['message']=2
+      response['status']=500
       return {'response': response},500
     
 
@@ -443,7 +448,8 @@ class PurchaseOrderApi(Resource):
 
       except Exception as e:
         print(e)
-        response['message']=2
+        response['message']=e
+        response['status']=500
         return {'response': response},500
       
 
@@ -474,7 +480,9 @@ class DowloadPurchaseOrderApi(Resource):
 
       except Exception as e:
         print(e)
-        response['message']=2
+        response['message']=e
+        response['status']=500
+     
         return {'response': response},500
       
 
