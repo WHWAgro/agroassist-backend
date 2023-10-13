@@ -498,7 +498,7 @@ class QuoterProductsApi(Resource):
         response['status']=200
         response['message']=0
         
-
+        print("quoter")
         id_quoter = request.args.get('id_quoter')
         print(id_quoter)
         quoter_products =getQuoterProducts(id_quoter)

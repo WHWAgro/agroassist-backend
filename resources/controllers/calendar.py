@@ -291,35 +291,12 @@ class WeatherApi(Resource):
           
          
          
-          {
-            "date": '2023-10-10',
-            "description": 'Soleado',
-            "icon": 'sunny',
-            "temperature": { "min": '4', "max": '21' },
-            "wind": "9",
-            "humidity": "3"
-          },
-          {
-            "date": '2023-10-11',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '5', "max": '21' },
-            "wind": "11",
-            "humidity": "1"
-          },
-          {
-            "date": '2023-10-12',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '5', "max": '22' },
-            "wind": "13",
-            "humidity": "0"
-          },
+          
            {
             "date": '2023-10-13',
             "description": 'Nublado',
             "icon":'cloudy',
-            "temperature": { "min": '6', "max": '23' },
+            "temperature": { "min": '5', "max": '23' },
             "wind": "13",
             "humidity": "0"
           },
@@ -328,8 +305,32 @@ class WeatherApi(Resource):
             "date": '2023-10-14',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '7', "max": '23' },
+            "temperature": { "min": '5', "max": '23' },
             "wind": "9",
+            "humidity": "0"
+          },
+          {
+            "date": '2023-10-15',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '4', "max": '22' },
+            "wind": "13",
+            "humidity": "1"
+          },
+          {
+            "date": '2023-10-16',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '3', "max": '22' },
+            "wind": "17",
+            "humidity": "0"
+          },
+          {
+            "date": '2023-10-17',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '7', "max": '24' },
+            "wind": "7",
             "humidity": "0"
           }
           

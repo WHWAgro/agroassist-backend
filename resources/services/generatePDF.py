@@ -12,7 +12,16 @@ import time
 from sqlalchemy.orm import class_mapper
 import ast
 from datetime import datetime  
+from resources.services.programServices import getTable
 
+def getTableDict(table):
+    table_elements=getTable(table)
+    products_dict={}
+    for el in table_elements:
+        products_dict[el["_id"]]=el
+
+    return products_dict
+    
 
 def getCompanyTaskOrders(id_company):
     try:
@@ -425,10 +434,10 @@ def generateQuoterProducts(body):
         pdf_content = []
 
         # Header: "AgroAssist" in green letters
-        header_style = getSampleStyleSheet()["Heading1"]
-        header_style.textColor = colors.green
-        header = Paragraph("AgroAssist", header_style)
-        pdf_content.append(header)
+        #header_style = getSampleStyleSheet()["Heading1"]
+        #header_style.textColor = colors.green
+        #header = Paragraph("AgroAssist", header_style)
+        #pdf_content.append(header)
 
         # Section 1: Title
         title_style = getSampleStyleSheet()["Title"]
@@ -461,17 +470,21 @@ def generateQuoterProducts(body):
         print("holas")
 
         product_data=[]
-        print(body)
+        
+        products=getTableDict("Products")
+        print(products)
         for key,section in body.items():
             print(section)
-            print(1)
+            print("------")
             print(section["product_id"])
             print(section["product_needed"])
+            print("prdo")
+            print(products[section["product_id"]])
             
-            row={"name":"producto "+str(section["product_id"]),"price":str(section["product_needed"]-section["product_stored"])+" cc"}
+            row={"name":products[section["product_id"]]["product_name"],"price":str(section["product_needed"]-section["product_stored"])+" cc"}
             product_data.append(row)
             for alternative in section["alternatives"]:
-                row={"name":"producto "+str(alternative["product_id"]),"price":str(alternative["product_needed"]-alternative["product_stored"])+" cc"}
+                row={"name":products[section["product_id"]]["product_name"],"price":str(alternative["product_needed"]-alternative["product_stored"])+" cc"}
                 product_data.append(row)
         print("chao")  
 
