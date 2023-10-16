@@ -112,10 +112,10 @@ def generateTaskOrder(body):
         pdf_content = []
 
         # Header: "AgroAssist" in green letters
-        header_style = getSampleStyleSheet()["Heading1"]
-        header_style.textColor = colors.green
-        header = Paragraph("AgroAssist", header_style)
-        pdf_content.append(header)
+        #header_style = getSampleStyleSheet()["Heading1"]
+        #header_style.textColor = colors.green
+        #header = Paragraph("AgroAssist", header_style)
+        #pdf_content.append(header)
 
         # Section 1: Title
         title_style = getSampleStyleSheet()["Title"]

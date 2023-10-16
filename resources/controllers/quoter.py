@@ -99,8 +99,8 @@ class QuoterInitApi(Resource):
 
       data={}
       data["hectares"]=10*len(programs)
-      data["usd2clp"]=884.79
-      data["clp2usd"]=0.0011
+      data["usd2clp"]=942.04
+      data["clp2usd"]=0.00106
       data["products"]=final_list
 
       
@@ -530,6 +530,7 @@ class QuoterProductsApi(Resource):
         if taskOrderFile== False:
           response['status']=400 
           response['message']=1
+          return {'response': response}, 400
         
         else:
 
@@ -539,9 +540,9 @@ class QuoterProductsApi(Resource):
           if True:
             return send_file(file_path, as_attachment=True)
           
-          else: 
+          
             
-            return {'response': response}, 400
+            
         
       except Exception as e:
         print(e)
