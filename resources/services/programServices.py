@@ -80,6 +80,7 @@ def getUserCompanies(user):
                     left join company as c
                     on c._id=uc.company_id
                 where uc.user_id ="""+str(user)+"""
+                order by uc._id
              """
         
 

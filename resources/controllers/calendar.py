@@ -291,8 +291,6 @@ class WeatherApi(Resource):
           
          
          
-          
-         
           {
             "date": '2023-10-16',
             "description": 'Soleado',
