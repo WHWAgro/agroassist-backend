@@ -195,7 +195,7 @@ def generateTaskOrder(body):
             ["Fecha de aplicacion:", application_date, "Cuarteles:", plots_names]
             
         ]
-        print('hola-0')
+        print('hola-1')
 
         section3_table = Table(section3_table_data, colWidths=[100, 150, 100, 150])
         section3_table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'LEFT'),
@@ -209,7 +209,7 @@ def generateTaskOrder(body):
 
         ##operadores----------------
         data_list = body['asignees']
-        headers = list(data_list[0].keys())
+        
 
         # Create a list to hold the table data
         table_data = [['Operador','Tractor','Rociador']]  # Start with the headers as the first row
@@ -246,12 +246,12 @@ def generateTaskOrder(body):
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
         data_list2 = body['products']
-        headers2 = list(data_list2[0].keys())
+        
 
         # Create a list to hold the table data
         table_data2 = [['Producto','Objetivo','Dosis x 100 Lt','Total Producto']] # Start with the headers as the first row
 
-        print('hola1')
+        print('hola-productos')
         # Add the data rows
         objectives=getTableDict("objectives")
         products=getTableDict("products")
@@ -260,7 +260,7 @@ def generateTaskOrder(body):
             row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(item["dosage"])+" cc",str(item["dosage"]*total_hectareas_data)]
             
             table_data2.append(row_data)
-        print('hola2')
+        print('hola-footer')
         # Create a table with the data
         table2 = Table(table_data2,colWidths=[150, 150, 100,100 ])
         print('hola3')
