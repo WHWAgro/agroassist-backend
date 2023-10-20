@@ -12,7 +12,8 @@ import time
 from sqlalchemy.orm import class_mapper
 import ast
 from datetime import datetime  
-from resources.services.programServices import getTable
+from resources.services.programServices import *
+from flask_jwt_extended import jwt_required,get_jwt_identity
 
 def getTableDict(table):
     table_elements=getTable(table)
@@ -84,13 +85,16 @@ class HorizontalLine(Flowable):
         self.canv.setLineWidth(self.thickness)
         self.canv.line(0, 0, self.width, 0)
 
+
+
+
 def generateTaskOrder(body):
 
     try:
 
         print(1)
         # Create a PDF document
-
+        user_id =  get_jwt_identity()
         myuuid = uuid.uuid4()
         doc_name = str(myuuid)+".pdf"
         doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
@@ -98,7 +102,9 @@ def generateTaskOrder(body):
 
         company_id=1
         id_task=body['id_task']
-        order_creator='John Doe'
+        user_name=getUserData(user_id)
+        
+        order_creator=user_name[0]["user_name"]
         order_number=1
 
         company_task_orders = getCompanyTaskOrders(1)
@@ -138,10 +144,32 @@ def generateTaskOrder(body):
         pdf_content.append(Spacer(1,10))
         # Section 5: Two Columns
         # Replace this with your actual data
-        empresa_data = "Agroassist test"
-        campo_data = body['id_field']
+        products=getTableDict("Products")
+        
+
+        companies=getUserCompanies(user_id)
+        empresa_data = companies[0]["company_name"]
+        print('----------1')
+        fields=getTableDict("field")
+        campo_data = fields[body['id_field']]["field_name"]
+
         cultivo_data = "Cereza"
-        total_hectareas_data = 10*len(body['id_plots'])
+
+        plots=getTableDict("plots")
+        plots_names = ''
+        total_plot_size=0
+        print('----------2')
+       
+        for id_plot in body['id_plots']:
+            print(id_plot)
+            print(plots[id_plot]["name"] )
+            plots_names = plots_names +', '+plots[id_plot]["name"] 
+            print(plots_names)  
+            total_plot_size=total_plot_size+plots[id_plot]["size"]
+            print(total_plot_size)  
+        if len(plots_names)>0:
+            plots_names=plots_names[1:]   
+        total_hectareas_data = total_plot_size
         print('----------3')
         # Create a table with two columns
         section5_table_data = [
@@ -161,12 +189,10 @@ def generateTaskOrder(body):
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
         application_date = body['application_date']
-        plots = ''
-        for plot in body['id_plots']:
-            plots = plots+' '+str(plot)
+        
         
         section3_table_data = [
-            ["Fecha de aplicacion:", application_date, "Cuarteles:", plots]
+            ["Fecha de aplicacion:", application_date, "Cuarteles:", plots_names]
             
         ]
         print('hola-0')
@@ -189,8 +215,10 @@ def generateTaskOrder(body):
         table_data = [['Operador','Tractor','Rociador']]  # Start with the headers as the first row
 
         # Add the data rows
+        workers=getTableDict("workers")
+        machinery=getTableDict("machinery")
         for item in data_list:
-            row_data = [item[header] for header in headers]
+            row_data = [workers[item["id_operator"]]["name"],machinery[item["id_tractor"]]["name"],machinery[item["id_sprayer"]]["name"]]
             table_data.append(row_data)
 
         # Create a table with the data
@@ -217,7 +245,7 @@ def generateTaskOrder(body):
         pdf_content.append(Spacer(1,10))
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
-        data_list2 = body['asignees']
+        data_list2 = body['products']
         headers2 = list(data_list2[0].keys())
 
         # Create a list to hold the table data
@@ -225,10 +253,12 @@ def generateTaskOrder(body):
 
         print('hola1')
         # Add the data rows
+        objectives=getTableDict("objectives")
+        products=getTableDict("products")
         for item in data_list2:
-            row_data = [item[header] for header in headers2]
-            row_data = row_data[0:2]+['','']
-            print(row_data)
+            print(item)
+            row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(item["dosage"])+" cc",str(item["dosage"]*total_hectareas_data)]
+            
             table_data2.append(row_data)
         print('hola2')
         # Create a table with the data
@@ -251,7 +281,7 @@ def generateTaskOrder(body):
 
 
         section6_table_data = [
-            ["Reingreso:", '', "Carencia:", '']
+            ["Reingreso:", '0', "Carencia:", '0']
             
         ]
         print('hola-0')

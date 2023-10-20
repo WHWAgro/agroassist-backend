@@ -97,6 +97,32 @@ def getUserCompanies(user):
         print(e)
         return False  
 
+def getUserData(user):
+   
+    
+    try:
+        
+
+        query="""SELECT *
+                from users
+                where _id ="""+str(user)+"""
+                
+             """
+        
+
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False  
+
 def verify_password(username_or_token, password):
     # first try token
     user = userClass.verify_auth_token(username_or_token)
