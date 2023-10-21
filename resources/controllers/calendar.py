@@ -48,7 +48,13 @@ class CalendarApi(Resource):
       tasks_format=[]
 
         
-      
+      field_plots=getFieldPlotsDetails(field)
+      field_plots_ids=[]
+      for plot in field_plots:
+        field_plots_ids.append(plot["_id"])
+      print("field plots:")
+      print(field_plots_ids)
+        
       for task in tasks:
         result={}
         result['_id']= task['_id']
@@ -60,12 +66,18 @@ class CalendarApi(Resource):
         
         task_plots=[]
         aux_plots=getTaskPlots(task['_id'])
+        
         if aux_plots !=False and len(aux_plots)>0:
            
            for a in aux_plots:
               task_plots.append(a['_id'])
-           
-        
+        shared_elements = set(field_plots_ids) & set(task_plots)
+       
+        count_shared_elements = len(shared_elements)
+        print("task plots:")
+        print(task_plots)
+        if count_shared_elements==0:
+           continue
         result['plots']=task_plots
         
        
