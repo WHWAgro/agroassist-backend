@@ -303,14 +303,7 @@ class WeatherApi(Resource):
           
          
          
-          {
-            "date": '2023-10-19',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '11', "max": '26' },
-            "wind": "9",
-            "humidity": "0"
-          },
+          
           {
             "date": '2023-10-20',
             "description": 'Nublado',
@@ -343,6 +336,14 @@ class WeatherApi(Resource):
             "temperature": { "min": '8', "max": '22' },
             "wind": "11",
             "humidity": "5"
+          },
+          {
+            "date": '2023-10-24',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '8', "max": '22' },
+            "wind": "9",
+            "humidity": "4"
           }
           
       ]
