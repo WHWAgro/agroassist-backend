@@ -22,7 +22,12 @@ def getTableDict(table):
         products_dict[el["_id"]]=el
 
     return products_dict
-    
+def find_element_index(matrix, element):
+    for i, row in enumerate(matrix):
+        for j, value in enumerate(row):
+            if value == element:
+                return i, j
+    return None  
 
 def getCompanyTaskOrders(id_company):
     try:
@@ -159,7 +164,16 @@ def generateTaskOrder(body):
         plots_names = ''
         total_plot_size=0
         print('----------2')
-       
+        ##tablas
+        objectives=getTableDict("objectives")
+        products=getTableDict("products")
+        tasks=getTableDict("tasks")
+        moments=getTableDict("program_tasks")
+        moment_objectives=getTableDict("task_objectives")
+        moment_id=tasks[body["id_task"]]["id_moment"]
+
+        wetting=moments[moment_id]["wetting"]
+
         for id_plot in body['id_plots']:
             print(id_plot)
             print(plots[id_plot]["name"] )
@@ -175,7 +189,7 @@ def generateTaskOrder(body):
         section5_table_data = [
             ["Empresa:", empresa_data, "Cultivo:", cultivo_data],
             ["Campo:", campo_data, "Total Hectareas:", total_hectareas_data],
-            ['Mojamieto','','','']
+            ['Mojamieto',str(wetting)+"L",'','']
         ]
         print('----------4')
 
@@ -253,15 +267,59 @@ def generateTaskOrder(body):
 
         print('hola-productos')
         # Add the data rows
-        objectives=getTableDict("objectives")
-        products=getTableDict("products")
-        
+       
 
+        
+        
+        k_filter1 = "id_task"
+        v_match1 = moment_id
+      
+        filtered_data = {key: value for key, value in moment_objectives.items() if (value.get(k_filter1) == v_match1 )}
+        
+        print("$$$$##############$$$$$")
+        
         for item in data_list2:
-            unit=" gr"
-            if products[item["id_product"]]["dosage_type"]in (5,6,7,8):
+            k_filter1 = "id_objective"
+            v_match1 = item["id_objective"]
+            filtered_data2={key: value for key, value in filtered_data.items() if (value.get(k_filter1) == v_match1 )}
+            
+            
+            dosage=0
+            dosage_unit=1
+            for key ,value in filtered_data2.items():
+                
+                product=ast.literal_eval(value["id_product"])
+                i,j=find_element_index(product,item["id_product"])
+                dosage=ast.literal_eval(value["dosage"])[i][j]
+                dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
+            unit=""
+            total_product=0
+            if dosage_unit == 1:
+                unit=" gr"
+                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+            elif dosage_unit == 2:
+                unit=" Kg"
+                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+            elif dosage_unit == 3:
+                unit=" gr"
+                total_product=str(dosage*total_hectareas_data/(wetting/100))
+            elif dosage_unit == 4:
+                unit=" Kg"
+                total_product=str(dosage*total_hectareas_data/(wetting/100))
+            if dosage_unit == 5:
                 unit=" cc"
-            row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(item["dosage"])+unit,str(item["dosage"]*total_hectareas_data)+unit]
+                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+            elif dosage_unit == 6:
+                unit=" L"
+                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+            elif dosage_unit == 7:
+                unit=" cc"
+                total_product=str(dosage*total_hectareas_data/(wetting/100))
+            elif dosage_unit == 8:
+                unit=" L"
+                total_product=str(dosage*total_hectareas_data/(wetting/100))
+        
+            row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(dosage)+unit,total_product+unit]
             
             table_data2.append(row_data)
         print('hola-footer')
