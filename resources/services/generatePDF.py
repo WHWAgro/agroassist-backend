@@ -255,9 +255,13 @@ def generateTaskOrder(body):
         # Add the data rows
         objectives=getTableDict("objectives")
         products=getTableDict("products")
+        
+
         for item in data_list2:
-            print(item)
-            row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(item["dosage"])+" cc",str(item["dosage"]*total_hectareas_data)]
+            unit=" gr"
+            if products[item["id_product"]]["dosage_type"]in (5,6,7,8):
+                unit=" cc"
+            row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(item["dosage"])+unit,str(item["dosage"]*total_hectareas_data)+unit]
             
             table_data2.append(row_data)
         print('hola-footer')
