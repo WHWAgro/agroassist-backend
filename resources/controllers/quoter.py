@@ -120,7 +120,7 @@ class QuoterInitApi(Resource):
                       continue
                    lol={"product_id":alternative["_id"]}
                    lol["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
-                   lol["product_needed_unit"]=1
+                   lol["product_needed_unit"]=2
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
                 final_list.append(el)
