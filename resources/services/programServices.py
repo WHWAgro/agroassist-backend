@@ -1010,6 +1010,8 @@ def createQuoter(body,user_id):
         row_id=0
         clusters={}
         for product in body["products"]:
+                if len(product)==0:
+                    continue
                 if product['cluster_id'] not in clusters:
                     cluster=uuid.uuid4()
                     clusters[product['cluster_id'] ]= cluster
