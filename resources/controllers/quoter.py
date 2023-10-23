@@ -13,7 +13,13 @@ from itertools import chain
 from resources.services.programServices import *
 from resources.services.generatePDF import *
 
+def getTableDict(table):
+    table_elements=getTable(table)
+    products_dict={}
+    for el in table_elements:
+        products_dict[el["_id"]]=el
 
+    return products_dict
 
 
 
@@ -45,13 +51,35 @@ class QuoterInitApi(Resource):
       elements=getTable("products")
       
       final_list=[]
+      plots=getTableDict("plots")
       
 
+      total_hectares=0
       for program in programs:
+        program_hectares=0
+
+        print("######$$$$#####new program")
+        print(program)
+        k_filter1 = "id_program"
+        v_match1 = int(program)
+
+       
+
+        filtered_data = {key: value for key, value in plots.items() if (str(value.get(k_filter1)) == str(v_match1) )}
+        
+        for key,value in filtered_data.items():
+          total_hectares=total_hectares+value["size"]
+          program_hectares=program_hectares+value["size"]
+          
+        if program_hectares==0:
+          print("0 hectares")
+          continue
   
         moments=getMoments(program,date_begin,date_end)
-        
+        print("moments:")
+        print(moments)
         for objective in moments:
+            print("-----processing moments")
             products_list={}
             products_ids=[]
             id_objective=objective["id_objective"]
@@ -60,11 +88,11 @@ class QuoterInitApi(Resource):
             
             for i,product in enumerate(products):
                 if product in products_ids:
-                    products_list[str(product)]["valid_hectares"]=products_list[str(product)]["valid_hectares"]+10
+                    products_list[str(product)]["n_applications"]=products_list[str(product)]["n_applications"]+1
                 else:
                     products_ids.append(product)
-                    products_list[str(product)]={"valid_hectares":10,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":dosages[i]}
-                    
+                    products_list[str(product)]={"valid_hectares":program_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":dosages[i]}
+                    products_list[str(product)]["n_applications"]=1
             
  
             print(products)
@@ -98,9 +126,9 @@ class QuoterInitApi(Resource):
                 final_list.append(el)
 
       data={}
-      data["hectares"]=10*len(programs)
-      data["usd2clp"]=942.04
-      data["clp2usd"]=0.00106
+      data["hectares"]=total_hectares
+      data["usd2clp"]=938.14
+      data["clp2usd"]=0.0011
       data["products"]=final_list
 
       

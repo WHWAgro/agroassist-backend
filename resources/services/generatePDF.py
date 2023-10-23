@@ -104,9 +104,9 @@ def generateTaskOrder(body):
         doc_name = str(myuuid)+".pdf"
         doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
         print(str(myuuid)+".pdf")
-
+        
         company_id=1
-        id_task=body['id_task']
+        id_task=int(body['id_task'])
         user_name=getUserData(user_id)
         
         order_creator=user_name[0]["user_name"]
@@ -170,7 +170,7 @@ def generateTaskOrder(body):
         tasks=getTableDict("tasks")
         moments=getTableDict("program_tasks")
         moment_objectives=getTableDict("task_objectives")
-        moment_id=tasks[body["id_task"]]["id_moment"]
+        moment_id=tasks[int(body["id_task"])]["id_moment"]
 
         wetting=moments[moment_id]["wetting"]
 
@@ -278,6 +278,9 @@ def generateTaskOrder(body):
         
         print("$$$$##############$$$$$")
         
+        
+        phi_list=[]
+        reentry_period_list=[]
         for item in data_list2:
             k_filter1 = "id_objective"
             v_match1 = item["id_objective"]
@@ -318,6 +321,9 @@ def generateTaskOrder(body):
             elif dosage_unit == 8:
                 unit=" L"
                 total_product=str(dosage*total_hectareas_data/(wetting/100))
+
+            phi_list.append(products[item["id_product"]]["phi"])
+            reentry_period_list.append(products[item["id_product"]]["reentry_period"])
         
             row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(dosage)+unit,total_product+unit]
             
@@ -343,7 +349,7 @@ def generateTaskOrder(body):
 
 
         section6_table_data = [
-            ["Reingreso:", '0', "Carencia:", '0']
+            ["Reingreso:", str(max(reentry_period_list))+" hrs", "Carencia:", str(max(phi_list))+" días"]
             
         ]
         print('hola-0')
