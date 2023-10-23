@@ -211,8 +211,8 @@ class ProductClass(db.Model):
   chemical_compounds = db.Column(db.String(180), nullable=True)
   max_applications = db.Column(db.Integer)
   id_objective=db.Column(db.Integer, nullable=True)
-  reentry_period = db.Column(db.Integer,default=0)
-  phi = db.Column(db.Integer,default=0)
+  reentry_period = db.Column(db.Double,default=0)
+  phi = db.Column(db.Double,default=0)
 
   def __repr__(self):
         return '<product %r>' % self.product_name
