@@ -43,7 +43,7 @@ def getMoments(id_program,start,end):
     
     try:
         
-        query="""SELECT wetting,id_product,dosage,id_objective
+        query="""SELECT wetting,id_product,dosage,dosage_parts_per_unit,id_objective
                 FROM program_tasks  pt
                 left join task_objectives  ta
                     on pt._id=ta.id_task

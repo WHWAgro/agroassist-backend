@@ -85,18 +85,52 @@ class QuoterInitApi(Resource):
             id_objective=objective["id_objective"]
             products= list(chain.from_iterable( ast.literal_eval(objective["id_product"])))
             dosages=list(chain.from_iterable( ast.literal_eval(objective["dosage"])))
+            dosages_unit=list(chain.from_iterable( ast.literal_eval(objective["dosage_parts_per_unit"])))
             
             for i,product in enumerate(products):
                 if product in products_ids:
                     products_list[str(product)]["n_applications"]=products_list[str(product)]["n_applications"]+1
                 else:
                     products_ids.append(product)
-                    products_list[str(product)]={"valid_hectares":program_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":dosages[i]}
+                    products_list[str(product)]={"valid_hectares":program_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":dosages[i],"product_needed_unit":dosages_unit[i]}
                     products_list[str(product)]["n_applications"]=1
+            
             
  
             print(products)
-            
+
+            for p_id,p_value in products_list.items():
+              dosage=p_value["dosage"]
+              wetting=p_value["wetting"]
+              total_hectareas_data=p_value["valid_hectares"]
+              n_app=p_value["n_applications"]
+
+              total_product=0
+              if p_value["product_needed_unit"] == 1:
+                
+                total_product=(dosage*(wetting/100)*total_hectareas_data)*n_app
+              elif p_value["product_needed_unit"] == 2:
+                
+                total_product=(dosage*(wetting/100)*total_hectareas_data)*1000*n_app
+              elif p_value["product_needed_unit"] == 3:
+                
+                total_product=(dosage*total_hectareas_data/(wetting/100))*n_app
+              elif p_value["product_needed_unit"] == 4:
+                
+                total_product=(dosage*total_hectareas_data/(wetting/100))*1000*n_app
+              if p_value["product_needed_unit"] == 5:
+                
+                total_product=(dosage*(wetting/100)*total_hectareas_data)*n_app
+              elif p_value["product_needed_unit"] == 6:
+                
+                total_product=(dosage*(wetting/100)*total_hectareas_data)*1000*n_app
+              elif p_value["product_needed_unit"] == 7:
+                
+                total_product=(dosage*total_hectareas_data/(wetting/100))*n_app
+              elif p_value["product_needed_unit"] == 8:
+                
+                total_product=(dosage*total_hectareas_data/(wetting/100))*1000*n_app
+              products_list[p_id]["product_needed"]=total_product
             print(products_list)
             print("hola")
             print(id_objective)
@@ -108,9 +142,9 @@ class QuoterInitApi(Resource):
                 
                 
                 el={"product_id":id, "objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":int(program),"dosage":products_list[str(id)]["dosage"]}
-                
-                el["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
-                el["product_needed_unit"]=1
+                el["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
+                el["products_needed"]=products_list[str(id)]["product_needed"]
+                #el["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
                 el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
                 
                 alternatives=list(filter(lambda product: product['chemical_compounds'] == compound and product['id_objective'] == id_objective and product['product_name'] != valid[0]["product_name"] , elements))
@@ -119,8 +153,9 @@ class QuoterInitApi(Resource):
                    if alternative["_id"]==id:
                       continue
                    lol={"product_id":alternative["_id"]}
-                   lol["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
-                   lol["product_needed_unit"]=2
+                   lol["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
+                   #lol["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
+                   lol["products_needed"]=products_list[str(id)]["product_needed"]
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
                 final_list.append(el)
