@@ -100,6 +100,7 @@ def generateTaskOrder(body):
         print(1)
         # Create a PDF document
         user_id =  get_jwt_identity()
+        
         myuuid = uuid.uuid4()
         doc_name = str(myuuid)+".pdf"
         doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
@@ -403,17 +404,23 @@ def generatePurchaseOrder(body):
     try:
         print(1)
         # Create a PDF document
-
+        user_id =  get_jwt_identity()
+        user_name=getUserData(user_id)
+        
+        order_creator=user_name[0]["user_name"]
         myuuid = uuid.uuid4()
         doc_name = str(myuuid)+".pdf"
         doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
         print(str(myuuid)+".pdf")
-
-        company_id=1
-        order_creator='John Doe'
+        products=getTableDict("products")
+        user_companies=getUserCompanies(user_id)
+       
+        company_id=user_companies[0]["_id"]
+        companies=getTableDict("company")
+        company=companies[company_id]
         order_number=1
         print("hola")
-        company_purchase_orders = getCompanyPurchaseOrders(1)
+        company_purchase_orders = getCompanyPurchaseOrders(company_id)
         print('hola1233')
         print(company_purchase_orders)
         if len(company_purchase_orders)>0:
@@ -425,10 +432,10 @@ def generatePurchaseOrder(body):
         pdf_content = []
 
         # Header: "AgroAssist" in green letters
-        header_style = getSampleStyleSheet()["Heading1"]
-        header_style.textColor = colors.green
-        header = Paragraph("AgroAssist", header_style)
-        pdf_content.append(header)
+        #header_style = getSampleStyleSheet()["Heading1"]
+        #header_style.textColor = colors.green
+        #header = Paragraph("AgroAssist", header_style)
+        #pdf_content.append(header)
 
         # Section 1: Title
         title_style = getSampleStyleSheet()["Title"]
@@ -441,7 +448,7 @@ def generatePurchaseOrder(body):
         subtitle_style.alignment = 0  # Align left
         subtitle_style.textColor = colors.grey
         print('----------')
-        subtitle1 = Paragraph("Orden emitida por "+order_creator, subtitle_style)
+        subtitle1 = Paragraph("Proveedor :"+body["provider_name"], subtitle_style)
         today_date = datetime.now().strftime("%Y-%m-%d")  # Example: "2023 September 04"
         subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
         pdf_content.extend([subtitle1, Spacer(1, 5), subtitle2, Spacer(1, 5)])
@@ -451,19 +458,17 @@ def generatePurchaseOrder(body):
         pdf_content.append(Spacer(1,10))
         # Section 2: Information in Two Columns
         # Load JSON data (replace this with your actual JSON data)4
-        json_data = {
-            "rut": "123456789",
-            "direccion": "123 Main Street",
-            "comuna": "City",
-            "telefono": "555-555-5555",
-            "enviar_a": "John Doe"
-        }
-
+        json_data = body
+        
+        
         # Create a table with two columns
         info_table_data = [
-            ["RUT:", json_data["rut"], "Teléfono:", json_data["telefono"]],
-            ["Dirección:", json_data["direccion"], "Enviar a:", json_data["enviar_a"]],
-            ["Comuna:", json_data["comuna"]]
+            ["Facturar a:", company["company_name"], "", ""],
+            ["RUT:", company["rut"], "Plazo entrega:", json_data["delivery_date"]],
+            ["Plazo pago:", json_data["payment_term"],"",""],
+            ["Enviar a:", json_data["delivery_address"], "",""],
+            ["Observaciones:",json_data["observations"],"",""]
+            
         ]
 
         info_table = Table(info_table_data, colWidths=[100, 150, 100, 150])
@@ -471,6 +476,9 @@ def generatePurchaseOrder(body):
                                     ('FONTNAME', (0, 0), (-1, -1), 'Helvetica')])
         info_table.setStyle(info_table_style)
         pdf_content.append(info_table)
+        pdf_content.append(Spacer(1,10))      
+        pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
+        pdf_content.append(Spacer(1,10))
 
         # Section 3: Table with Product Names and Prices
         # Replace this with your actual product data (a list of dictionaries)
@@ -480,18 +488,56 @@ def generatePurchaseOrder(body):
             {"name": "Product 3", "price": 150}
         ]
 
-        # Create a table for product data
-        product_table_data = [["Product Name", "Price"]]
-        total_price = 0
-        for product in product_data:
-            product_table_data.append([product["name"], f"${product['price']}"])
-            total_price += product["price"]
+        # Start with the headers as the first row
 
-        product_table = Table(product_table_data, colWidths=[300, 80])
-        pdf_content.append(product_table)
+        print('hola-productos')
+        # Add the data rows
+       
+
+        
+        
+       
+        print("$$$$##############$$$$$")
+        
+        
+       
+        table_data2 = [['Nombre Producto','Formtato Envase','Cantidad','Precio Unitario','Precio Total']] 
+        subtotal=0
+        for item in body["products"]:
+            product_total=item["number_products"]*item["unit_price_clp"]
+            subtotal=subtotal+product_total
+            row_data = [products[item["id_product"]]["product_name"],str(item["format_size"])+" "+item["format_unit"],str(item["number_products"]),"$"+str(item["unit_price_clp"]),"$"+str(item["number_products"]*item["unit_price_clp"])]
+            
+            table_data2.append(row_data)
+        table_data2.append(["","","","Sub-Total","$"+str(subtotal)])
+        table_data2.append(["","","","IVA 19%","$"+str(subtotal*0.19)])
+        table_data2.append(["","","","Total","$"+str(subtotal*1.19)])
+        print('hola-footer')
+        # Create a table with the data
+        table2 = Table(table_data2,colWidths=[140, 120, 60,100,100 ])
+        print('hola3')
+        # Add style to the table
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen),  # Header background color
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center-align all cells
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
+            
+            ('GRID', (0, 0), (-1, -1), 1, colors.green)  # Gridlines
+        ])
+
+        table2.setStyle(table_style)
+        pdf_content.append(table2)
+       
+        pdf_content.append(Spacer(1,10))      
+        pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
+        pdf_content.append(Spacer(1,10))
+
+       
 
         # Add the total price
-        pdf_content.append(Paragraph(f"Total: ${total_price}", title_style))
+        #pdf_content.append(Paragraph(f"Total: ${total_price}", title_style))
 
         # Build the PDF document
         doc.build(pdf_content)
