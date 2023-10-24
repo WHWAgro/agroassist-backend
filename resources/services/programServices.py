@@ -1010,6 +1010,7 @@ def createQuoter(body,user_id):
         row_id=0
         clusters={}
         cluster_masters={}
+        
         for product in body["products"]:
             if len(product)==0:
                     continue
@@ -1017,16 +1018,29 @@ def createQuoter(body,user_id):
                 cluster_masters[product["cluster_id"]]=False
             if product["cluster_master"]==True:
                 cluster_masters[product["cluster_id"]]=True
+           
 
+        n_cluster_master={}
         for product in body["products"]:
+                print("producto:")
                 if len(product)==0:
                     continue
                 if product['cluster_id'] not in clusters:
                     cluster=uuid.uuid4()
                     clusters[product['cluster_id'] ]= cluster
+                    n_cluster_master[product['cluster_id']]=0
                 if cluster_masters[product['cluster_id'] ]==False:
                     product["cluster_master"]=True
                     cluster_masters[product['cluster_id'] ]=True
+                if product["cluster_master"]==True:
+                    
+                    n_cluster_master[product['cluster_id'] ]=n_cluster_master[product['cluster_id'] ]+1
+                    if  n_cluster_master[product['cluster_id'] ]>1:
+                        product["cluster_master"]=False
+                print(product['product_id'])
+                print(product['cluster_master'])
+                print(n_cluster_master[product['cluster_id'] ])
+                print(n_cluster_master)
                 row_id=row_id+1
                 quoter_product=QuoterProductClass(id_quoter=quoter._id,cluster_id=clusters[product['cluster_id'] ],cluster_master=product['cluster_master'],product_row_id=row_id,product_id=product['product_id'],
                                           product_needed=product['product_needed'],product_stored=product['product_stored'],product_needed_unit_id=product['product_needed_unit_id'],
