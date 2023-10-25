@@ -306,8 +306,9 @@ class QuoterApi(Resource):
       print(products) 
       
       data={}
-      data["usd2clp"]=811.69
-      data["clp2usd"]=0.0012
+     
+      data["usd2clp"]=938.14
+      data["clp2usd"]=0.0011
 
       
       quoter_rows = getQuoter(user_id,quoter_id)
