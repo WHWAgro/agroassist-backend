@@ -308,46 +308,47 @@ class WeatherApi(Resource):
          
           
           
-           {
-            "date": '2023-10-25',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '8', "max": '23' },
-            "wind": "9",
-            "humidity": "4"
-          },  
+             
           {
             "date": '2023-10-26',
-            "description": 'Soleado',
-            "icon":'sunny',
+            "description": 'Nublado',
+            "icon":'cloudy',
             "temperature": { "min": '7', "max": '23' },
-            "wind": "9",
-            "humidity": "25"
+            "wind": "7",
+            "humidity": "58"
           },
             {
             
             "date": '2023-10-27',
             "description": 'Nublado',
             "icon":'cloudy',
-            "temperature": { "min": '9', "max": '21' },
-            "wind": "9",
-            "humidity": "25"
+            "temperature": { "min": '8', "max": '21' },
+            "wind": "7",
+            "humidity": "56"
           },
           {
             "date": '2023-10-28',
             "description": 'Lluvia',
             "icon": 'rainy',
-            "temperature": { "min": '9', "max": '21' },
-            "wind": "9",
-            "humidity": "25"
+            "temperature": { "min": '9', "max": '16' },
+            "wind": "7",
+            "humidity": "62"
           },
           {
             "date": '2023-10-29',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '6', "max": '18' },
-            "wind": "9",
-            "humidity": "7"
+            "description": 'Lluvia',
+            "icon":'rainy',
+            "temperature": { "min": '8', "max": '13' },
+            "wind": "7",
+            "humidity": "90"
+          },
+          {
+            "date": '2023-10-30',
+            "description": 'Lluvia',
+            "icon":'rainy',
+            "temperature": { "min": '8', "max": '14' },
+            "wind": "7",
+            "humidity": "91"
           }
           
       ]
