@@ -506,7 +506,7 @@ def generatePurchaseOrder(body):
         for item in body["products"]:
             product_total=item["number_products"]*item["unit_price_clp"]
             subtotal=subtotal+product_total
-            row_data = [products[item["id_product"]]["product_name"],str(item["format_size"])+" "+item["format_unit"],str(item["number_products"]),"$"+str(item["unit_price_clp"]),"$"+str(item["number_products"]*item["unit_price_clp"])]
+            row_data = [products[item["id_product"]]["product_name"],str(item["container_size"])+" "+item["format_unit"],str(item["number_products"]),"$"+str(item["unit_price_clp"]),"$"+str(item["number_products"]*item["unit_price_clp"])]
             
             table_data2.append(row_data)
         table_data2.append(["","","","Sub-Total","$"+str(subtotal)])
