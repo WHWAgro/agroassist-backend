@@ -309,47 +309,49 @@ class WeatherApi(Resource):
           
           
              
+         
           {
-            "date": '2023-10-26',
+            "date": '2023-10-30',
             "description": 'Nublado',
             "icon":'cloudy',
-            "temperature": { "min": '7', "max": '23' },
+            "temperature": { "min": '8', "max": '17' },
             "wind": "7",
-            "humidity": "58"
+            "humidity": "25"
+          },
+           {
+            "date": '2023-10-31',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '8', "max": '18' },
+            "wind": "7",
+            "humidity": "43"
           },
             {
             
-            "date": '2023-10-27',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '8', "max": '21' },
-            "wind": "7",
-            "humidity": "56"
+            "date": '2023-11-01',
+            "description": 'Lluvia',
+            "icon":'rainy',
+            "temperature": { "min": '6', "max": '16' },
+            "wind": "6",
+            "humidity": "81"
           },
           {
-            "date": '2023-10-28',
+            "date": '2023-11-02',
             "description": 'Lluvia',
             "icon": 'rainy',
-            "temperature": { "min": '9', "max": '16' },
+            "temperature": { "min": '3', "max": '14' },
             "wind": "7",
-            "humidity": "62"
+            "humidity": "84"
           },
           {
-            "date": '2023-10-29',
-            "description": 'Lluvia',
-            "icon":'rainy',
-            "temperature": { "min": '8', "max": '13' },
+            "date": '2023-11-03',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '5', "max": '23' },
             "wind": "7",
-            "humidity": "90"
-          },
-          {
-            "date": '2023-10-30',
-            "description": 'Lluvia',
-            "icon":'rainy',
-            "temperature": { "min": '8', "max": '14' },
-            "wind": "7",
-            "humidity": "91"
+            "humidity": "0"
           }
+        
           
       ]
       
