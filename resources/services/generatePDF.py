@@ -85,11 +85,22 @@ class HorizontalLine(Flowable):
         super().__init__()
         self.width = width
         self.thickness = thickness
+        
 
     def draw(self):
         self.canv.setLineWidth(self.thickness)
         self.canv.line(0, 0, self.width, 0)
 
+class HorizontalLine2(Flowable):
+    def __init__(self, width, thickness=1):
+        super().__init__()
+        self.width = width
+        self.thickness = thickness
+        
+
+    def draw(self):
+        self.canv.setLineWidth(self.thickness)
+        self.canv.line(375, 0, 375+self.width, 0)
 
 
 
@@ -140,10 +151,10 @@ def generateTaskOrder(body):
         subtitle_style.alignment = 0  # Align left
         subtitle_style.textColor = colors.grey
         print('----------')
-        subtitle1 = Paragraph("Orden emitida por "+order_creator, subtitle_style)
+        
         today_date = datetime.now().strftime("%Y-%m-%d")  # Example: "2023 September 04"
         subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
-        pdf_content.extend([subtitle1, Spacer(1, 5), subtitle2, Spacer(1, 5)])
+        pdf_content.extend([ subtitle2, Spacer(1, 5)])
         print('----------')
         pdf_content.append(Spacer(1,10))      
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
@@ -264,7 +275,7 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data2 = [['Producto','Objetivo','Dosis x 100 Lt','Total Producto']] # Start with the headers as the first row
+        table_data2 = [['Producto',"Compuesto Activo",'Objetivo','Dosis x 100 Lt','Total Producto']] # Start with the headers as the first row
 
         print('hola-productos')
         # Add the data rows
@@ -325,8 +336,8 @@ def generateTaskOrder(body):
 
             phi_list.append(products[item["id_product"]]["phi"])
             reentry_period_list.append(products[item["id_product"]]["reentry_period"])
-        
-            row_data = [products[item["id_product"]]["product_name"],objectives[item["id_objective"]]["objective_name"],str(dosage)+unit,total_product+unit]
+            print(products[item["id_product"]])
+            row_data = [products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage)+unit,total_product+unit]
             
             table_data2.append(row_data)
         print('hola-footer')
@@ -382,6 +393,37 @@ def generateTaskOrder(body):
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
 
+
+        par_style = getSampleStyleSheet()["Normal"]
+        par_style.alignment = 0  # Align left
+        print('----------2')
+        par2_style = getSampleStyleSheet()["Normal"]
+        par2_style.alignment = 0  # Align left
+        
+        par1 = Paragraph("Obligaciones", par_style)
+        par2 = Paragraph("[ ]Leer la etiqueta de los productos a aplicar, cualquier duda consultar", par2_style)
+        par3 = Paragraph("[ ]Usar equipos de protección personal completo", par2_style)
+        par4 = Paragraph("[ ]Hacer triple lavado de envases vaciós ", par2_style)
+        par5 = Paragraph("[ ]Poner bandera roja en los sectores aplicados", par2_style)
+        pdf_content.append(par1)
+        pdf_content.append(par2)
+        pdf_content.append(par3)
+        pdf_content.append(par4)
+        pdf_content.append(par5)
+
+        pdf_content.append(Spacer(1,10))
+        pdf_content.append(HorizontalLine2(125))
+          # Adjust the width as needed
+        pdf_content.append(Spacer(1,10))
+        par_style = getSampleStyleSheet()["Normal"]
+        par_style.alignment = 2  # Align left
+        par_style.whiteSpace = 'preserve'
+        par1 = Paragraph("Nombre Aplicador:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", par_style)
+        pdf_content.append(par1)
+        pdf_content.append(Spacer(1,5))
+        subtitle1 = Paragraph("Orden emitida por: "+order_creator,par_style)
+        
+        pdf_content.append(subtitle1)
 
         
         # Build the PDF document

@@ -615,7 +615,27 @@ def mailExists(email):
     except Exception as e:
         print(e)
         return False
-    
+def process_nested_list(lst):
+    result = []
+    for item in lst:
+        if isinstance(item, list):
+            result.append(process_nested_list(item))
+        elif isinstance(item, str):
+            # Replace "," with "." and convert to float
+            result.append(float(item.replace(',', '.')))
+        else:
+            result.append(item)
+    return result
+
+def process_dictionary(d):
+    result = {}
+    for key, value in d.items():
+        if isinstance(value, list):
+            result[key] = [process_nested_list(value[0])]
+        else:
+            result[key] = value
+    return result
+  
 def createTask(body):
     
     try:
@@ -635,7 +655,7 @@ def createTask(body):
         for idx, objective in enumerate(body.get('objectives')):
          
           
-          taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
+          taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(process_nested_list(body.get('dosage')[idx])),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
           db.session.add(taskObjective)
         db.session.commit()
         return task._id
