@@ -130,7 +130,7 @@ class QuoterInitApi(Resource):
               elif p_value["product_needed_unit"] == 8:
                 
                 total_product=(dosage*total_hectareas_data/(wetting/100))*1000*n_app
-              products_list[p_id]["product_needed"]=total_product
+              products_list[p_id]["product_needed"]=int(total_product)
             print(products_list)
             print("hola")
             print(id_objective)
@@ -162,7 +162,7 @@ class QuoterInitApi(Resource):
 
       data={}
       data["hectares"]=total_hectares
-      data["usd2clp"]=938.14
+      data["usd2clp"]=896.00
       data["clp2usd"]=0.0011
       data["products"]=final_list
 
@@ -307,7 +307,7 @@ class QuoterApi(Resource):
       
       data={}
      
-      data["usd2clp"]=938.14
+      data["usd2clp"]=896.00
       data["clp2usd"]=0.0011
 
       

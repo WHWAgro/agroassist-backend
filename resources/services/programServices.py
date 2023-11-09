@@ -724,7 +724,8 @@ def createTasks(program_id, body):
         if program_details is None:
             return False
         assigned_companies = body.get('assigned_companies')
-        
+        print("assigned companies")
+        print(assigned_companies)
         query="""SELECT m._id as _id, m.id_program, m.start_date, m.end_date, t._id as id_task,t.id_company
                     FROM program_tasks as m
                     left join tasks  as t on m._id = t.id_moment

@@ -467,6 +467,8 @@ class TaskApi(Resource):
         id_moment=request.args.get('id_moment')
 
         tasks=getTaskDetails(id_moment)
+
+        
         
         dic_result = {}
         if tasks==False:
@@ -523,7 +525,9 @@ class TaskApi(Resource):
             task=tasks_format[0]
             data["moment_details"]=task
             
-            
+        
+        
+
       
       
 
@@ -558,8 +562,23 @@ class TaskApi(Resource):
 
         products = body.get('products')
 
-        task = createTask(body)    
-      
+        task = createTask(body)   
+
+        ####
+        body_update={"program_details":["test"]} 
+        id_program=body.get('id_program')
+        user_id =  get_jwt_identity()
+        
+
+        programs,assigned_companies,tasks=getProgramDetails(user_id,id_program)
+
+        body_update['assigned_companies']=[ d["_id"] for d in assigned_companies]
+        print("body_update")
+        print(body_update)
+         
+
+        create_tasks =  createTasks(id_program,body_update)
+        #####
       
         data={}
         data['id_moment']=task

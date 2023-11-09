@@ -1,6 +1,6 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak, Frame, Flowable
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import uuid
 import json
@@ -102,6 +102,16 @@ class HorizontalLine2(Flowable):
         self.canv.setLineWidth(self.thickness)
         self.canv.line(375, 0, 375+self.width, 0)
 
+def create_wrapped_paragraph(text):
+    
+
+    # Get the "BodyText" style from the sample style sheet
+    body_text_style = getSampleStyleSheet()["BodyText"]
+
+    par_style2 = getSampleStyleSheet()["BodyText"]
+    par_style2.alignment = 1
+    
+    return Paragraph(text, par_style2)
 
 
 def generateTaskOrder(body):
@@ -275,7 +285,7 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data2 = [['Producto',"Compuesto Activo",'Objetivo','Dosis x 100 Lt','Total Producto']] # Start with the headers as the first row
+        table_data2 = [['Producto',"Compuesto Activo",'Objetivo','Dosis','Unidad','Total Producto']] # Start with the headers as the first row
 
         print('hola-productos')
         # Add the data rows
@@ -308,47 +318,60 @@ def generateTaskOrder(body):
                 dosage=ast.literal_eval(value["dosage"])[i][j]
                 dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
             unit=""
+            unit_dosage=""
             total_product=0
             if dosage_unit == 1:
                 unit=" gr"
+                unit_dosage="gr/100L"
                 total_product=str(dosage*(wetting/100)*total_hectareas_data)
             elif dosage_unit == 2:
                 unit=" Kg"
+                unit_dosage="Kg/100L"
                 total_product=str(dosage*(wetting/100)*total_hectareas_data)
             elif dosage_unit == 3:
                 unit=" gr"
+                unit_dosage="gr/100L"
                 total_product=str(dosage*total_hectareas_data/(wetting/100))
             elif dosage_unit == 4:
                 unit=" Kg"
+                unit_dosage="Kg/100L"
                 total_product=str(dosage*total_hectareas_data/(wetting/100))
             if dosage_unit == 5:
                 unit=" cc"
+                unit_dosage="cc/100L"
                 total_product=str(dosage*(wetting/100)*total_hectareas_data)
             elif dosage_unit == 6:
                 unit=" L"
+                unit_dosage="L/100L"
                 total_product=str(dosage*(wetting/100)*total_hectareas_data)
             elif dosage_unit == 7:
                 unit=" cc"
+                unit_dosage="cc/100L"
                 total_product=str(dosage*total_hectareas_data/(wetting/100))
             elif dosage_unit == 8:
                 unit=" L"
+                unit_dosage="L/100L"
                 total_product=str(dosage*total_hectareas_data/(wetting/100))
 
             phi_list.append(products[item["id_product"]]["phi"])
             reentry_period_list.append(products[item["id_product"]]["reentry_period"])
             print(products[item["id_product"]])
-            row_data = [products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage)+unit,total_product+unit]
+            row_data = [products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage),unit_dosage,total_product+unit]
             
-            table_data2.append(row_data)
+            wrapped_row = [create_wrapped_paragraph(cell) for cell in row_data]
+           
+
+            table_data2.append(wrapped_row)
         print('hola-footer')
         # Create a table with the data
-        table2 = Table(table_data2,colWidths=[150, 150, 100,100 ])
+        table2 = Table(table_data2,colWidths=[115, 115, 130,43,48, 75 ])
         print('hola3')
         # Add style to the table
         table_style = TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen),  # Header background color
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center-align all cells
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
             
@@ -356,6 +379,7 @@ def generateTaskOrder(body):
         ])
 
         table2.setStyle(table_style)
+        
         pdf_content.append(table2)
         pdf_content.append(Spacer(1,15))
 
@@ -425,7 +449,7 @@ def generateTaskOrder(body):
         
         pdf_content.append(subtitle1)
 
-        
+        print("creando pdf")
         # Build the PDF document
         doc.build(pdf_content)
 
