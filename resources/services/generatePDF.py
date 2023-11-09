@@ -331,11 +331,14 @@ def generateTaskOrder(body):
             elif dosage_unit == 3:
                 unit=" gr"
                 unit_dosage="gr/100L"
-                total_product=str(dosage*total_hectareas_data/(wetting/100))
+                
+                total_product=str(dosage*total_hectareas_data)
+                dosage=str(dosage/(wetting/100))
             elif dosage_unit == 4:
                 unit=" Kg"
                 unit_dosage="Kg/100L"
-                total_product=str(dosage*total_hectareas_data/(wetting/100))
+                total_product=str(dosage*total_hectareas_data)
+                dosage=str(dosage/(wetting/100))
             if dosage_unit == 5:
                 unit=" cc"
                 unit_dosage="cc/100L"
@@ -347,11 +350,13 @@ def generateTaskOrder(body):
             elif dosage_unit == 7:
                 unit=" cc"
                 unit_dosage="cc/100L"
-                total_product=str(dosage*total_hectareas_data/(wetting/100))
+                total_product=str(dosage*total_hectareas_data)
+                dosage=str(dosage/(wetting/100))
             elif dosage_unit == 8:
                 unit=" L"
                 unit_dosage="L/100L"
-                total_product=str(dosage*total_hectareas_data/(wetting/100))
+                total_product=str(dosage*total_hectareas_data)
+                dosage=str(dosage/(wetting/100))
 
             phi_list.append(products[item["id_product"]]["phi"])
             reentry_period_list.append(products[item["id_product"]]["reentry_period"])
