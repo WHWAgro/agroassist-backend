@@ -688,13 +688,13 @@ def generateQuoterProducts(body):
             print("------")
             print(section["product_id"])
             print(section["product_needed"])
-            print("prdo")
+           
             print(products[section["product_id"]])
             
             row={"name":products[section["product_id"]]["product_name"],"price":str(section["product_needed"]-section["product_stored"])+" cc"}
             product_data.append(row)
             for alternative in section["alternatives"]:
-                row={"name":products[section["product_id"]]["product_name"],"price":str(alternative["product_needed"]-alternative["product_stored"])+" cc"}
+                row={"name":products[alternative["product_id"]]["product_name"],"price":str(alternative["product_needed"]-alternative["product_stored"])+" cc"}
                 product_data.append(row)
         print("chao")  
 
@@ -713,7 +713,7 @@ def generateQuoterProducts(body):
         pdf_content.append(product_table)
 
         # Add the total price
-        print(pdf_content)
+        
         
 
         # Build the PDF document

@@ -576,6 +576,7 @@ class QuoterProductsApi(Resource):
 
           del product['_id']
           del product['id_quoter']
+          print(product)
 
           if product['cluster_id'] not in products:
             products[product['cluster_id']]={'alternatives':[]}
@@ -587,7 +588,7 @@ class QuoterProductsApi(Resource):
           else:
               products[product['cluster_id']]['alternatives'].append(product)
 
-        print(products)
+        
         taskOrderFile = generateQuoterProducts(products)
         print("-----")
         print(taskOrderFile)
