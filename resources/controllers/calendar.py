@@ -309,46 +309,47 @@ class WeatherApi(Resource):
              
          
          
-           {
-            "date": '2023-11-09',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '10', "max": '27' },
-            "wind": "7",
-            "humidity": "8"
-          },
+          
             {
             
             "date": '2023-11-10',
-            "description": 'Lluvia',
-            "icon":'rainy',
-            "temperature": { "min": '10', "max": '19' },
-            "wind": "9",
-            "humidity": "100"
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '11', "max": '18' },
+            "wind": "25",
+            "humidity": "15"
           },
           {
             "date": '2023-11-11',
             "description": 'Lluvia',
             "icon": 'rainy',
-            "temperature": { "min": '8', "max": '17' },
-            "wind": "6",
-            "humidity": "60"
+            "temperature": { "min": '5', "max": '16' },
+            "wind": "15",
+            "humidity": "86"
           },
           {
             "date": '2023-11-12',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '6', "max": '18' },
-            "wind": "9",
-            "humidity": "25"
+            "temperature": { "min": '3', "max": '19' },
+            "wind": "20",
+            "humidity": "1"
           },
            {
             "date": '2023-11-13',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '9', "max": '22' },
+            "temperature": { "min": '6', "max": '21' },
+            "wind": "15",
+            "humidity": "1"
+          },
+           {
+            "date": '2023-11-14',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '6', "max": '22' },
             "wind": "9",
-            "humidity": "22"
+            "humidity": "3"
           }
         
           

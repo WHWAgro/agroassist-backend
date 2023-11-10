@@ -572,7 +572,7 @@ def generatePurchaseOrder(body):
         
         
        
-        table_data2 = [['Nombre Producto','Formtato Envase','Cantidad','Precio Unitario','Precio Total']] 
+        table_data2 = [['Nombre Producto','Formato Envase','Cantidad','Precio Unitario','Precio Total']] 
         subtotal=0
         for item in body["products"]:
             product_total=item["number_products"]*item["container_price_clp"]
@@ -581,8 +581,8 @@ def generatePurchaseOrder(body):
             
             table_data2.append(row_data)
         table_data2.append(["","","","Sub-Total","$"+str(subtotal)])
-        table_data2.append(["","","","IVA 19%","$"+str(subtotal*0.19)])
-        table_data2.append(["","","","Total","$"+str(subtotal*1.19)])
+        table_data2.append(["","","","IVA 19%","$"+str(int(subtotal*0.19))])
+        table_data2.append(["","","","Total","$"+str(int(subtotal*1.19))])
         print('hola-footer')
         # Create a table with the data
         table2 = Table(table_data2,colWidths=[140, 120, 60,100,100 ])
