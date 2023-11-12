@@ -310,46 +310,47 @@ class WeatherApi(Resource):
          
          
           
-            {
-            
-            "date": '2023-11-10',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '11', "max": '18' },
-            "wind": "25",
-            "humidity": "15"
-          },
-          {
-            "date": '2023-11-11',
-            "description": 'Lluvia',
-            "icon": 'rainy',
-            "temperature": { "min": '5', "max": '16' },
-            "wind": "15",
-            "humidity": "86"
-          },
+           
           {
             "date": '2023-11-12',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '3', "max": '19' },
-            "wind": "20",
-            "humidity": "1"
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '6', "max": '18' },
+            "wind": "9",
+            "humidity": "25"
           },
            {
             "date": '2023-11-13',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '6', "max": '21' },
-            "wind": "15",
-            "humidity": "1"
+            "temperature": { "min": '7', "max": '21' },
+            "wind": "9",
+            "humidity": "4"
           },
            {
             "date": '2023-11-14',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '6', "max": '22' },
+            "temperature": { "min": '8', "max": '21' },
             "wind": "9",
-            "humidity": "3"
+            "humidity": "9"
+          },
+           {
+            
+            "date": '2023-11-15',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '5', "max": '19' },
+            "wind": "9",
+            "humidity": "65"
+          },
+          {
+            "date": '2023-11-16',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '7', "max": '21' },
+            "wind": "9",
+            "humidity": "6"
           }
         
           
