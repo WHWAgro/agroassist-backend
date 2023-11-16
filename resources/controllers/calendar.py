@@ -304,54 +304,48 @@ class WeatherApi(Resource):
          
          
           
-        
-          
-             
-         
-         
-          
            
          
-           {
-            "date": '2023-11-13',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '6', "max": '20' },
-            "wind": "9",
-            "humidity": "2"
-          },
-           {
-            "date": '2023-11-14',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '8', "max": '20' },
-            "wind": "9",
-            "humidity": "11"
-          },
-           {
-            
-            "date": '2023-11-15',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '5', "max": '19' },
-            "wind": "7",
-            "humidity": "90"
-          },
+         
           {
             "date": '2023-11-16',
             "description": 'Soleado',
             "icon": 'sunny',
-            "temperature": { "min": '8', "max": '21' },
+            "temperature": { "min": '10', "max": '22' },
             "wind": "9",
-            "humidity": "25"
+            "humidity": "56"
           },
            {
             "date": '2023-11-17',
             "description": 'Nublado',
             "icon":'cloudy',
-            "temperature": { "min": '8', "max": '16' },
+            "temperature": { "min": '8', "max": '14' },
+            "wind": "9",
+            "humidity": "65"
+          } , {
+            "date": '2023-11-18',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '8', "max": '18' },
             "wind": "6",
-            "humidity": "55"
+            "humidity": "9"
+          },
+           {
+            "date": '2023-11-19',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '10', "max": '26' },
+            "wind": "7",
+            "humidity": "5"
+          },
+           {
+            
+            "date": '2023-11-20',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '11', "max": '23' },
+            "wind": "9",
+            "humidity": "11"
           }
         
           
