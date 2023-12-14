@@ -308,44 +308,44 @@ class WeatherApi(Resource):
          
          
           {
-            "date": '2023-12-11',
+            "date": '2023-12-14',
             "description": 'Soleado',
             "icon": 'sunny',
-            "temperature": { "min": '9', "max": '27' },
-            "wind": "13",
+            "temperature": { "min": '8', "max": '28' },
+            "wind": "9",
             "humidity": "3"
           },
            {
-            "date": '2023-12-12',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '29', "max": '9' },
-            "wind": "13",
-            "humidity": "2"
-          } , {
-            "date": '2023-12-13',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '10', "max": '31' },
-            "wind": "11",
-            "humidity": "1"
-          },
-           {
-            "date": '2023-12-14',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '7', "max": '28' },
-            "wind": "9",
-            "humidity": "2"
-          },
-           {
-            
             "date": '2023-12-15',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '6', "max": '29' },
-            "wind": "11",
+            "temperature": { "min": '8', "max": '29' },
+            "wind": "7",
             "humidity": "2"
+          } , {
+            "date": '2023-12-16',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '8', "max": '25' },
+            "wind": "9",
+            "humidity": "25"
+          },
+           {
+            "date": '2023-12-17',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '8', "max": '28' },
+            "wind": "11",
+            "humidity": "6"
+          },
+           {
+            
+            "date": '2023-12-18',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '7', "max": '30' },
+            "wind": "11",
+            "humidity": "1"
           }
         
           
