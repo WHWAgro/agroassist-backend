@@ -171,6 +171,7 @@ class MachineryClass(db.Model):
   name=db.Column(db.String(100), nullable=True)
   model=db.Column(db.String(100), nullable=True)
   id_machinery_type=db.Column(db.Integer, nullable=False)
+  size=db.Column(db.Double, nullable=False)
 
 class PurchaseOrderClass(db.Model):
 

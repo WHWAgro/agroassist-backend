@@ -312,13 +312,15 @@ class FieldsApi(Resource):
             
             for machine in body["machinery"] :
                 
-                
+                machine_size=0
+                if 'size' in machine:
+                   machine_size =machine['size']
                 _id=machine['_id']
                 print(_id)
                 
                 if _id is None:
                    print("hola")
-                   machine_instance = MachineryClass(id_field=id_field,name =machine['name'],model=machine['model'],id_machinery_type=machine['id_machinery_type'])
+                   machine_instance = MachineryClass(id_field=id_field,name =machine['name'],model=machine['model'],id_machinery_type=machine['id_machinery_type'],size=machine_size)
                    db.session.add(machine_instance)
                 elif _id not in id_current:
                    continue
@@ -331,6 +333,7 @@ class FieldsApi(Resource):
                       machine_instance.name=machine.get('name')
                       machine_instance.model=machine.get('model')
                       machine_instance.id_machinery_type=machine.get('id_machinery_type')
+                      machine_instance.size=machine_size
                       db.session.add(machine_instance)     
                    
             db.session.commit()

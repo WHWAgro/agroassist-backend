@@ -314,7 +314,7 @@ def getFieldMachineryDetails(id_field):
     
     try:
         
-        query_tasks="""SELECT _id,name,model,id_machinery_type
+        query_tasks="""SELECT _id,name,model,id_machinery_type,size
                 FROM machinery
                 
                 where id_field = """+ str(id_field)+"""
