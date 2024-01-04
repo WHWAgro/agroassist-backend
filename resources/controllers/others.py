@@ -707,7 +707,9 @@ class PlotListApi(Resource):
           response['status']=400 
           response['message']=1
         
-
+        for plot in plots:
+             plot["idPhenologicalStage"]=plot["id_phenological_stage"]
+             del(plot["id_phenological_stage"])
         data={}
         data['plots']=plots
         response['data']=data
