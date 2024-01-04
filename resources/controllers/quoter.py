@@ -79,7 +79,7 @@ class QuoterInitApi(Resource):
         print("moments:")
         print(moments)
         for objective in moments:
-            print("-----processing moments")
+            
             products_list={}
             products_ids=[]
             id_objective=objective["id_objective"]
@@ -97,7 +97,7 @@ class QuoterInitApi(Resource):
             
             
  
-            print(products)
+            
 
             for p_id,p_value in products_list.items():
               dosage=p_value["dosage"]
@@ -131,9 +131,7 @@ class QuoterInitApi(Resource):
                 
                 total_product=(dosage*total_hectareas_data)*1000*n_app
               products_list[p_id]["product_needed"]=int(total_product)
-            print(products_list)
-            print("hola")
-            print(id_objective)
+           
             for id in products_ids:
                 valid=list(filter(lambda product: product['_id'] == id , elements))
                 print(valid)
@@ -148,6 +146,13 @@ class QuoterInitApi(Resource):
                 el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
                 
                 alternatives=list(filter(lambda product: product['chemical_compounds'] == compound and product['id_objective'] == id_objective and product['product_name'] != valid[0]["product_name"] , elements))
+                print('producto')
+                print(str(id))
+                print(products_list[str(id)])
+                print('alternativas')
+                #print(product['product_name'])
+                
+                print(alternatives)
                 alternatives_list=[]
                 for alternative in alternatives:
                    if alternative["_id"]==id:
@@ -162,9 +167,40 @@ class QuoterInitApi(Resource):
 
       data={}
       data["hectares"]=total_hectares
-      data["usd2clp"]=872.28
+      data["usd2clp"]=884.45
       data["clp2usd"]=0.0011
       data["products"]=final_list
+
+      consolidated_products=[]
+      used_products=[]
+      for product in data["products"]:
+       
+        if product['product_id'] not in used_products:
+         
+          used_products.append(product["product_id"])
+          for alternative in product["alternatives"]:
+            used_products.append(alternative["product_id"])
+          consolidated_products.append(product)
+          
+        else: 
+          
+          for c_product in consolidated_products:
+            c_alternatives=[c_alternative["product_id"] for c_alternative in c_product["alternatives"]]
+            if product["product_id"]==c_product["product_id"] or c_product["product_id"] in c_alternatives :
+              
+              c_product['wetting']=c_product['wetting']+product['wetting']
+              c_product['products_needed']=c_product['products_needed']+product['products_needed']
+              c_product['valid_hectares']=c_product['valid_hectares']+product['valid_hectares']
+              for c_alternative in c_product["alternatives"]:
+               
+                c_alternative['products_needed']=c_product['products_needed']+product['products_needed']
+                
+
+      data['products']=consolidated_products
+
+          
+
+
 
       
       
@@ -307,7 +343,7 @@ class QuoterApi(Resource):
       
       data={}
      
-      data["usd2clp"]=881.17
+      data["usd2clp"]=884.45
       data["clp2usd"]=0.0011
 
       

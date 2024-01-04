@@ -152,6 +152,7 @@ class PlotClass(db.Model):
   size = db.Column(db.Double, nullable=False,default=0)
   id_species = db.Column(db.Integer, nullable=False)
   variety = db.Column(db.String(100), nullable=True)
+  id_phenological_stage = db.Column(db.Integer, nullable=False)
   
   
 class TaskOrderClass(db.Model):

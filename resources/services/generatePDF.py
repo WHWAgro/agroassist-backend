@@ -1,3 +1,4 @@
+import math
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak, Frame, Flowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -208,10 +209,21 @@ def generateTaskOrder(body):
         total_hectareas_data = total_plot_size
         print('----------3')
         # Create a table with two columns
+
+        machinery=getTableDict("machinery")
+        print('machinery///////////')
+        sprayer_size=1
+        data_list = body['asignees']
+        for item in data_list:
+            sprayer_size=machinery[item["id_sprayer"]]["size"]
+            
+
+        n_maquinadas=float(wetting/sprayer_size)
+
         section5_table_data = [
             ["Empresa:", empresa_data, "Cultivo:", cultivo_data],
             ["Campo:", campo_data, "Total Hectareas:", total_hectareas_data],
-            ['Mojamieto',str(wetting)+"L",'','']
+            ['Mojamieto',str(wetting)+"L",'N Maquinadas', str(round(n_maquinadas,1))]
         ]
         print('----------4')
 
@@ -253,8 +265,11 @@ def generateTaskOrder(body):
         # Add the data rows
         workers=getTableDict("workers")
         machinery=getTableDict("machinery")
+        print('machinery///////////')
+        sprayer_size=1
         for item in data_list:
             row_data = [workers[item["id_operator"]]["name"],machinery[item["id_tractor"]]["name"],machinery[item["id_sprayer"]]["name"]]
+            sprayer_size=machinery[item["id_sprayer"]]["size"]
             table_data.append(row_data)
 
         # Create a table with the data
@@ -285,12 +300,10 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data2 = [['Producto',"Compuesto Activo",'Objetivo','Dosis','Unidad','Total Producto']] # Start with the headers as the first row
+        table_data2 = [['Producto',"Compuesto Activo",'Objetivo','Dosis','Unidad','Total Producto','cantidad \n x maquinada']] # Start with the headers as the first row
 
         print('hola-productos')
         # Add the data rows
-       
-
         
         
         k_filter1 = "id_task"
@@ -320,48 +333,53 @@ def generateTaskOrder(body):
             unit=""
             unit_dosage=""
             total_product=0
+            print('producto///////////////')
+            print(dosage_unit)
+            print(dosage)
+
             if dosage_unit == 1:
                 unit=" gr"
                 unit_dosage="gr/100L"
-                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+                total_product=dosage*(wetting/100)*total_hectareas_data
             elif dosage_unit == 2:
                 unit=" Kg"
                 unit_dosage="Kg/100L"
-                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+                total_product=dosage*(wetting/100)*total_hectareas_data
             elif dosage_unit == 3:
                 unit=" gr"
                 unit_dosage="gr/100L"
                 
-                total_product=str(dosage*total_hectareas_data)
+                total_product=dosage*total_hectareas_data
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 4:
                 unit=" Kg"
                 unit_dosage="Kg/100L"
-                total_product=str(dosage*total_hectareas_data)
+                total_product=dosage*total_hectareas_data
                 dosage=str(dosage/(wetting/100))
             if dosage_unit == 5:
                 unit=" cc"
                 unit_dosage="cc/100L"
-                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+                total_product=dosage*(wetting/100)*total_hectareas_data
             elif dosage_unit == 6:
                 unit=" L"
                 unit_dosage="L/100L"
-                total_product=str(dosage*(wetting/100)*total_hectareas_data)
+                total_product=dosage*(wetting/100)*total_hectareas_data
             elif dosage_unit == 7:
                 unit=" cc"
                 unit_dosage="cc/100L"
-                total_product=str(dosage*total_hectareas_data)
+                total_product=dosage*total_hectareas_data
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 8:
                 unit=" L"
                 unit_dosage="L/100L"
-                total_product=str(dosage*total_hectareas_data)
+                total_product=dosage*total_hectareas_data
                 dosage=str(dosage/(wetting/100))
-
+            hola=str(total_product)
+            print('----------product')
             phi_list.append(products[item["id_product"]]["phi"])
             reentry_period_list.append(products[item["id_product"]]["reentry_period"])
-            print(products[item["id_product"]])
-            row_data = [products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage),unit_dosage,total_product+unit]
+           
+            row_data = [products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage),unit_dosage,hola+unit,str(round(total_product/n_maquinadas,2))]
             
             wrapped_row = [create_wrapped_paragraph(cell) for cell in row_data]
            

@@ -184,12 +184,14 @@ class FieldsApi(Resource):
                 
                 _id=plot['_id']
                 print(_id)
+                print(plot)
                 
                 if _id is None:
                    if plot["id_program"]=="":
                       plot["id_program"]=None
+                   size=float(str(plot['size']).replace(',','.'))
                       
-                   plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=plot['size'],id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'])
+                   plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=size,id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'],id_phenological_stage=plot['idPhenologicalStage'])
                    db.session.add(plot_instance)
                 elif _id not in id_current:
                    continue
@@ -199,11 +201,13 @@ class FieldsApi(Resource):
                    if plot_instance is None: 
                     response['status']=400
                    else:
+                      size=float(str(plot['size']).replace(',','.'))
                       plot_instance.name=plot.get('name')
-                      plot_instance.size = plot.get('size')
+                      plot_instance.size = size
                       plot_instance.id_species=plot.get('id_species')
                       plot_instance.variety=plot.get('variety')
                       plot_instance.id_program=plot.get('id_program')
+                      plot_instance.id_phenological_stage = plot.get('idPhenologicalStage')
                       db.session.add(plot_instance)
             
                    
@@ -315,6 +319,7 @@ class FieldsApi(Resource):
                 machine_size=0
                 if 'size' in machine:
                    machine_size =machine['size']
+                   machine_size=float(str(machine_size).replace(',','.'))
                 _id=machine['_id']
                 print(_id)
                 
@@ -410,9 +415,12 @@ class FieldsApi(Resource):
           data['general']=field_general[0]
         else:
            response['status']=400
-
+        
         field_plots=getFieldPlotsDetails(id_field)
         if field_plots!=False: 
+          for plot in field_plots:
+             plot["idPhenologicalStage"]=plot["id_phenological_stage"]
+             del(plot["id_phenological_stage"])
           data['plots']=field_plots
         else:
            response['status']=400
@@ -428,10 +436,11 @@ class FieldsApi(Resource):
           data['field_team']=field_field_team
         else:
            response['status']=400
-
+        
         field_machinery_team=getFieldMachineryDetails(id_field)
         if field_field_team!=False: 
           data['machinery']=field_machinery_team
+          
         else:
            response['status']=400
 
@@ -442,6 +451,7 @@ class FieldsApi(Resource):
         
         
         if response.get('status') == 200:
+            print("-------------chao2")
             response['data']=data
 
             return {'response': response}, 200
@@ -769,9 +779,9 @@ class TaskOrderApi(Resource):
         
 
         body = request.get_json()
-        
+        print('processing task order ------')
         taskOrderFile = generateTaskOrder(body)
-        
+        print(taskOrderFile)
         if taskOrderFile== False:
           response['status']=400 
           response['message']=1

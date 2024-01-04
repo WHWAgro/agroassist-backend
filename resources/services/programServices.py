@@ -312,6 +312,7 @@ def getTaskDetails(id_moment):
     
 def getFieldMachineryDetails(id_field):
     
+    print("-----enter")
     try:
         
         query_tasks="""SELECT _id,name,model,id_machinery_type,size
@@ -402,7 +403,7 @@ def getFieldPlotsDetails(id_field):
     try:
         
         
-        query_tasks="""SELECT _id,name,size,id_species,variety,id_program
+        query_tasks="""SELECT _id,name,size,id_species,variety,id_program,id_phenological_stage
                 FROM plots 
                 
                 where id_field = """+ str(id_field)+"""
