@@ -191,7 +191,7 @@ class FieldsApi(Resource):
                       plot["id_program"]=None
                    size=float(str(plot['size']).replace(',','.'))
                       
-                   plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=size,id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'],id_phenological_stage=plot['idPhenologicalStage'])
+                   plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=size,id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'],id_phenological_stage=plot['id_phenological_stage'])
                    db.session.add(plot_instance)
                 elif _id not in id_current:
                    continue
@@ -207,7 +207,7 @@ class FieldsApi(Resource):
                       plot_instance.id_species=plot.get('id_species')
                       plot_instance.variety=plot.get('variety')
                       plot_instance.id_program=plot.get('id_program')
-                      plot_instance.id_phenological_stage = plot.get('idPhenologicalStage')
+                      plot_instance.id_phenological_stage = plot.get('id_phenological_stage')
                       db.session.add(plot_instance)
             
                    
