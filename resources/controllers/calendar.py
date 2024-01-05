@@ -302,14 +302,7 @@ class WeatherApi(Resource):
       weather=[
           
          
-          {
-            "date": '2024-01-04',
-            "description": 'Soleado',
-            "icon": 'sunny',
-            "temperature": { "min": '12', "max": '32' },
-            "wind": "11",
-            "humidity": "2"
-          },
+        
            {
             "date": '2024-01-05',
             "description": 'Soleado',
@@ -341,6 +334,14 @@ class WeatherApi(Resource):
             "temperature": { "min": '10', "max": '32' },
             "wind": "11",
             "humidity": "3"
+          },
+            {
+            "date": '2024-01-09',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '10', "max": '32' },
+            "wind": "11",
+            "humidity": "2"
           }
         
           
