@@ -303,46 +303,47 @@ class WeatherApi(Resource):
           
          
         
-           {
-            "date": '2024-01-06',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '10', "max": '30' },
-            "wind": "9",
-            "humidity": "25"
-          },
-           {
-            "date": '2024-01-07',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '10', "max": '30' },
-            "wind": "11",
-            "humidity": "4"
-          },
+           
            {
             
             "date": '2024-01-08',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '10', "max": '31' },
+            "temperature": { "min": '9', "max": '31' },
             "wind": "11",
-            "humidity": "4"
+            "humidity": "3"
           },
             {
             "date": '2024-01-09',
             "description": 'Soleado',
             "icon": 'sunny',
-            "temperature": { "min": '10', "max": '31' },
-            "wind": "11",
-            "humidity": "2"
+            "temperature": { "min": '9', "max": '30' },
+            "wind": "9",
+            "humidity": "1"
           },
            {
             "date": '2024-01-10',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '7', "max": '32' },
+            "temperature": { "min": '9', "max": '32' },
+            "wind": "11",
+            "humidity": "2"
+          },
+          {
+            "date": '2024-01-11',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '10', "max": '33' },
             "wind": "11",
             "humidity": "1"
+          },
+           {
+            "date": '2024-01-12',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '9', "max": '30' },
+            "wind": "11",
+            "humidity": "2"
           } 
         
           
