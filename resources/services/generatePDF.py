@@ -221,13 +221,13 @@ def generateTaskOrder(body):
         n_maquinadas=float(wetting/sprayer_size)
 
         section5_table_data = [
-            ["Empresa:", empresa_data, "Cultivo:", cultivo_data],
-            ["Campo:", campo_data, "Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.')],
-            ['Mojamieto',str(wetting)+"L",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.')]
+            [" ","Empresa:", empresa_data, " ","Cultivo:", cultivo_data],
+            [" ","Campo:", campo_data, " ","Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.')],
+            [" ",'Mojamieto',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.')]
         ]
         print('----------4')
 
-        section5_table = Table(section5_table_data, colWidths=[80, 150, 80, 150])
+        section5_table = Table(section5_table_data, colWidths=[40,80, 150,70 ,80, 150])
         section5_table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'LEFT'),
                                         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica')])
         section5_table.setStyle(section5_table_style)
@@ -300,7 +300,7 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data2 = [['Producto',"Compuesto Activo",'Objetivo','Dosis','Unidad','Total Producto','cantidad \n x maquinada']] # Start with the headers as the first row
+        table_data2 = [[" ",'Producto',"Compuesto Activo",'Objetivo','Dosis x Há','Dosis','Total Producto','cantidad \n x maquinada']] # Start with the headers as the first row
 
         print('hola-productos')
         # Add the data rows
@@ -333,55 +333,88 @@ def generateTaskOrder(body):
             unit=""
             unit_dosage=""
             total_product=0
+
+            unit_hectare=""
+            dosage_hectare=0
             print('producto///////////////')
             print(dosage_unit)
             print(dosage)
 
             if dosage_unit == 1:
+                print(" 1")
                 unit=" gr"
                 unit_dosage="gr/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
+                unit_hectare="gr/Há"
+                dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 2:
+                print(" 2")
                 unit=" Kg"
                 unit_dosage="Kg/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
+                unit_hectare="Kg/Há"
+                dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 3:
+                print(" 3")
                 unit=" gr"
                 unit_dosage="gr/100L"
-                
                 total_product=dosage*total_hectareas_data
+                unit_hectare="gr/Há"
+                dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 4:
+                print(" 4")
                 unit=" Kg"
                 unit_dosage="Kg/100L"
                 total_product=dosage*total_hectareas_data
+                
+                unit_hectare="Kg/Há"
+                dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             if dosage_unit == 5:
+                print(" 5")
                 unit=" cc"
                 unit_dosage="cc/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
+                unit_hectare="cc/Há"
+                dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 6:
+                print(" 6")
                 unit=" L"
                 unit_dosage="L/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
+                unit_hectare="L/Há"
+                dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 7:
+                print(" 7")
                 unit=" cc"
                 unit_dosage="cc/100L"
                 total_product=dosage*total_hectareas_data
+                
+                unit_hectare="cc/Há"
+                dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 8:
+                print(" 8")
                 unit=" L"
                 unit_dosage="L/100L"
                 total_product=dosage*total_hectareas_data
+                unit_hectare="L/Há"
+                dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
+            print("cuartel 1")
             hola='{:,.2f}'.format(total_product).replace(',','*').replace('.', ',').replace('*','.')
             dosage='{:,.2f}'.format(float(dosage)).replace(',','*').replace('.', ',').replace('*','.')
+            print("cuartel 2")
+            dosage_hectare='{:,.2f}'.format(float(dosage_hectare)).replace(',','*').replace('.', ',').replace('*','.')
+            print("cuartel 3")
             totalXmaquinada='{:,.2f}'.format(float(total_product/n_maquinadas)).replace(',','*').replace('.', ',').replace('*','.')
+            
             print('----------product')
             phi_list.append(products[item["id_product"]]["phi"])
             
             reentry_period_list.append(products[item["id_product"]]["reentry_period"])
-            row_data = [products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage),unit_dosage,hola+unit,totalXmaquinada+unit]
+            row_data = [" ",products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage_hectare)+unit_hectare,str(dosage)+unit_dosage,hola+unit,totalXmaquinada+unit]
             
             wrapped_row = [create_wrapped_paragraph(cell) for cell in row_data]
            
@@ -389,19 +422,23 @@ def generateTaskOrder(body):
             table_data2.append(wrapped_row)
         print('hola-footer')
         # Create a table with the data
-        table2 = Table(table_data2,colWidths=[115, 115, 130,43,48, 75 ])
+        table2 = Table(table_data2,colWidths=[67,102, 102, 118,78,78,68, 68])
         print('hola3')
         # Add style to the table
         table_style = TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen),  # Header background color
+            ('BACKGROUND', (1, 0), (-1, 0), colors.lightgreen),  # Header background color
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center-align all cells
             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
             
-            ('GRID', (0, 0), (-1, -1), 1, colors.green)  # Gridlines
+            ('GRID', (1, 0), (-1, -1), 1, colors.green),  # Gridlines
+            ('FONTSIZE', (0, 0), (-1, -1) , 8 )
         ])
+
+      
+       
 
         table2.setStyle(table_style)
         
