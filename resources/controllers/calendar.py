@@ -305,45 +305,45 @@ class WeatherApi(Resource):
         
            
            {
-            "date": '2024-01-29',
+            "date": '2024-02-26',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '12', "max": '34' },
-            "wind": "9",
-            "humidity": "3"
+            "temperature": { "min": '12', "max": '31' },
+            "wind": "11",
+            "humidity": "1"
           },
           {
-            "date": '2024-01-30',
+            "date": '2024-02-27',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '13', "max": '36' },
+            "temperature": { "min": '12', "max": '32' },
             "wind": "11",
-            "humidity": "0"
+            "humidity": "1"
           },
            {
-            "date": '2024-01-31',
+            "date": '2024-02-28',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '13', "max": '37' },
+            "temperature": { "min": '13', "max": '32' },
             "wind": "11",
             "humidity": "0"
           } ,
           {
             
-            "date": '2024-02-01',
+            "date": '2024-02-29',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '14', "max": '36' },
-            "wind": "9",
-            "humidity": "2"
-          },
-           {
-            "date": '2024-02-02',
-            "description": 'Soleado',
-            "icon": 'sunny',
-            "temperature": { "min": '13', "max": '35' },
+            "temperature": { "min": '12', "max": '33' },
             "wind": "11",
             "humidity": "0"
+          },
+           {
+            "date": '2024-03-01',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '12', "max": '33' },
+            "wind": "11",
+            "humidity": "1"
           }
         
           

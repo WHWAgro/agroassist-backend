@@ -118,7 +118,7 @@ def create_wrapped_paragraph(text):
 def generateTaskOrder(body):
 
     try:
-
+        print("Generando PDF $$$$$$$$$$$$$$$$$$$$$$$$")
         print(1)
         # Create a PDF document
         user_id =  get_jwt_identity()
@@ -196,22 +196,25 @@ def generateTaskOrder(body):
         moment_id=tasks[int(body["id_task"])]["id_moment"]
 
         wetting=moments[moment_id]["wetting"]
-
+        print(plots)
         for id_plot in body['id_plots']:
+            print("init plot")
             print(id_plot)
-            print(plots[id_plot]["name"] )
+            
             plots_names = plots_names +', '+plots[id_plot]["name"] 
             print(plots_names)  
             total_plot_size=total_plot_size+plots[id_plot]["size"]
             print(total_plot_size)  
+            print("plot end")
         if len(plots_names)>0:
+            print("hola")
             plots_names=plots_names[1:]   
         total_hectareas_data = total_plot_size
         print('----------3')
         # Create a table with two columns
 
         machinery=getTableDict("machinery")
-        print('machinery///////////')
+        print('machinery///////////1')
         sprayer_size=1
         data_list = body['asignees']
         for item in data_list:
