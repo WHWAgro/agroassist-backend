@@ -166,6 +166,37 @@ def getPrograms(id_usuario,company_id):
         print(e)
         return False
     
+def getProgramsMarketFilter(id_usuario,company_id,markets):
+    
+    try:
+        
+        query="""SELECT distinct(p._id)  FROM programs as p
+                left join species as s on p.id_species= s._id
+                left join market_program as mp on p._id=mp.program_id
+                left join program_companies as pc on p._id=pc.id_program
+                WHERE (p.id_user = """+ str(id_usuario)+"""
+                or pc.id_company in """+ str(company_id)+""") 
+                and mp.market_id in """+ str(markets)+"""
+
+                 
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            print(result)
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
 
 def getFields(id_company):
     
@@ -191,6 +222,8 @@ def getFields(id_company):
     except Exception as e:
         print(e)
         return False
+    
+
     
 
 def getPlots(id_field):
@@ -427,12 +460,40 @@ def getFieldPlotsDetails(id_field):
         print(e)
         return False
     
+def getFieldMarketFilter(programs):
+    
+    try:
+        
+        
+        query_tasks="""SELECT distinct(fi._id),sag_code
+                FROM field as fi
+				left join plots as pl on pl.id_field= fi._id
+                where pl.id_program in """+ str(programs)+"""
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def getFieldGeneralDetails(id_field):
     
     try:
         
         
-        query_tasks="""SELECT field_name,location,latitude,longitude
+        query_tasks="""SELECT field_name,location,latitude,longitude,sag_code
                 FROM field 
                 
                 where _id = """+ str(id_field)+"""

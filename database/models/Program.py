@@ -335,6 +335,7 @@ class FieldClass(db.Model):
   company_id = db.Column(db.Integer, nullable=False)
  
   field_name = db.Column(db.String(80), nullable=False)
+  sag_code = db.Column(db.String(80), nullable=False)
   location = db.Column(db.String(120), nullable=True,default='Rancagua')
   latitude = db.Column(db.String(100), nullable=True,default='-34.17083')
   longitude = db.Column(db.String(100), nullable=True,default='-70.74444')

@@ -157,6 +157,7 @@ class FieldsApi(Resource):
         if "general" in body:
          
           field = FieldClass.query.get(id_field)
+          print("Es general")
           
           if field is None: 
             response['status']=400
@@ -165,6 +166,7 @@ class FieldsApi(Resource):
             field.location = body["general"].get('location')
             field.latitude=body["general"].get('latitude')
             field.longitude=body["general"].get('longitude')
+            field.sag_code=body["general"].get('sag_code')
             db.session.add(field)
             db.session.commit()
             

@@ -5,6 +5,7 @@ from .controllers.tryc import CreationApi
 from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
 from .controllers.quoter import QuoterProductsApi,QuoterApi,QuoterInitApi,QuoterSelectionApi,PurchaseOrderApi,DowloadPurchaseOrderApi
 from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
+from .controllers.fieldbook import FieldBookApi,FieldBookExportApi,FieldBookFullApi
 
 
 
@@ -66,6 +67,12 @@ def initialize_routes(api):
  
  api.add_resource(QuoterProductsApi,'/api/v1.0/quoter/products/download')
  
+ api.add_resource(FieldBookApi,'/api/v1.0/fieldbook/fields')
+
+ api.add_resource(FieldBookFullApi,'/api/v1.0/fieldbook/full/download')
+
+ api.add_resource(FieldBookExportApi,'/api/v1.0/fieldbook/export/download')
+
  
  
 
