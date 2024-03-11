@@ -38,6 +38,14 @@ def getTable(table,field=None,value=None):
         print(e)
         return False
     
+def getTableDict(table):
+    table_elements=getTable(table)
+    products_dict={}
+    for el in table_elements:
+        products_dict[el["_id"]]=el
+
+    return products_dict
+    
 def getMoments(id_program,start,end):
    
     
@@ -469,6 +477,41 @@ def getFieldMarketFilter(programs):
                 FROM field as fi
 				left join plots as pl on pl.id_field= fi._id
                 where pl.id_program in """+ str(programs)+"""
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        print(rows_tasks)
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getFieldBookData(fields):
+    
+    try:
+        
+        
+        query_tasks="""SELECT com.company_name,pt.wetting,ta._id,ta.date_start,field._id as f_id,field.sag_code,plot.variety,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name
+FROM public.tasks ta
+left join program_tasks as pt on pt._id=ta.id_moment
+left join programs as p on p._id = pt.id_program
+left join plots as plot on plot.id_program = p._id
+left join field as field on field._id =plot.id_field
+left join task_objectives as t_o on t_o.id_task = pt._id
+left join objectives as o on o._id =t_o.id_objective
+left join company as com on com._id = field.company_id
+where ta.id_status=2
+and field._id in """+ str(fields)+"""
              """
         rows_tasks=[]
         with db.engine.begin() as conn:

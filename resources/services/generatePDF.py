@@ -16,13 +16,7 @@ from datetime import datetime
 from resources.services.programServices import *
 from flask_jwt_extended import jwt_required,get_jwt_identity
 
-def getTableDict(table):
-    table_elements=getTable(table)
-    products_dict={}
-    for el in table_elements:
-        products_dict[el["_id"]]=el
 
-    return products_dict
 def find_element_index(matrix, element):
     for i, row in enumerate(matrix):
         for j, value in enumerate(row):
