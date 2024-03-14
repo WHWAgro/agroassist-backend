@@ -198,7 +198,12 @@ class FieldBookFullApi(Resource):
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
         
+        processed_rows=[]
         for row in field_book_data:
+            if str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]) in processed_rows:
+             
+                continue
+            processed_rows.append(str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]))
             field_fb[str(row["f_id"])]["company"]=row["company_name"]
             field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
             field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
@@ -553,7 +558,12 @@ class FieldBookExportApi(Resource):
 
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
+        processed_rows=[]
         for row in field_book_data:
+            if str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]) in processed_rows:
+             
+                continue
+            processed_rows.append(str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]))
             field_fb[str(row["f_id"])]["company"]=row["company_name"]
             field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
             field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
