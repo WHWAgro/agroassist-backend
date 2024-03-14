@@ -190,6 +190,7 @@ def generateTaskOrder(body):
         moment_id=tasks[int(body["id_task"])]["id_moment"]
 
         wetting=moments[moment_id]["wetting"]
+        
         print(plots)
         for id_plot in body['id_plots']:
             print("init plot")
@@ -214,7 +215,7 @@ def generateTaskOrder(body):
         for item in data_list:
             sprayer_size=machinery[item["id_sprayer"]]["size"]
             
-
+        wetting=body['wetting']
         n_maquinadas=float(wetting/sprayer_size)
 
         section5_table_data = [
@@ -511,8 +512,9 @@ def generateTaskOrder(body):
         print("creando pdf")
         # Build the PDF document
         doc.build(pdf_content)
+        
 
-        new_task_order = TaskOrderClass( id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number)
+        new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number)
         db.session.add(new_task_order)
         db.session.commit()
         

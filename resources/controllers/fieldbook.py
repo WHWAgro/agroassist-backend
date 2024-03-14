@@ -35,6 +35,9 @@ class FieldBookApi(Resource):
         
         user_company=getUserCompanies(user_id)
         
+
+        
+        
         companies="( "
         for company in user_company:
             companies=companies+str(company["_id"])+","
@@ -44,9 +47,12 @@ class FieldBookApi(Resource):
         print("hola0")
         markets_format="( "
         for market in markets:
+            
             markets_format=markets_format+str(market)+","
         markets_format = markets_format[:-1]
         markets_format=markets_format+" )"
+        
+
         print(companies)
         print(markets_format)
         print("hola1")
@@ -110,7 +116,8 @@ class FieldBookFullApi(Resource):
         
         
         user_company=getUserCompanies(user_id)
-        
+        markets_dict=getTableDict("market")
+        markets_final=""
         companies="( "
         for company in user_company:
             companies=companies+str(company["_id"])+","
@@ -120,12 +127,21 @@ class FieldBookFullApi(Resource):
         print("hola0")
         markets_format="( "
         for market in markets:
+            markets_final=markets_final+str(markets_dict[int(market)]["market_name"])+","
             markets_format=markets_format+str(market)+","
+        print("hola0")
         markets_format = markets_format[:-1]
         markets_format=markets_format+" )"
+        markets_final = markets_final[:-1]
         print(companies)
         print(markets_format)
         print("hola1")
+
+        
+
+       
+    
+       
         
         ##programs=getProgramsMarketFilter(user_id,companies,markets_format)
 
@@ -181,6 +197,7 @@ class FieldBookFullApi(Resource):
 
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
+        
         for row in field_book_data:
             field_fb[str(row["f_id"])]["company"]=row["company_name"]
             field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
@@ -189,6 +206,10 @@ class FieldBookFullApi(Resource):
             dppus=ast.literal_eval(row["dosage_parts_per_unit"])
             dosages=ast.literal_eval(row["dosage"])
             date_start=row["date_start"].strftime("%d-%m-%Y")
+            date_end=row["date_end"].strftime("%d-%m-%Y")
+            application_date=row["application_date"].strftime("%d-%m-%Y")
+            out_of_cover_days=calculate_date_difference(row["date_end"],row["application_date"])
+            
             
             wetting=row["wetting"]
 
@@ -270,10 +291,13 @@ class FieldBookFullApi(Resource):
 
                 objective=objectives[product["id_objective"]]["objective_name"]
                 field_fb[str(row["f_id"])]["data"].append({"Objetivo":objective,
-                                                            "Nombre Producto":product_name,
-                                                            "Fecha":date_start,
+                                                            "Fecha Aplicacion":application_date,
+                                                            "Producto Comercial":product_name,
                                                             "Ingredientes Activos":active_ingredient,
-                                                            "Dosis/100L":dosage+unit})
+                                                            "Dosis/100L":dosage+unit,
+                                                            "Días fuera cobertura":out_of_cover_days,
+                                                            "Aplicacion en estado fenologico correcto":"Sí",
+                                                            "Aplicacion producto en programa ":"Sí"})
                 
                 
             
@@ -289,7 +313,7 @@ class FieldBookFullApi(Resource):
         doc_name = "files/fieldbooks/"+str(myuuid)+".xlsx"
 
         template_path = "files/fieldbooks/tmp_exp.xlsx"
-        wb = load_workbook(template_path)
+        wb = Workbook()
     
         # Access the active worksheet (assuming there's only one sheet)
         original_sheet = wb.active
@@ -323,23 +347,74 @@ class FieldBookFullApi(Resource):
 
             varieties=set(field_data["varieties"])
 
-
-            new_sheet.cell(row=start_row+1, column=2, value="Fecha: "+ date_string)
-            new_sheet.cell(row=start_row+2, column=2, value="Razón Social: "+field_data["company"])
-            new_sheet.cell(row=start_row+3, column=2, value="Variedades: "+', '.join(varieties))
-            new_sheet.cell(row=start_row+4, column=2, value="Código CSG: "+field_data["CSG_code"])
-            
             thick_border = Border(left=Side(style='medium'), 
                       right=Side(style='medium'), 
                       top=Side(style='medium'), 
                       bottom=Side(style='medium'))
+
+            cell=new_sheet.cell(row=start_row+1, column=1, value="Código SAG predio (CSG): ")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+1, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 1, start_column=1, end_row=start_row + 1, end_column=2)
+            cell=new_sheet.cell(row=start_row+1, column=3, value=field_data["CSG_code"])
+            cell.border = thick_border
+
+            cell=new_sheet.cell(row=start_row+2, column=1, value="Especie: ")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+2, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 2, start_column=1, end_row=start_row + 2, end_column=2)
+            cell=new_sheet.cell(row=start_row+2, column=3, value="Cereza")
+            cell.border = thick_border
+
+            cell=new_sheet.cell(row=start_row+3, column=1, value="Variedad: ")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+3, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 3, start_column=1, end_row=start_row + 3, end_column=2)
+            cell=new_sheet.cell(row=start_row+3, column=3, value=', '.join(varieties))
+            cell.border = thick_border
+
+            cell=new_sheet.cell(row=start_row+4, column=1, value="Región:")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+4, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 4, start_column=1, end_row=start_row + 4, end_column=2)
+            cell=new_sheet.cell(row=start_row+4, column=3, value="VI")
+            cell.border = thick_border
+
+            cell=new_sheet.cell(row=start_row+5, column=1, value="Comuna: ")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+5, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 5, start_column=1, end_row=start_row + 5, end_column=2)
+            cell=new_sheet.cell(row=start_row+5, column=3, value="Rancagua")
+            cell.border = thick_border
+            print('dfsfdsfdsf')
+            cell=new_sheet.cell(row=start_row+6, column=1, value="Paises a Exportar: ")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+6, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 6, start_column=1, end_row=start_row + 6, end_column=2)
+            print('dfsfdsfdsf')
+            cell=new_sheet.cell(row=start_row+6, column=3, value=markets_final)
+            cell.border = thick_border
+            print('dfsfdsfdsf2')
+            
+            
+
+            
+            
+            
+            
             light_border = Border( 
                       
                        
                       bottom=Side(style='thin'))
             rows = dataframe_to_rows(df)
-            row_n=start_row+7
-            for r_idx, row in enumerate(rows, start_row+6):  #starts at 3 as you want to skip the first 2 rows
+            row_n=start_row+9
+            for r_idx, row in enumerate(rows, start_row+8):  #starts at 3 as you want to skip the first 2 rows
                 row_n=row_n+1
                 for c_idx, value in enumerate(row, 1):
                     if c_idx==1:
@@ -351,7 +426,7 @@ class FieldBookFullApi(Resource):
                         cell.border = thick_border
             
 
-            new_sheet.cell(row=row_n+7, column=2, value="Nota: - Formato referencial")
+            
             
 
 
@@ -486,6 +561,7 @@ class FieldBookExportApi(Resource):
             dppus=ast.literal_eval(row["dosage_parts_per_unit"])
             dosages=ast.literal_eval(row["dosage"])
             date_start=row["date_start"].strftime("%d-%m-%Y")
+            application_date=row["application_date"].strftime("%d-%m-%Y")
             
             wetting=row["wetting"]
 
@@ -568,7 +644,7 @@ class FieldBookExportApi(Resource):
                 objective=objectives[product["id_objective"]]["objective_name"]
                 field_fb[str(row["f_id"])]["data"].append({"Objetivo":objective,
                                                             "Nombre Producto":product_name,
-                                                            "Fecha":date_start,
+                                                            "Fecha":application_date,
                                                             "Ingredientes Activos":active_ingredient,
                                                             "Dosis/100L":dosage+unit})
                 

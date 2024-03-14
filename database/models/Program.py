@@ -163,6 +163,8 @@ class TaskOrderClass(db.Model):
   id_task = db.Column(db.Integer, nullable=False)
   file_name=db.Column(db.String(100), nullable=True)
   order_number=db.Column(db.Integer, nullable=False)
+  wetting=db.Column(db.Integer, nullable=False)
+  application_date=db.Column(db.DateTime, server_default=db.func.now())
 
 class MachineryClass(db.Model):
 
