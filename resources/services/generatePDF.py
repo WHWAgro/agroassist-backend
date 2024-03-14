@@ -12,7 +12,7 @@ import jwt
 import time
 from sqlalchemy.orm import class_mapper
 import ast
-from datetime import datetime  
+from datetime import datetime  as daytime1
 from resources.services.programServices import *
 from flask_jwt_extended import jwt_required,get_jwt_identity
 
@@ -157,7 +157,7 @@ def generateTaskOrder(body):
         subtitle_style.textColor = colors.grey
         print('----------')
         
-        today_date = datetime.now().strftime("%Y-%m-%d")  # Example: "2023 September 04"
+        today_date = daytime1.now().strftime("%d-%m-%Y")  # Example: "2023 September 04"
         subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
         pdf_content.extend([ subtitle2, Spacer(1, 5)])
         print('----------')
@@ -576,7 +576,7 @@ def generatePurchaseOrder(body):
         subtitle_style.textColor = colors.grey
         print('----------')
         subtitle1 = Paragraph("Proveedor :"+body["provider_name"], subtitle_style)
-        today_date = datetime.now().strftime("%Y-%m-%d")  # Example: "2023 September 04"
+        today_date = daytime1.now().strftime("%d-%m-%Y")  # Example: "2023 September 04"
         subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
         pdf_content.extend([subtitle1, Spacer(1, 5), subtitle2, Spacer(1, 5)])
         print('----------')
@@ -721,7 +721,7 @@ def generateQuoterProducts(body):
         subtitle_style.alignment = 0  # Align left
         subtitle_style.textColor = colors.grey
         
-        today_date = datetime.now().strftime("%Y-%m-%d")  # Example: "2023 September 04"
+        today_date = daytime1.now().strftime("%d-%m-%Y")  # Example: "2023 September 04"
         subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
         pdf_content.extend([ subtitle2, Spacer(1, 5)])
         print('----------')
