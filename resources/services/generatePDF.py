@@ -258,7 +258,7 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data = [['Operador','Tractor','Rociador']]  # Start with the headers as the first row
+        table_data = [['Operador','Tractor','Nebulizador']]  # Start with the headers as the first row
 
         # Add the data rows
         workers=getTableDict("workers")

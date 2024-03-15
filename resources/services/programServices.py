@@ -155,6 +155,7 @@ def getPrograms(id_usuario,company_id):
                 left join program_companies as pc on p._id=pc.id_program
                 WHERE p.id_user = """+ str(id_usuario)+"""
                 or pc.id_company in """+ str(company_id)+"""
+                ORDER BY p._id DESC
 
                  
                 
@@ -1147,13 +1148,13 @@ def createQuoter(body,user_id):
         print(quoter._id)
         print("hola")
 
-        quote = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 1')
+        quote = QuoteClass( id_quoter=quoter._id,provider_name='Nombre Proveedor 1')
         db.session.add(quote)
-        quote2 = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 2')
+        quote2 = QuoteClass( id_quoter=quoter._id,provider_name='Nombre Proveedor 2')
         db.session.add(quote2)
-        quote3 = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 3')
+        quote3 = QuoteClass( id_quoter=quoter._id,provider_name='Nombre Proveedor 3')
         db.session.add(quote3)
-        quote4 = QuoteClass( id_quoter=quoter._id,provider_name='Ingresar Nombre Proveedor 4')
+        quote4 = QuoteClass( id_quoter=quoter._id,provider_name='Nombre Proveedor 4')
         db.session.add(quote4)
         db.session.commit()
         row_id=0
@@ -1186,6 +1187,12 @@ def createQuoter(body,user_id):
                     n_cluster_master[product['cluster_id'] ]=n_cluster_master[product['cluster_id'] ]+1
                     if  n_cluster_master[product['cluster_id'] ]>1:
                         product["cluster_master"]=False
+                
+                container_unit=2
+                if product['product_needed_unit_id']>4:
+                    container_unit=1
+                
+                
                 print(product['product_id'])
                 print(product['cluster_master'])
                 print(n_cluster_master[product['cluster_id'] ])
@@ -1196,13 +1203,13 @@ def createQuoter(body,user_id):
                                           valid_hectares=product['valid_hectares'])
                 db.session.add(quoter_product)
 
-                quote_row=QuoteRowClass(quote_id=quote._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
+                quote_row=QuoteRowClass(quote_id=quote._id,product_row_id=row_id,container_size=0,container_unit_id=container_unit,container_price_clp=0,checked=False)
                 db.session.add(quote_row)
-                quote_row=QuoteRowClass(quote_id=quote2._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
+                quote_row=QuoteRowClass(quote_id=quote2._id,product_row_id=row_id,container_size=0,container_unit_id=container_unit,container_price_clp=0,checked=False)
                 db.session.add(quote_row)
-                quote_row=QuoteRowClass(quote_id=quote3._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
+                quote_row=QuoteRowClass(quote_id=quote3._id,product_row_id=row_id,container_size=0,container_unit_id=container_unit,container_price_clp=0,checked=False)
                 db.session.add(quote_row)
-                quote_row=QuoteRowClass(quote_id=quote4._id,product_row_id=row_id,container_size=0,container_unit_id=product['product_needed_unit_id'],container_price_clp=0,checked=False)
+                quote_row=QuoteRowClass(quote_id=quote4._id,product_row_id=row_id,container_size=0,container_unit_id=container_unit,container_price_clp=0,checked=False)
                 db.session.add(quote_row)
                 
                 
@@ -1337,6 +1344,7 @@ def getQuoters(id_usuario):
         query="""SELECT *
                 from quoter
                 WHERE id_user = """+ str(id_usuario)+"""
+                ORDER BY _id DESC
                 
              """
         

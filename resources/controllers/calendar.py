@@ -305,45 +305,45 @@ class WeatherApi(Resource):
         
            
            {
-            "date": '2024-03-14',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '7', "max": '29' },
-            "wind": "9",
-            "humidity": "0"
-          },
-          {
             "date": '2024-03-15',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '7', "max": '29' },
-            "wind": "9",
-            "humidity": "0"
-          },
-           {
-            "date": '2024-03-16',
             "description": 'Soleado',
             "icon":'sunny',
             "temperature": { "min": '8', "max": '28' },
             "wind": "9",
             "humidity": "0"
-          } ,
+          },
           {
-            
-            "date": '2024-03-17',
+            "date": '2024-03-16',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '8', "max": '29' },
+            "temperature": { "min": '8', "max": '28' },
             "wind": "9",
             "humidity": "1"
           },
            {
-            "date": '2024-03-18',
-            "description": 'Nublado',
-            "icon": 'cloudy',
-            "temperature": { "min": '10', "max": '30' },
+            "date": '2024-03-17',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '7', "max": '30' },
             "wind": "9",
             "humidity": "1"
+          } ,
+          {
+            
+            "date": '2024-03-18',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '9', "max": '30' },
+            "wind": "9",
+            "humidity": "1"
+          },
+           {
+            "date": '2024-03-19',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '10', "max": '29' },
+            "wind": "13",
+            "humidity": "7"
           }
         
           
