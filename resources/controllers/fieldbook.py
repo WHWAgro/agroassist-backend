@@ -193,7 +193,7 @@ class FieldBookFullApi(Resource):
         field_fb={
         }
         for field in fields:
-            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","varieties":[]}
+            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","location":"","varieties":[]}
 
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
@@ -206,6 +206,8 @@ class FieldBookFullApi(Resource):
             processed_rows.append(str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]))
             field_fb[str(row["f_id"])]["company"]=row["company_name"]
             field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
+            field_fb[str(row["f_id"])]["location"]=row["locat"]
+            
             field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
             products_id=ast.literal_eval(row["id_product"])
             dppus=ast.literal_eval(row["dosage_parts_per_unit"])
@@ -394,7 +396,7 @@ class FieldBookFullApi(Resource):
             cell=new_sheet.cell(row=start_row+5, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 5, start_column=1, end_row=start_row + 5, end_column=2)
-            cell=new_sheet.cell(row=start_row+5, column=3, value="Rancagua")
+            cell=new_sheet.cell(row=start_row+5, column=3, value=field_data["location"])
             cell.border = thick_border
             print('dfsfdsfdsf')
             cell=new_sheet.cell(row=start_row+6, column=1, value="Paises a Exportar: ")
@@ -554,7 +556,7 @@ class FieldBookExportApi(Resource):
         field_fb={
         }
         for field in fields:
-            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","varieties":[]}
+            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","location":"","varieties":[]}
 
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
@@ -566,6 +568,7 @@ class FieldBookExportApi(Resource):
             processed_rows.append(str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]))
             field_fb[str(row["f_id"])]["company"]=row["company_name"]
             field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
+            field_fb[str(row["f_id"])]["location"]=row["location"]
             field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
             products_id=ast.literal_eval(row["id_product"])
             dppus=ast.literal_eval(row["dosage_parts_per_unit"])

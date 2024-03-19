@@ -517,7 +517,7 @@ def getFieldBookData(fields):
     try:
         
         
-        query_tasks="""SELECT com.company_name,ta._id,ta.date_start,ta.date_end,field._id as f_id,field.sag_code,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, task_orders.application_date
+        query_tasks="""SELECT com.company_name,ta._id,ta.date_start,ta.date_end,field._id as f_id,field.sag_code,field.location as locat,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, task_orders.application_date
 FROM public.tasks ta
 left join program_tasks as pt on pt._id=ta.id_moment
 left join programs as p on p._id = pt.id_program
@@ -535,6 +535,7 @@ SELECT *
 FROM ranked_tasks
 WHERE rn = 1) as task_orders on task_orders.id_task =ta._id 
 where ta.id_status=2
+and task_orders.application_date is not null
 and field._id in """+ str(fields)+"""
              """
         rows_tasks=[]
