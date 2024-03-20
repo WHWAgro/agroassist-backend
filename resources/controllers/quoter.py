@@ -167,7 +167,7 @@ class QuoterInitApi(Resource):
 
       data={}
       data["hectares"]=total_hectares
-      data["usd2clp"]=945.11
+      data["usd2clp"]=962.06
       data["clp2usd"]=0.0011
       data["products"]=final_list
 
@@ -343,7 +343,7 @@ class QuoterApi(Resource):
       
       data={}
      
-      data["usd2clp"]=945.11
+      data["usd2clp"]=962.06
       data["clp2usd"]=0.0011
 
       

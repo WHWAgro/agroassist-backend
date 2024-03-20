@@ -340,6 +340,17 @@ class FieldBookFullApi(Resource):
             
 
             field_data=field_fb[field_id]
+            if len(field_data["data"])==0:
+
+                field_data["data"].append({"Objetivo":"No hay ODAs Completadas",
+                                                            "Fecha Aplicacion":"",
+                                                            "Producto Comercial":"",
+                                                            "Ingredientes Activos":"",
+                                                            "Dosis/100L":"",
+                                                            "Días fuera cobertura":"",
+                                                            "Aplicacion en estado fenologico correcto":"",
+                                                            "Aplicacion producto en programa ":""})
+
             df=pd.DataFrame(field_data["data"])
             new_sheet = wb.copy_worksheet(original_sheet)
             new_sheet.title = f'Datos {field_data["CSG_code"]}' 
@@ -697,6 +708,13 @@ class FieldBookExportApi(Resource):
             
 
             field_data=field_fb[field_id]
+            if len(field_data["data"])==0:
+
+                field_data["data"].append({"Objetivo":"No hay ODAs Completadas",
+                                                            "Nombre Producto":"",
+                                                            "Fecha":"",
+                                                            "Ingredientes Activos":"",
+                                                            "Dosis/100L":""})
             df=pd.DataFrame(field_data["data"])
             new_sheet = wb.copy_worksheet(original_sheet)
             new_sheet.title = f'Datos {field_data["CSG_code"]}' 
@@ -729,7 +747,7 @@ class FieldBookExportApi(Resource):
                       bottom=Side(style='thin'))
             rows = dataframe_to_rows(df)
             row_n=start_row+7
-            for r_idx, row in enumerate(rows, start_row+6):  #starts at 3 as you want to skip the first 2 rows
+            for r_idx, row in enumerate(rows, start_row+6):  
                 row_n=row_n+1
                 for c_idx, value in enumerate(row, 1):
                     if c_idx==1:
