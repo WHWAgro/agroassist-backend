@@ -113,7 +113,7 @@ def generateTaskOrder(body):
 
     try:
         print("Generando PDF $$$$$$$$$$$$$$$$$$$$$$$$")
-        print(1)
+        #print(1)
         # Create a PDF document
         user_id =  get_jwt_identity()
         
@@ -130,12 +130,12 @@ def generateTaskOrder(body):
         order_number=1
 
         company_task_orders = getCompanyTaskOrders(1)
-        print(2)
+        #print(2)
         if len(company_task_orders)>0:
            order_number = company_task_orders[0]['order_number']+1
         
         #-----------------------pdf begins here-------------------
-        print('----------')
+        #print('----------')
         # Create a list to hold the content of the PDF
         pdf_content = []
 
@@ -150,17 +150,17 @@ def generateTaskOrder(body):
         title_style.alignment = 0 
         title = Paragraph("Orden de Aplicación Nº "+str(order_number), title_style)
         pdf_content.append(title)
-        print('----------')
+        #print('----------')
         # Section 2: Subtitles (aligned to the left and in gray)
         subtitle_style = getSampleStyleSheet()["Normal"]
         subtitle_style.alignment = 0  # Align left
         subtitle_style.textColor = colors.grey
-        print('----------')
+        #print('----------')
         
         today_date = daytime1.now().strftime("%d-%m-%Y")  # Example: "2023 September 04"
         subtitle2 = Paragraph(f"Fecha emisión: {today_date}", subtitle_style)
         pdf_content.extend([ subtitle2, Spacer(1, 5)])
-        print('----------')
+        #print('----------')
         pdf_content.append(Spacer(1,10))      
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
@@ -171,7 +171,7 @@ def generateTaskOrder(body):
 
         companies=getUserCompanies(user_id)
         empresa_data = companies[0]["company_name"]
-        print('----------1')
+       # print('----------1')
         fields=getTableDict("field")
         campo_data = fields[body['id_field']]["field_name"]
 
@@ -180,7 +180,7 @@ def generateTaskOrder(body):
         plots=getTableDict("plots")
         plots_names = ''
         total_plot_size=0
-        print('----------2')
+       # print('----------2')
         ##tablas
         objectives=getTableDict("objectives")
         products=getTableDict("products")
@@ -191,7 +191,7 @@ def generateTaskOrder(body):
 
         wetting=moments[moment_id]["wetting"]
         
-        print(plots)
+        #print(plots)
         for id_plot in body['id_plots']:
             print("init plot")
             print(id_plot)
@@ -205,11 +205,11 @@ def generateTaskOrder(body):
             print("hola")
             plots_names=plots_names[1:]   
         total_hectareas_data = total_plot_size
-        print('----------3')
+       # print('----------3')
         # Create a table with two columns
 
         machinery=getTableDict("machinery")
-        print('machinery///////////1')
+       # print('machinery///////////1')
         sprayer_size=1
         data_list = body['asignees']
         for item in data_list:
@@ -223,13 +223,13 @@ def generateTaskOrder(body):
             [" ","Campo:", campo_data, " ","Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.')],
             [" ",'Mojamieto',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.')]
         ]
-        print('----------4')
+        #print('----------4')
 
         section5_table = Table(section5_table_data, colWidths=[40,80, 150,70 ,80, 150])
         section5_table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'LEFT'),
                                         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica')])
         section5_table.setStyle(section5_table_style)
-        print('----------5')
+       # print('----------5')
         pdf_content.append( section5_table)
         pdf_content.append(Spacer(1,10))
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
@@ -241,9 +241,12 @@ def generateTaskOrder(body):
             ["Fecha de aplicacion:", application_date, "Cuarteles:", plots_names]
             
         ]
-        print('hola-1')
+        print(section3_table_data)
+        wrapped_row1 = [[create_wrapped_paragraph(cell) for cell in section3_table_data[0]]]
+        
+        #print('hola-1')
 
-        section3_table = Table(section3_table_data, colWidths=[100, 150, 100, 150])
+        section3_table = Table(wrapped_row1, colWidths=[150, 150, 100, 150])
         section3_table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'LEFT'),
                                         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica')])
         section3_table.setStyle(section3_table_style)
@@ -263,7 +266,7 @@ def generateTaskOrder(body):
         # Add the data rows
         workers=getTableDict("workers")
         machinery=getTableDict("machinery")
-        print('machinery///////////')
+        #print('machinery///////////')
         sprayer_size=1
         for item in data_list:
             row_data = [workers[item["id_operator"]]["name"],machinery[item["id_tractor"]]["name"],machinery[item["id_sprayer"]]["name"]]
@@ -290,7 +293,7 @@ def generateTaskOrder(body):
 
 
         #----productos-----
-        print('hola0')
+        #print('hola0')
         pdf_content.append(Spacer(1,10))
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
@@ -298,7 +301,7 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data2 = [[" ",'Producto',"Compuesto Activo",'Objetivo','Dosis x Há','Dosis','Total Producto','cantidad \n x maquinada']] # Start with the headers as the first row
+        table_data2 = [[" ",'Producto',"Compuesto Activo",'Objetivo','Dosis x Há','Dosis','Total Producto','cantidad \n x maquinada \n completa']] # Start with the headers as the first row
 
         print('hola-productos')
         # Add the data rows
@@ -334,34 +337,40 @@ def generateTaskOrder(body):
 
             unit_hectare=""
             dosage_hectare=0
-            print('producto///////////////')
-            print(dosage_unit)
-            print(dosage)
+            
+            #print(dosage_unit)
+            #print(dosage)
 
             if dosage_unit == 1:
-                print(" 1")
+                #print(" 1")
                 unit=" gr"
                 unit_dosage="gr/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
+                if total_product>1000:
+                    total_product=total_product/1000
+                    unit=" Kg"
                 unit_hectare="gr/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 2:
-                print(" 2")
+                #print(" 2")
                 unit=" Kg"
                 unit_dosage="Kg/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
                 unit_hectare="Kg/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 3:
-                print(" 3")
+                #print(" 3")
                 unit=" gr"
                 unit_dosage="gr/100L"
                 total_product=dosage*total_hectareas_data
+                if total_product>1000:
+                    total_product=total_product/1000
+                    unit=" Kg"
                 unit_hectare="gr/Há"
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 4:
-                print(" 4")
+               # print(" 4")
                 unit=" Kg"
                 unit_dosage="Kg/100L"
                 total_product=dosage*total_hectareas_data
@@ -370,51 +379,60 @@ def generateTaskOrder(body):
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             if dosage_unit == 5:
-                print(" 5")
+               # print(" 5")
                 unit=" cc"
                 unit_dosage="cc/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
+                if total_product>1000:
+                    total_product=total_product/1000
+                    unit=" L"
                 unit_hectare="cc/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 6:
-                print(" 6")
+                #print(" 6")
                 unit=" L"
                 unit_dosage="L/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
                 unit_hectare="L/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 7:
-                print(" 7")
+               #print(" 7")
                 unit=" cc"
                 unit_dosage="cc/100L"
                 total_product=dosage*total_hectareas_data
+                if total_product>1000:
+                    total_product=total_product/1000
+                    unit=" L"
                 
                 unit_hectare="cc/Há"
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 8:
-                print(" 8")
+                #print(" 8")
                 unit=" L"
                 unit_dosage="L/100L"
                 total_product=dosage*total_hectareas_data
                 unit_hectare="L/Há"
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
-            print("cuartel 1")
+            #print("cuartel 1")
             hola='{:,.2f}'.format(total_product).replace(',','*').replace('.', ',').replace('*','.')
             dosage='{:,.2f}'.format(float(dosage)).replace(',','*').replace('.', ',').replace('*','.')
-            print("cuartel 2")
+            #print("cuartel 2")
             dosage_hectare='{:,.2f}'.format(float(dosage_hectare)).replace(',','*').replace('.', ',').replace('*','.')
-            print("cuartel 3")
+            #print("cuartel 3")
             totalXmaquinada='{:,.2f}'.format(float(total_product/n_maquinadas)).replace(',','*').replace('.', ',').replace('*','.')
             
-            print('----------product')
+            #print('----------product')
             phi_list.append(products[item["id_product"]]["phi"])
             
             reentry_period_list.append(products[item["id_product"]]["reentry_period"])
             row_data = [" ",products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage_hectare)+unit_hectare,str(dosage)+unit_dosage,hola+unit,totalXmaquinada+unit]
+            print('producto///////////////')
+            print(row_data)
             
             wrapped_row = [create_wrapped_paragraph(cell) for cell in row_data]
+            #print(wrapped_row)
            
 
             table_data2.append(wrapped_row)
