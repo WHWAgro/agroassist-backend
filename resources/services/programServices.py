@@ -165,10 +165,10 @@ def getPrograms(id_usuario,company_id):
         rows=[]
         with db.engine.begin() as conn:
             result = conn.execute(text(query)).fetchall()
-            print(result)
+            
             for row in result:
                 row_as_dict = row._mapping
-                print(row_as_dict)
+                
                 rows.append(dict(row_as_dict))
             return rows
 

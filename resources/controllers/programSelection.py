@@ -90,6 +90,17 @@ class ProgramApi(Resource):
     
       data["assigned_companies"]=list(filter(None,set(companies_ids)))
 
+      data["editable"]=False
+      user_id =  get_jwt_identity()
+     
+      user_programs=getPrograms(user_id,"(0)")
+      
+      for prog in user_programs:
+        
+        if '_id' in prog and str(prog['_id'])==str(program_id):
+          data["editable"]=True
+
+
 
 
 
