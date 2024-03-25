@@ -59,13 +59,18 @@ class QuoterInitApi(Resource):
         program_hectares=0
 
         print("######$$$$#####new program")
-        print(program)
+        
         k_filter1 = "id_program"
         v_match1 = int(program)
 
        
-
-        filtered_data = {key: value for key, value in plots.items() if (str(value.get(k_filter1)) == str(v_match1) )}
+        user_plots=getUserPlots(user_id)
+        
+        
+        
+        filtered_data = {value["_id"]:value  for  value in user_plots if (str(value.get(k_filter1)) == str(v_match1) )}
+        
+        
         
         for key,value in filtered_data.items():
           total_hectares=total_hectares+value["size"]
@@ -167,7 +172,7 @@ class QuoterInitApi(Resource):
 
       data={}
       data["hectares"]=total_hectares
-      data["usd2clp"]=971.54
+      data["usd2clp"]=980.24	
       data["clp2usd"]=0.0011
       data["products"]=final_list
 
@@ -343,7 +348,7 @@ class QuoterApi(Resource):
       
       data={}
      
-      data["usd2clp"]=971.54
+      data["usd2clp"]=980.24	
       data["clp2usd"]=0.0011
 
       

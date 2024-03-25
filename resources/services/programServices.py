@@ -89,7 +89,7 @@ def getUserCompanies(user):
                     left join company as c
                     on c._id=uc.company_id
                 where uc.user_id ="""+str(user)+"""
-                order by uc._id
+                order by uc._id asc
              """
         
 
@@ -265,10 +265,11 @@ def getProgramDetails(id_usuario,id_programa):
     
     try:
         
-        query="""SELECT p._id as _id,id_species,id_user,program_name,species_name,market_id,published,updated_at FROM programs as p
+        query="""SELECT p._id as _id,id_species,id_user,user_name,program_name,species_name,market_id,published,updated_at FROM programs as p
                 left join species as s on p.id_species= s._id
                 left join market_program as mp on p._id=mp.program_id
                 left join market as m on m._id=mp.market_id
+                left join  users on p.id_user= users._id
                 
                 WHERE p._id = """+ str(id_programa)+"""
                 
@@ -683,12 +684,63 @@ def getTask(id_task):
         print(e)
         return False
     
+def getUserPlots(user_id):
+    try:
+
+
+        companies=getUserCompanies(user_id)
+        print(companies)
+        if len(companies)==0:
+            return False
+        company=companies[0]['_id']
+
+        query_tasks="""SELECT pt.*
+                FROM plots as pt
+                left join field as fi  on pt.id_field=fi._id
+                
+                where fi.company_id = """+ str(company)+"""
+                
+             """
+        
+        
+        
+        rows_plots=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_plots.append(dict(row_as_dict))
+        
+        
+        return rows_plots
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def createProgram(program_name,id_user,species):
     
     try:
+
+        
+        companies=getUserCompanies(id_user)
+        print(companies)
+        if len(companies)==0:
+            return False
+        company=companies[0]['_id']
         
         program = ProgramClass( program_name=program_name, id_user = id_user,id_species = species,published=False)
+       
+        
         db.session.add(program)
+        db.session.commit()
+
+        program_company=ProgramCompaniesClass(id_program=program._id, id_company=company)
+        db.session.add(program_company)
         db.session.commit()
         return program._id
     

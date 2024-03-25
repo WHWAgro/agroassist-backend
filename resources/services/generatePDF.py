@@ -216,7 +216,7 @@ def generateTaskOrder(body):
             sprayer_size=machinery[item["id_sprayer"]]["size"]
             
         wetting=body['wetting']
-        n_maquinadas=float(wetting/sprayer_size)
+        n_maquinadas=float(total_hectareas_data*(wetting/sprayer_size))
 
         section5_table_data = [
             [" ","Empresa:", empresa_data, " ","Cultivo:", cultivo_data],
