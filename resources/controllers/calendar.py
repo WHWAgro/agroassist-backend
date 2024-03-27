@@ -306,17 +306,6 @@ class WeatherApi(Resource):
            
           
           
-            
-         
-         
-          {
-            "date": '2024-03-26',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '12', "max": '28' },
-            "wind": "9",
-            "humidity": "2"
-          },
            {
             
             "date": '2024-03-27',
@@ -330,7 +319,7 @@ class WeatherApi(Resource):
             "date": '2024-03-28',
             "description": 'Soleado',
             "icon": 'sunny',
-            "temperature": { "min": '11', "max": '30' },
+            "temperature": { "min": '11', "max": '29' },
             "wind": "9",
             "humidity": "1"
           },
@@ -338,7 +327,7 @@ class WeatherApi(Resource):
             "date": '2024-03-29',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '10', "max": '29' },
+            "temperature": { "min": '11', "max": '29' },
             "wind": "7",
             "humidity": "1"
           },
@@ -346,9 +335,17 @@ class WeatherApi(Resource):
             "date": '2024-03-30',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '9', "max": '28' },
+            "temperature": { "min": '10', "max": '29' },
             "wind": "9",
             "humidity": "4"
+          },
+          {
+            "date": '2024-03-31',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '8', "max": '27' },
+            "wind": "9",
+            "humidity": "3"
           }
         
           
