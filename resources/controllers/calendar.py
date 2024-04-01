@@ -308,45 +308,45 @@ class WeatherApi(Resource):
           
            
            {
-            "date": '2024-03-28',
+            "date": '2024-04-01',
             "description": 'Soleado',
             "icon": 'sunny',
-            "temperature": { "min": '11', "max": '29' },
-            "wind": "9",
-            "humidity": "0"
+            "temperature": { "min": '8', "max": '25' },
+            "wind": "7",
+            "humidity": "9"
           },
            {
-            "date": '2024-03-29',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '11', "max": '29' },
-            "wind": "9",
-            "humidity": "1"
-          },
-           {
-            "date": '2024-03-30',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '11', "max": '30' },
-            "wind": "9",
-            "humidity": "1"
-          },
-          {
-            "date": '2024-03-31',
+            "date": '2024-04-02',
             "description": 'Nublado',
             "icon":'cloudy',
-            "temperature": { "min": '9', "max": '27' },
-            "wind": "9",
-            "humidity": "6"
+            "temperature": { "min": '9', "max": '24' },
+            "wind": "7",
+            "humidity": "19"
+          },
+           {
+            "date": '2024-04-03',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '7', "max": '23' },
+            "wind": "7",
+            "humidity": "25"
+          },
+          {
+            "date": '2024-04-04',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '8', "max": '25' },
+            "wind": "7",
+            "humidity": "1"
           },
           {
             
-            "date": '2024-04-01',
+            "date": '2024-04-05',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '9', "max": '25' },
+            "temperature": { "min": '7', "max": '27' },
             "wind": "7",
-            "humidity": "12"
+            "humidity": "1"
           }
         
           
