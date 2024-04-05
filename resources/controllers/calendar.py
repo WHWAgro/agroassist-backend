@@ -307,36 +307,13 @@ class WeatherApi(Resource):
           
           
            
-           {
-            "date": '2024-04-02',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '8', "max": '21' },
-            "wind": "7",
-            "humidity": "19"
-          },
-           {
-            "date": '2024-04-03',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '8', "max": '22' },
-            "wind": "7",
-            "humidity": "25"
-          },
-          {
-            "date": '2024-04-04',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '8', "max": '25' },
-            "wind": "7",
-            "humidity": "1"
-          },
+         
           {
             
             "date": '2024-04-05',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '8', "max": '27' },
+            "temperature": { "min": '7', "max": '27' },
             "wind": "7",
             "humidity": "1"
           },
@@ -344,8 +321,32 @@ class WeatherApi(Resource):
             "date": '2024-04-06',
             "description": 'Soleado',
             "icon": 'sunny',
-            "temperature": { "min": '6', "max": '25' },
+            "temperature": { "min": '7', "max": '25' },
             "wind": "9",
+            "humidity": "1"
+          },
+            {
+            "date": '2024-04-07',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '8', "max": '26' },
+            "wind": "7",
+            "humidity": "0"
+          },
+           {
+            "date": '2024-04-08',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '8', "max": '25' },
+            "wind": "8",
+            "humidity": "1"
+          },
+          {
+            "date": '2024-04-09',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '10', "max": '26' },
+            "wind": "7",
             "humidity": "1"
           }
         
