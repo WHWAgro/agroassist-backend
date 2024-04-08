@@ -308,38 +308,14 @@ class WeatherApi(Resource):
           
            
          
-          {
-            
-            "date": '2024-04-05',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '7', "max": '27' },
-            "wind": "7",
-            "humidity": "1"
-          },
-           {
-            "date": '2024-04-06',
-            "description": 'Soleado',
-            "icon": 'sunny',
-            "temperature": { "min": '7', "max": '25' },
-            "wind": "9",
-            "humidity": "1"
-          },
-            {
-            "date": '2024-04-07',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '8', "max": '26' },
-            "wind": "7",
-            "humidity": "0"
-          },
+         
            {
             "date": '2024-04-08',
-            "description": 'Nublado',
-            "icon":'cloudy',
+            "description": 'Soleado',
+            "icon":'sunny',
             "temperature": { "min": '8', "max": '25' },
-            "wind": "8",
-            "humidity": "1"
+            "wind": "9",
+            "humidity": "2"
           },
           {
             "date": '2024-04-09',
@@ -348,6 +324,31 @@ class WeatherApi(Resource):
             "temperature": { "min": '10', "max": '26' },
             "wind": "7",
             "humidity": "1"
+          },
+           {
+            
+            "date": '2024-04-10',
+            "description": 'Nublado',
+            "icon":'cloudy',
+            "temperature": { "min": '7', "max": '25' },
+            "wind": "7",
+            "humidity": "10"
+          },
+           {
+            "date": '2024-04-11',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '8', "max": '22' },
+            "wind": "7",
+            "humidity": "5"
+          },
+            {
+            "date": '2024-04-12',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '9', "max": '23' },
+            "wind": "7",
+            "humidity": "15"
           }
         
           
