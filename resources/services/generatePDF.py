@@ -342,7 +342,7 @@ def generateTaskOrder(body):
             #print(dosage)
 
             if dosage_unit == 1:
-                #print(" 1")
+                print(" 1")
                 unit=" gr"
                 unit_dosage="gr/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
@@ -352,14 +352,14 @@ def generateTaskOrder(body):
                 unit_hectare="gr/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 2:
-                #print(" 2")
+                print(" 2")
                 unit=" Kg"
                 unit_dosage="Kg/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
                 unit_hectare="Kg/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 3:
-                #print(" 3")
+                print(" 3")
                 unit=" gr"
                 unit_dosage="gr/100L"
                 total_product=dosage*total_hectareas_data
@@ -370,7 +370,7 @@ def generateTaskOrder(body):
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 4:
-               # print(" 4")
+                print(" 4")
                 unit=" Kg"
                 unit_dosage="Kg/100L"
                 total_product=dosage*total_hectareas_data
@@ -379,7 +379,7 @@ def generateTaskOrder(body):
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             if dosage_unit == 5:
-               # print(" 5")
+                print(" 5")
                 unit=" cc"
                 unit_dosage="cc/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
@@ -389,14 +389,14 @@ def generateTaskOrder(body):
                 unit_hectare="cc/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 6:
-                #print(" 6")
+                print(" 6")
                 unit=" L"
                 unit_dosage="L/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
                 unit_hectare="L/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 7:
-               #print(" 7")
+                print(" 7")
                 unit=" cc"
                 unit_dosage="cc/100L"
                 total_product=dosage*total_hectareas_data
@@ -408,22 +408,22 @@ def generateTaskOrder(body):
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             elif dosage_unit == 8:
-                #print(" 8")
+                print(" 8")
                 unit=" L"
                 unit_dosage="L/100L"
                 total_product=dosage*total_hectareas_data
                 unit_hectare="L/Há"
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
-            #print("cuartel 1")
+            print("cuartel 1")
             hola='{:,.2f}'.format(total_product).replace(',','*').replace('.', ',').replace('*','.')
             dosage='{:,.2f}'.format(float(dosage)).replace(',','*').replace('.', ',').replace('*','.')
-            #print("cuartel 2")
+            print("cuartel 2")
             dosage_hectare='{:,.2f}'.format(float(dosage_hectare)).replace(',','*').replace('.', ',').replace('*','.')
-            #print("cuartel 3")
+            print("cuartel 3")
             totalXmaquinada='{:,.2f}'.format(float(total_product/n_maquinadas)).replace(',','*').replace('.', ',').replace('*','.')
             
-            #print('----------product')
+            print('----------product')
             phi_list.append(products[item["id_product"]]["phi"])
             
             reentry_period_list.append(products[item["id_product"]]["reentry_period"])
@@ -432,7 +432,7 @@ def generateTaskOrder(body):
             print(row_data)
             
             wrapped_row = [create_wrapped_paragraph(cell) for cell in row_data]
-            #print(wrapped_row)
+            print("fin")
            
 
             table_data2.append(wrapped_row)
