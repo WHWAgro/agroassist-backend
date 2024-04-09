@@ -346,6 +346,7 @@ def generateTaskOrder(body):
             print(type(wetting))
             print(total_hectareas_data)
             print(type(total_hectareas_data))
+            dosage=float(dosage)
 
             if dosage_unit == 1:
                 print(" 1")
