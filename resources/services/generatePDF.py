@@ -338,8 +338,14 @@ def generateTaskOrder(body):
             unit_hectare=""
             dosage_hectare=0
             
-            #print(dosage_unit)
-            #print(dosage)
+            print(dosage_unit)
+            print(type(dosage_unit))
+            print(dosage)
+            print(type(dosage))
+            print(wetting)
+            print(type(wetting))
+            print(total_hectareas_data)
+            print(type(total_hectareas_data))
 
             if dosage_unit == 1:
                 print(" 1")
