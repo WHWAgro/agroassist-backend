@@ -227,7 +227,7 @@ class FieldBookFullApi(Resource):
                 product=products[product_id]
                 product_name=product["product_name"]
                 active_ingredient=product["chemical_compounds"]
-                dosage=dosages[i][0]
+                dosage=float(dosages[i][0])
                 dosage_unit=dppus[i][0]
                 unit_dosage=""
                 
@@ -598,7 +598,7 @@ class FieldBookExportApi(Resource):
                 product=products[product_id]
                 product_name=product["product_name"]
                 active_ingredient=product["chemical_compounds"]
-                dosage=dosages[i][0]
+                dosage=float(dosages[i][0])
                 dosage_unit=dppus[i][0]
                 unit_dosage=""
                 
