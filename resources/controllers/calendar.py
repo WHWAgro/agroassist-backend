@@ -306,49 +306,46 @@ class WeatherApi(Resource):
            
           
           
-           
-         
-         
-           {
-            "date": '2024-04-08',
-            "description": 'Soleado',
-            "icon":'sunny',
-            "temperature": { "min": '8', "max": '25' },
-            "wind": "9",
-            "humidity": "2"
-          },
           {
             "date": '2024-04-09',
             "description": 'Soleado',
             "icon":'sunny',
             "temperature": { "min": '10', "max": '26' },
             "wind": "7",
-            "humidity": "1"
+            "humidity": "2"
           },
            {
             
             "date": '2024-04-10',
-            "description": 'Nublado',
-            "icon":'cloudy',
-            "temperature": { "min": '7', "max": '25' },
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '6', "max": '25' },
             "wind": "7",
-            "humidity": "10"
+            "humidity": "11"
           },
            {
             "date": '2024-04-11',
-            "description": 'Soleado',
-            "icon": 'sunny',
+            "description": 'Nublado',
+            "icon": 'cloudy',
             "temperature": { "min": '8', "max": '22' },
-            "wind": "7",
-            "humidity": "5"
+            "wind": "6",
+            "humidity": "8"
           },
             {
             "date": '2024-04-12',
             "description": 'Soleado',
             "icon":'sunny',
-            "temperature": { "min": '9', "max": '23' },
+            "temperature": { "min": '8', "max": '21' },
             "wind": "7",
-            "humidity": "15"
+            "humidity": "21"
+          },
+          {
+            "date": '2024-04-13',
+            "description": 'Soleado',
+            "icon":'sunny',
+            "temperature": { "min": '10', "max": '22' },
+            "wind": "7",
+            "humidity": "55"
           }
         
           
