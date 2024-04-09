@@ -97,7 +97,7 @@ class QuoterInitApi(Resource):
                     products_list[str(product)]["n_applications"]=products_list[str(product)]["n_applications"]+1
                 else:
                     products_ids.append(product)
-                    products_list[str(product)]={"valid_hectares":program_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":dosages[i],"product_needed_unit":dosages_unit[i]}
+                    products_list[str(product)]={"valid_hectares":program_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":float(dosages[i]),"product_needed_unit":dosages_unit[i]}
                     products_list[str(product)]["n_applications"]=1
             
             
