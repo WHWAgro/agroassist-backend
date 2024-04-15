@@ -13,6 +13,39 @@ from datetime import timedelta
 
 auth = HTTPBasicAuth()
 
+
+
+class WeatherLocationsClass(db.Model):
+
+  __tablename__ = 'weather_locations'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  location_key = db.Column(db.Integer, nullable=False)
+  location_long=db.Column(db.String(50), nullable=False)
+  location_lat=db.Column(db.String(50), nullable=False)
+
+class FieldWeatherLocationsAssignClass(db.Model):
+
+  __tablename__ = 'field_weather_location_assign'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  field_id = db.Column(db.Integer, nullable=False)
+  weather_locations_id = db.Column(db.Integer, nullable=False)
+  
+class WeatherDayClass(db.Model):
+
+  __tablename__ = 'weather_day'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  field_id = db.Column(db.Integer, nullable=False)
+  weather_locations_id = db.Column(db.Integer, nullable=False)
+  date=db.Column(db.String(75), nullable=False)
+  description=db.Column(db.String(150), nullable=False)
+  icon = db.Column(db.Integer, nullable=False)
+  temperature_min = db.Column(db.Integer, nullable=False)
+  temperature_max = db.Column(db.Integer, nullable=False)
+  wind = db.Column(db.Integer, nullable=False)
+  humidity = db.Column(db.Integer, nullable=False)
+  
+  
+
 class ProgramClass(db.Model):
 
   __tablename__ = 'programs'

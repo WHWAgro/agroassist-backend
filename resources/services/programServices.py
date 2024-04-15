@@ -1,5 +1,5 @@
 import json
-from database.models.Program import QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -857,7 +857,9 @@ def createField(body):
 
 
         db.session.commit()
-        
+        weather_locaction_assign=FieldWeatherLocationsAssignClass(field_id=field._id,weather_locations_id=1)
+        db.session.add(weather_locaction_assign)
+        db.session.commit()
        
         return field._id
     except Exception as e:
@@ -1414,6 +1416,28 @@ def getQuoters(id_usuario):
     except Exception as e:
         print(e)
         return False
+    
+def getFieldForecast(field):
+
+    query="""SELECT wd.*
+                from field
+                left join field_weather_location_assign as fw on fw.field_id=field._id
+                left join weather_day as wd on fw.weather_locations_id = wd.weather_locations_id
+                WHERE field._id = """+ str(field)+"""
+                and TO_DATE(date, 'YYYY-MM-DD')>=CURRENT_DATE
+                order by date asc
+             """
+        
+        
+    rows=[]
+    with db.engine.begin() as conn:
+        result = conn.execute(text(query)).fetchall()
+        print(result)
+        for row in result:
+            row_as_dict = row._mapping
+            rows.append(dict(row_as_dict))
+        return rows
+
     
 def getCompanyFromField(id_field):
 

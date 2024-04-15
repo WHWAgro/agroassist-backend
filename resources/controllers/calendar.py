@@ -296,16 +296,31 @@ class WeatherApi(Resource):
       data={}
       
       field = request.args.get('id_field')
+      weather_raw=getFieldForecast(field)
 
+      weather_format=[]
+      
+      icon_map={"1":"sunny","2":"sunny","3":"sunny","4":"sunny","5":"sunny","6":"cloudy","7":"cloudy","8":"cloudy","9":"cloudy","10":"cloudy","11":"cloudy",
+                "12":"rainy",
+                "13":"rainy","14":"rainy","15":"rainy","16":"rainy","17":"rainy","18":"rainy","19":"cloudy","20":"cloudy","21":"sunny",
+                "22":"snowy","23":"snowy","24":"snowy",
+                "25":"snowy","26":"snowy","27":"snowy","28":"snowy","29":"snowy"
+                
+                }
+      for day in weather_raw:
+         weather_format.append({
+           "date": day["date"],
+            "description": day["description"],
+            "icon": icon_map[str(day["icon"])],
+            "temperature": { "min": str(day["temperature_min"]), "max": str(day["temperature_max"]) },
+            "wind": str(day["wind"]),
+            "humidity": str(day["humidity"])
+         })
+         
       
 
+
       weather=[
-          
-         
-        
-           
-          
-          
           
            
            
@@ -362,10 +377,9 @@ class WeatherApi(Resource):
           
       ]
       
-     
-
    
-      data["forecast"]=weather
+      data["forecast"]=weather_format
+      
      
       response['data']=data
       
