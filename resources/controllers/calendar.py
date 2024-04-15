@@ -349,6 +349,14 @@ class WeatherApi(Resource):
             "temperature": { "min": '4', "max": '21' },
             "wind": "7",
             "humidity": "9"
+          },
+          {
+            "date": '2024-04-17',
+            "description": 'Soleado',
+            "icon": 'sunny',
+            "temperature": { "min": '5', "max": '22' },
+            "wind": "7",
+            "humidity": "9"
           }
         
           
