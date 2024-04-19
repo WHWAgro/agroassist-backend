@@ -440,20 +440,48 @@ class QuoterSelectionApi(Resource):
       
 
       quoters=getQuoters(user_id)
-      print(quoters)
+     
       if quoters== False:
         response['status']=400
         response['message']=1
 
+      user_company=getUserCompanies(user_id)
+      
+      companies="( "
+      for company in user_company:
+        companies=companies+str(company["_id"])+","
+      companies = companies[:-1]
+      companies=companies+" )"
+      print(user_id)
+      programs_raw=getPrograms(user_id,companies)
+      print("$$$$$$$---------")
+
+      programs={}
+      for program in programs_raw:
+        if (program['_id'] in programs)==False:
+          programs[program['_id']]={}
+          programs[program['_id']]["program_name"]=program['program_name']
+
+      
+      print(programs)
       
       # id,id_user,program_name,species_name,market_name
 
       quoters_format=[]
       
       for quoter in quoters:
-        result={}
+        
+        result={"programs":[]}
         result['_id']= quoter['_id']
         result['id_programs']= ast.literal_eval(quoter['id_programs'])
+        
+        for program in result['id_programs']:
+          
+          if program in programs:
+            
+            result["programs"].append(programs[program]["program_name"])
+
+        #result['programs']=
         result['start_date']= str(quoter['start_date'])
         result['end_date']= str(quoter['end_date'])
         result['updated_at']= str(quoter['updated_at'])

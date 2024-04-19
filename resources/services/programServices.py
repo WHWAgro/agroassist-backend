@@ -1406,10 +1406,10 @@ def getQuoters(id_usuario):
         rows=[]
         with db.engine.begin() as conn:
             result = conn.execute(text(query)).fetchall()
-            print(result)
+            
             for row in result:
                 row_as_dict = row._mapping
-                print(row_as_dict)
+                
                 rows.append(dict(row_as_dict))
             return rows
 
