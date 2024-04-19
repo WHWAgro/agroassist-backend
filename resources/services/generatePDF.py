@@ -565,9 +565,12 @@ def generatePurchaseOrder(body):
         doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
         print(str(myuuid)+".pdf")
         products=getTableDict("products")
+        print("hol1")
         user_companies=getUserCompanies(user_id)
-       
+        print(user_companies)
+        print("hol2")
         company_id=user_companies[0]["_id"]
+        print("hol3")
         companies=getTableDict("company")
         company=companies[company_id]
         order_number=1
@@ -649,17 +652,30 @@ def generatePurchaseOrder(body):
         
         
        
-        print("$$$$##############$$$$$")
+        print("$$$$##############$$$-$$")
         
         
        
         table_data2 = [['Nombre Producto','Formato Envase','Cantidad','Precio Unitario','Precio Total']] 
         subtotal=0
+        print(products)
         for item in body["products"]:
+            print("producto ------")
+            print(item)
             product_total=item["number_products"]*item["container_price_clp"]
+            print(product_total)
             subtotal=subtotal+product_total
-            row_data = [products[item["id_product"]]["product_name"],str(item["container_size"])+" "+item["format_unit"],str(item["number_products"]),"$"+str(item["container_price_clp"]),"$"+str(item["number_products"]*item["container_price_clp"])]
+            print(subtotal)
+            print(products[item["id_product"]]["product_name"])
+            print(str(item["container_size"])+" "+item["format_unit"])
+            print(products[item["id_product"]]["product_name"])
+            print(str(item["container_size"])+" "+item["format_unit"])
+            print("$"+str(item["container_price_clp"]))
+            print("$"+str(item["number_products"]*item["container_price_clp"]))
+            print("chao")
+            row_data = [products[item["id_product"]]["product_name"],str(item["container_size"])+" "+item["format_unit"],item["number_products"],"$"+str(item["container_price_clp"]),"$"+str(item["number_products"]*item["container_price_clp"])]
             
+            print(row_data)
             table_data2.append(row_data)
         table_data2.append(["","","","Sub-Total","$"+str(subtotal)])
         table_data2.append(["","","","IVA 19%","$"+str(int(subtotal*0.19))])
