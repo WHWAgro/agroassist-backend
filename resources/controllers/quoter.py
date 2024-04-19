@@ -470,15 +470,15 @@ class QuoterSelectionApi(Resource):
       quoters_format=[]
       
       for quoter in quoters:
-        
+        print(quoter['_id'])
         result={"programs":[]}
         result['_id']= quoter['_id']
         result['id_programs']= ast.literal_eval(quoter['id_programs'])
-        
+        print(result['id_programs'])
         for program in result['id_programs']:
-          
+          print("checkando programa")
           if program in programs:
-            
+            print("Esta")
             result["programs"].append(programs[program]["program_name"])
 
         #result['programs']=
