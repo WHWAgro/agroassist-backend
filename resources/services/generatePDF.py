@@ -550,7 +550,10 @@ def generateTaskOrder(body):
         print(error)
         return False
     
+def formatter(valor):
+            formated_number='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.').split(',')[0]
 
+            return formated_number
 def generatePurchaseOrder(body):
 
     try:
@@ -654,6 +657,7 @@ def generatePurchaseOrder(body):
        
         print("$$$$##############$$$-$$")
         
+
         
        
         table_data2 = [['Nombre Producto','Formato Envase','Cantidad','Precio Unitario','Precio Total']] 
@@ -673,13 +677,18 @@ def generatePurchaseOrder(body):
             print("$"+str(item["container_price_clp"]))
             print("$"+str(item["number_products"]*item["container_price_clp"]))
             print("chao")
-            row_data = [products[item["id_product"]]["product_name"],str(item["container_size"])+" "+item["format_unit"],item["number_products"],"$"+str(item["container_price_clp"]),"$"+str(item["number_products"]*item["container_price_clp"])]
+
+            
+            total_price_format =str(formatter(item["number_products"]*item["container_price_clp"]))
+            container_size_format=str(formatter(item["container_size"]))
+            container_price_format=str(formatter(item["container_price_clp"]))
+            row_data = [products[item["id_product"]]["product_name"],container_size_format+" "+item["format_unit"],item["number_products"],"$"+container_price_format,"$"+total_price_format]
             
             print(row_data)
             table_data2.append(row_data)
-        table_data2.append(["","","","Sub-Total","$"+str(subtotal)])
-        table_data2.append(["","","","IVA 19%","$"+str(int(subtotal*0.19))])
-        table_data2.append(["","","","Total","$"+str(int(subtotal*1.19))])
+        table_data2.append(["","","","Sub-Total","$"+str(formatter(subtotal))])
+        table_data2.append(["","","","IVA 19%","$"+str(formatter(subtotal*0.19))])
+        table_data2.append(["","","","Total","$"+str(formatter(subtotal*1.19))])
         print('hola-footer')
         # Create a table with the data
         table2 = Table(table_data2,colWidths=[140, 120, 60,100,100 ])
@@ -787,16 +796,22 @@ def generateQuoterProducts(body):
         print(products)
         for key,section in body.items():
             print(section)
-            print("------")
+            print("------*")
             print(section["product_id"])
             print(section["product_needed"])
-           
             print(products[section["product_id"]])
+
+            product_unit=' gr'
+            if section["product_needed_unit_id"]>=5:
+                product_unit=' cc'
+
             
-            row={"name":products[section["product_id"]]["product_name"],"price":str(section["product_needed"]-section["product_stored"])+" cc"}
+            
+            row={"name":products[section["product_id"]]["product_name"],"price":str(formatter(max(section["product_needed"]-section["product_stored"],0)))+product_unit}
+            print('siguiente')
             product_data.append(row)
             for alternative in section["alternatives"]:
-                row={"name":products[alternative["product_id"]]["product_name"],"price":str(alternative["product_needed"]-alternative["product_stored"])+" cc"}
+                row={"name":products[alternative["product_id"]]["product_name"],"price":str(formatter(max(alternative["product_needed"]-alternative["product_stored"],0)))+product_unit}
                 product_data.append(row)
         print("chao")  
 
