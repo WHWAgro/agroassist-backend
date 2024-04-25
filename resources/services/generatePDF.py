@@ -813,14 +813,14 @@ def generateQuoterProducts(body):
             for alternative in section["alternatives"]:
                 row={"name":products[alternative["product_id"]]["product_name"],"price":str(formatter(max(alternative["product_needed"]-alternative["product_stored"],0)))+product_unit}
                 product_data.append(row)
-        print("chao")  
+          
 
         # Section 3: Table with Product Names and Prices
         # Replace this with your actual product data (a list of dictionaries)
        
 
         # Create a table for product data
-        product_table_data = [["Producto", "cantidad"]]
+        product_table_data = [["Producto", "Cantidad"]]
         
         for product in product_data:
             product_table_data.append([product["name"], product['price']])
