@@ -186,6 +186,15 @@ class PlotClass(db.Model):
   id_species = db.Column(db.Integer, nullable=False)
   variety = db.Column(db.String(100), nullable=True)
   id_phenological_stage = db.Column(db.Integer, nullable=False)
+
+class PlotTasksClass(db.Model):
+
+  __tablename__ = 'plot_tasks'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  plot_id = db.Column(db.Integer, nullable=False)
+  task_id = db.Column(db.Integer, nullable=False)
+  status_id = db.Column(db.Integer, nullable=False)
+  
   
   
 class TaskOrderClass(db.Model):

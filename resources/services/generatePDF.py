@@ -184,10 +184,12 @@ def generateTaskOrder(body):
         ##tablas
         objectives=getTableDict("objectives")
         products=getTableDict("products")
-        tasks=getTableDict("tasks")
+        task=getTask(id_task)[0]
+        print("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")        
+        print(task)
         moments=getTableDict("program_tasks")
         moment_objectives=getTableDict("task_objectives")
-        moment_id=tasks[int(body["id_task"])]["id_moment"]
+        moment_id=task["id_moment"]
 
         wetting=moments[moment_id]["wetting"]
         

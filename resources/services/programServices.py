@@ -1,5 +1,5 @@
 import json
-from database.models.Program import FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import PlotTasksClass,FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -326,7 +326,9 @@ def getTaskDetails(id_moment):
         
         
         query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,start_date,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
-                FROM program_tasks as pt 
+                
+              
+                from program_tasks as pt 
                 left join task_objectives as tp on pt._id=tp.id_task
                 where pt._id = """+ str(id_moment)+"""
                 
@@ -656,11 +658,13 @@ def getTask(id_task):
     try:
         
         
-        query_tasks="""SELECT t._id as _id,t.id_moment,t.id_task_type as id_task_type,t.date_start, t.date_end,t.time_indicator as time_indicator,t.id_status as id_status, id_moment_type,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
-                FROM program_tasks as pt 
-                left join task_objectives as tp on pt._id=tp.id_task
-                left join tasks t on pt._id= t.id_moment
-                where t._id = """+ str(id_task)+"""
+        query_tasks="""select pt._id as _id, t.date_start,t.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status, 
+                        t.id_company as id_company,t.id_moment as id_moment
+                from plot_tasks as pt
+                left join tasks as t on pt.task_id = t._id
+                left join plots as p on pt.plot_id = p._id
+
+                WHERE pt._id = """+ str(id_task)+"""
                 
              """
         
@@ -683,6 +687,8 @@ def getTask(id_task):
     except Exception as e:
         print(e)
         return False
+    
+
     
 def getUserPlots(user_id):
     try:
@@ -876,6 +882,7 @@ def updateTask(task_id,body):
             return False
         
         TaskObjectivesClass.query.filter_by(id_task=task._id).delete()
+        
 
         
         task.id_program=body.get('id_program')
@@ -967,7 +974,7 @@ def updateTaskIns(task_id, body):
     try:
         
 
-        task = TaskClass.query.get(task_id)
+        task = PlotTasksClass.query.get(task_id)
 
         if task is None:
             return False
@@ -975,10 +982,10 @@ def updateTaskIns(task_id, body):
         for key,value in body.items():
             if key=="status":
                 print("cambio de status")
-                task.id_status = value
-            if key=="time_indicator":
-                print("cambio de tiempo")
-                task.time_indicator = value
+                task.status_id = value
+            #if key=="time_indicator":
+            #       print("cambio de tiempo")
+            #  task.time_indicator = value
             #status = body.get('status')
             #time_indicator = body.get('time_indicator')
                 
@@ -1185,8 +1192,43 @@ def create_logic():
         print(e)
         return False
 
+def delete_program_tasks_plot(plot_id):
+    PlotTasksClass.query.filter_by(plot_id=plot_id).delete()
+    db.session.commit()
+
+
+def add_program_tasks_plot(program_id,plot_id,user_id):
+    
+    companies=getUserCompanies(user_id)
+    user_company_id=companies[0]['_id']
 
     
+    
+    query="""SELECT t.*
+                from tasks as t
+                left join program_tasks as pt on pt._id=id_moment
+                left join programs as p on p._id=pt.id_program
+                where t.id_company = """+ str(user_company_id)+"""
+                and p._id="""+ str(program_id)+"""
+
+                """
+        
+    rows=[]
+    with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            
+            for row in result:
+                row_as_dict = row._mapping
+               
+                rows.append(dict(row_as_dict))
+    
+    
+    for task in rows:
+        plot_task=PlotTasksClass( plot_id=plot_id,task_id=task["_id"],status_id=1)
+        db.session.add(plot_task)
+        print(plot_task)
+    db.session.commit()
+
 
 def createQuoter(body,user_id):
     
@@ -1489,6 +1531,37 @@ def getTasks(id_company):
         print(e)
         return False
     
+def getTasks2(id_company):
+    
+    try:
+
+       
+        
+        query="""SELECT pt._id as _id, t.date_start,t.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status,
+         t.id_company as id_company,t.id_moment as id_moment
+                from plot_tasks as pt
+                left join tasks as t on pt.task_id = t._id
+                left join plots as p on pt.plot_id = p._id
+
+                WHERE t.id_company = """+ str(id_company)+"""
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            print(result)
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
 
 def getTaskPlots(id_task):
         
@@ -1519,4 +1592,28 @@ def getTaskPlots(id_task):
         return False
 
 
-    
+def getTaskPlots2(id_task):
+        
+
+    try:
+        
+        query="""SELECT  pt.plot_id as _id, pt.task_id, p.id_program as id_program,p.id_species as id_species
+                    FROM plot_tasks as pt
+                    left join plots as p on p._id =pt.plot_id
+                    WHERE task_id = (SELECT task_id FROM plot_tasks WHERE _id = """+ str(id_task)+""")
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False

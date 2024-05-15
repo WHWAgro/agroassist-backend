@@ -5,7 +5,7 @@ from datetime import datetime
 #import pandas as pd
 #from get_project_root import root_path
 from resources.errors import  InternalServerError
-from database.models.Program import ProgramClass,FieldClass,PlotClass,MachineryClass,WorkersClass,db
+from database.models.Program import ProgramClass,FieldClass,PlotClass,PlotTasksClass,MachineryClass,WorkersClass,db
 from resources.services.programServices import *
 from resources.services.generatePDF import *
 from flask_jwt_extended import jwt_required,get_jwt_identity,current_user
@@ -130,10 +130,6 @@ class FieldsApi(Resource):
         
         #TaskObjectivesClass.query.filter_by(id_task=task._id).delete()
 
-        
-        
-       
-
 
     
         #for idx, objective in enumerate(body.get('objectives')):
@@ -172,7 +168,9 @@ class FieldsApi(Resource):
             
             
         if "plots" in body:
+          print("plots")
           field_plots=getFieldPlotsDetails(id_field)
+          
           if field_plots!=False: 
             id_current = [d["_id"] for d in field_plots]
             id_new =[d["_id"] for d in body["plots"]]
@@ -180,6 +178,7 @@ class FieldsApi(Resource):
             for _id in id_current:
                 if _id not in id_new:
                   PlotClass.query.filter_by(_id=_id).delete()
+                  delete_program_tasks_plot(_id)
             
             
             for plot in body["plots"] :
@@ -187,17 +186,27 @@ class FieldsApi(Resource):
                 _id=plot['_id']
                 print(_id)
                 print(plot)
+                print("****")
+                user_id =  get_jwt_identity()
                 
                 if _id is None:
-                   if plot["id_program"]=="":
+                   print("no existe")
+                   if ("id_program" not in plot) or (plot["id_program"]==""):
                       plot["id_program"]=None
                    size=float(str(plot['size']).replace(',','.'))
                       
                    plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=size,id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'],id_phenological_stage=plot['id_phenological_stage'])
+
                    db.session.add(plot_instance)
+                   db.session.commit()
+                   
+                   add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id)
+                   
                 elif _id not in id_current:
+                   print("hola")
                    continue
                 else:
+                   print("existe")
                    plot_instance = PlotClass.query.get(_id)
           
                    if plot_instance is None: 
@@ -207,11 +216,19 @@ class FieldsApi(Resource):
                       plot_instance.name=plot.get('name')
                       plot_instance.size = size
                       plot_instance.id_species=plot.get('id_species')
+                      print(plot_instance.id_program)
+                      print(plot.get('id_program'))
+                      print("----")
+                      if plot_instance.id_program != plot.get('id_program'):
+                         delete_program_tasks_plot(plot_instance._id)
+                         #hay que ver que pasa con las tasks ya completadas
+                         add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id)
+                      
                       plot_instance.variety=plot.get('variety')
                       plot_instance.id_program=plot.get('id_program')
                       plot_instance.id_phenological_stage = plot.get('id_phenological_stage')
                       db.session.add(plot_instance)
-            
+                     
                    
                    
             db.session.commit()

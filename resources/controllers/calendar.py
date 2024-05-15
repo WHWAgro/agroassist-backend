@@ -37,7 +37,7 @@ class CalendarApi(Resource):
         response['status']=400
         response['message']=1
 
-      tasks=getTasks(company[0]['company_id'])
+      tasks=getTasks2(company[0]['company_id'])
       if tasks== False:
         response['status']=400
         response['message']=1
@@ -65,7 +65,8 @@ class CalendarApi(Resource):
         result['id_status']= task['id_status']
         
         task_plots=[]
-        aux_plots=getTaskPlots(task['_id'])
+        print("searching plots")
+        aux_plots=getTaskPlots2(task['_id'])
         
         if aux_plots !=False and len(aux_plots)>0:
            
@@ -174,7 +175,7 @@ class TaskInsApi(Resource):
                
         
 
-
+            print("entering task format")
 
         
         
@@ -194,7 +195,7 @@ class TaskInsApi(Resource):
             task_plots=[]
            
             
-            aux_plots=getTaskPlots(task_details['_id'])
+            aux_plots=getTaskPlots2(task_details['_id'])
             if aux_plots !=False and len(aux_plots)>0:
               result['id_program']= aux_plots[0]['id_program']
               result['id_species']= aux_plots[0]['id_species']
