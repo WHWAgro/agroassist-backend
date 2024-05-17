@@ -325,7 +325,7 @@ def getTaskDetails(id_moment):
     try:
         
         
-        query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,start_date,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
+        query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,end_date,start_date,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
                 
               
                 from program_tasks as pt 

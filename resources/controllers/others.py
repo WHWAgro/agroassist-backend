@@ -527,8 +527,10 @@ class TaskApi(Resource):
                 dic_result[id]["id_moment_type"] = task["id_moment_type"] 
                 dic_result[id]["start_date"] = str(task['start_date'])
                 if 'end_date' in task:
+                  print("MMMMMMMM esta")
                   dic_result[id]["end_date"] = str(task['end_date'])
                 else:
+                  print("MMMMMMMM no esta")
                   dic_result[id]["end_date"] = str(task['start_date'])
                 dic_result[id]["moment_value"] = task['moment_value']
                 dic_result[id]["objectives"] = [objectives]
