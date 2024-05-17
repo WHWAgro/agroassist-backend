@@ -972,9 +972,6 @@ def createTasks(program_id, body):
             created_tasks={}
             for el in created:
                 created_tasks[el['_id']]  =el
-                
-
-            
   
  
             for moment_id,task in tasks.items():
@@ -984,13 +981,16 @@ def createTasks(program_id, body):
                 if moment_id not in created_tasks:
                     task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='AM' ,id_status=1,id_company=company_id)
                     db.session.add(task_instance)
-
-          
-        db.session.commit()
+                    db.session.commit()
+                    print('creando_task')
+                    print(task_instance._id)
+                    program_plots=PlotClass.query.filter_by(id_program=program_id)
+                    for plot in program_plots:
+                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1)
+                        db.session.add(plot_task)
+                    db.session.commit()
                     
-
-
-            
+        db.session.commit()                       
 
         return True
 
