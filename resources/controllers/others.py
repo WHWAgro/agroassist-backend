@@ -646,11 +646,13 @@ class TaskApi(Resource):
         
 
         id_moment=request.args.get('id_moment')
-        task = updateTask(id_moment,body)    
+        moment = updateMoment(id_moment,body)
+        tasks = updateMomentTasks(id_moment,body)
+
 
       
         data={}
-        data['id_moment']=task
+        data['id_moment']=moment
         response['data']=data
         
         if response.get('status') == 200:

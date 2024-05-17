@@ -872,7 +872,7 @@ def createField(body):
         print(e)
         return False
     
-def updateTask(task_id,body):
+def updateMoment(task_id,body):
     
     try:
     
@@ -902,6 +902,33 @@ def updateTask(task_id,body):
         db.session.add(task)
         db.session.commit()
         return task._id
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def updateMomentTasks(moment_id,body):
+    
+    try:
+    
+        print('Holas')
+
+        
+        
+        tasks=TaskClass.query.filter_by(id_moment=moment_id)
+        if tasks is None:
+            return False
+        
+        for task in tasks:
+        
+            
+            task.id_task_type=body.get('id_moment_type')
+            task.date_start=body.get('start_date')
+            task.date_end=body.get('end_date')
+
+            db.session.add(task)
+        db.session.commit()
+        return moment_id
     except Exception as e:
         print(e)
         return False
