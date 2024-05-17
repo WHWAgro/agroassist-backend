@@ -891,6 +891,7 @@ def updateTask(task_id,body):
         task.moment_value=body.get('moment_value')
         task.wetting=body.get('wetting')
         task.observations=body.get('observations')
+        task.end_date=body.get('end_date')
 
 
     
