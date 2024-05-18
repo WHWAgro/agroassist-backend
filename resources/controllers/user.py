@@ -124,6 +124,7 @@ class LoginUserApi(Resource):
             data["task_status"]=[{'_id':1,'status_name':'Pendiente'},{'_id':2,'status_name':'Finalizada'},{'_id':3,'status_name':'Orden Generada'},{'_id':4,'status_name':'En Proceso'}]
             data["worker_type"]=[{'_id':1,'worker_type_name':'Administrador'},{'_id':2,'worker_type_name':'Asesor Agrícola'},{'_id':3,'worker_type_name':'En Terreno'}]
             data["machinery_type"]=[{'_id':1,'machinery_type_name':'Tractor'},{'_id':2,'machinery_type_name':'Nebulizador'}]
+            data["task_type"]=[{'_id':1,'task_type_name':'Fitosanitario'},{'_id':2,'task_type_name':'Raleo'},{'_id':3,'task_type_name':'Riego'},{'_id':4,'task_type_name':'Cosecha'}]
             for product in data['products']:
               if product['dosage_type']==1:
 
