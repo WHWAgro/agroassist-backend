@@ -520,7 +520,7 @@ def getFieldBookData(fields):
     try:
         
         
-        query_tasks="""SELECT ta.id_status, com.company_name,ta._id,ta.date_start,ta.date_end,field._id as f_id,field.sag_code,field.location as locat,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, task_orders.application_date
+        query_tasks="""SELECT ta.id_status,ta._id,ta.date_start,ta.date_end, com.company_name,field._id as f_id,field.sag_code,field.location as locat,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, task_orders.application_date
 FROM public.tasks ta
 left join program_tasks as pt on pt._id=ta.id_moment
 left join programs as p on p._id = pt.id_program
@@ -1559,7 +1559,7 @@ def getTasks(id_company):
         print(e)
         return False
     
-def getTasks2(id_company):
+def getTasks2(company_id,field_id):
     
     try:
 
@@ -1571,7 +1571,8 @@ def getTasks2(id_company):
                 left join tasks as t on pt.task_id = t._id
                 left join plots as p on pt.plot_id = p._id
 
-                WHERE t.id_company = """+ str(id_company)+"""
+                WHERE t.id_company = """+ str(company_id)+"""
+                and p.id_field = """+ str(field_id)+"""
                 
              """
         
@@ -1625,7 +1626,7 @@ def getTaskPlots2(id_task):
 
     try:
         
-        query="""SELECT  pt.plot_id as _id, pt.task_id, p.id_program as id_program,p.id_species as id_species
+        query="""SELECT  pt.plot_id as _id, pt.task_id, p.id_program as id_program,p.id_species as id_species, p.id_field
                     FROM plot_tasks as pt
                     left join plots as p on p._id =pt.plot_id
                     WHERE task_id = (SELECT task_id FROM plot_tasks WHERE _id = """+ str(id_task)+""")

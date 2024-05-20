@@ -37,7 +37,7 @@ class CalendarApi(Resource):
         response['status']=400
         response['message']=1
 
-      tasks=getTasks2(company[0]['company_id'])
+      tasks=getTasks2(company[0]['company_id'],field)
       if tasks== False:
         response['status']=400
         response['message']=1
@@ -65,7 +65,7 @@ class CalendarApi(Resource):
         result['id_status']= task['id_status']
         
         task_plots=[]
-        print("searching plots")
+        
         aux_plots=getTaskPlots2(task['_id'])
         
         if aux_plots !=False and len(aux_plots)>0:
@@ -79,7 +79,7 @@ class CalendarApi(Resource):
         print(task_plots)
         if count_shared_elements==0:
            continue
-        result['plots']=task_plots
+        result['plots']=list(shared_elements)
         
        
         print(task_plots)
