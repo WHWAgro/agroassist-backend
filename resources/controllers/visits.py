@@ -32,6 +32,8 @@ class VisitTaskApi(Resource):
       date_start=body['date_start']
       date_end=body['date_end']
       observations=body['observations']
+      plots=body['plots']
+      visita_id=body['visit_id']
       wetting=0
       objectives=0
       products=0
@@ -88,6 +90,7 @@ class VisitTaskApi(Resource):
       date_start=body['date_start']
       date_end=body['date_end']
       observations=body['observations']
+      plots=body['plots']
       wetting=0
       objectives=0
       products=0
@@ -192,7 +195,10 @@ class VisitTaskApi(Resource):
                     "task_type_id": 2,
                     "date_start": "2024-05-25",
                     "date_end": "2024-05-29",
-                    "observations": "no usar en dias con luna llena"
+                    "observations": "no usar en dias con luna llena",
+                    "plots": [1,2],
+                    "out_platform":False
+
                 }
       else:
         print('no entro')
@@ -205,7 +211,9 @@ class VisitTaskApi(Resource):
                     "dosage": [[[10],[5.4]],[[20]]],
                     "dosage_parts_per_unit": [[[1],[1]],[[2],]],
                     "wetting": 400,
-                    "observations": "no usar en dias con luna llena"
+                    "observations": "no usar en dias con luna llena",
+                    "plots": [1,2],
+                    "out_platform":False
                 }
       
       data['task_details']=task_details
