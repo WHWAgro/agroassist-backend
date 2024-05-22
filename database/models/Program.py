@@ -60,6 +60,54 @@ class ProgramClass(db.Model):
   def __repr__(self):
         return '<program %r>' % self.program_name
   
+
+
+class VisitTaskClass(db.Model):
+
+  __tablename__ = 'visit_tasks'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  visit_id = db.Column(db.Integer, nullable=False)
+  task_type_id = db.Column(db.Integer, nullable=False)
+  date_start=db.Column(db.DateTime, nullable=False)
+  date_end=db.Column(db.DateTime, nullable=False)
+  wetting=db.Column(db.Integer, nullable=True)
+  observations=db.Column(db.String(500), nullable=True)
+  plots=db.Column(db.String(500), nullable=True)
+  objectives = db.relationship('VisitTaskObjectivesClass', backref='visit_task')  
+
+class VisitTaskObjectivesClass(db.Model):
+
+  __tablename__ = 'visit_task_objectives'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  visit_task_id = db.Column(db.Integer,db.ForeignKey('visit_tasks._id'), nullable=False)
+  objectives = db.Column(db.String(400), nullable=True)
+  products = db.Column(db.String(400), nullable=True)
+  dosage=db.Column(db.String(400), nullable=True)
+  dosage_parts_per_unit=db.Column(db.String(400), nullable=True)
+  
+class VisitClass(db.Model):
+
+  __tablename__ = 'visits'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  user_id = db.Column(db.Integer, nullable=False)
+  user_name = db.Column(db.String(200), nullable=False)
+  company_id = db.Column(db.Integer, nullable=False )
+  company_name = db.Column(db.String(200), nullable=False)
+  company_mail = db.Column(db.String(200), nullable=False)
+  field_id = db.Column(db.Integer, nullable=False )
+  field_name = db.Column(db.String(200), nullable=False)
+  published = db.Column(db.Boolean, nullable=False, default=False)
+  created_at=db.Column(db.DateTime, default=db.func.now())
+
+
+  #max_applications=db.Column(db.String(400), nullable=True)
+  
+  
+ 
+  
+  
+
+  
 class QuoterClass(db.Model):
 
   __tablename__ = 'quoter'

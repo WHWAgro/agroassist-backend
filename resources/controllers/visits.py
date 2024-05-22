@@ -12,6 +12,7 @@ from functools import reduce
 from itertools import chain
 from resources.services.programServices import *
 from resources.services.generatePDF import *
+from resources.services.visitServices import *
 
 
 
@@ -29,28 +30,13 @@ class VisitTaskApi(Resource):
       
       user_id =  get_jwt_identity()
       body = request.get_json()
-      date_start=body['date_start']
-      date_end=body['date_end']
-      observations=body['observations']
-      plots=body['plots']
-      visita_id=body['visit_id']
-      wetting=0
-      objectives=0
-      products=0
-      dosage=0
-      dosage_parts_per_unit=0
       
-      if body['task_type_id']==1:
-        wetting=body['wetting']
-        objectives=body['objectives']
-        products=body['products']
-        dosage=body['dosage']
-        dosage_parts_per_unit=body['dosage_parts_per_unit']
+      
+
+      print('creando task de visita')
 
 
-
-
-      created=4
+      created=createVisitTask(body)
       
       if created== False:
         response['status']=400
@@ -79,7 +65,7 @@ class VisitTaskApi(Resource):
   
     try:
       
-      visit_id=request.args.get('task_id')
+      task_id=request.args.get('task_id')
       response={}
       response['status']=500
       response['message']=0
@@ -87,25 +73,13 @@ class VisitTaskApi(Resource):
       
       user_id =  get_jwt_identity()
       body = request.get_json()
-      date_start=body['date_start']
-      date_end=body['date_end']
-      observations=body['observations']
-      plots=body['plots']
-      wetting=0
-      objectives=0
-      products=0
-      dosage=0
-      dosage_parts_per_unit=0
+    
+     
       
-      if body['task_type_id']==1:
-        wetting=body['wetting']
-        objectives=body['objectives']
-        products=body['products']
-        dosage=body['dosage']
-        dosage_parts_per_unit=body['dosage_parts_per_unit']
+      
 
 
-      updated=visit_id
+      updated=updateVisitTask(task_id,body)
       data={}
       response['status']=200
       if response.get('status') == 200 and updated != False:
@@ -146,7 +120,7 @@ class VisitTaskApi(Resource):
       task_id=request.args.get('task_id')
 
       
-      deleted=True
+      deleted=deleteVisitTask(task_id)
       if deleted== False:
         response['status']=400 
         response['message']=1
@@ -184,39 +158,48 @@ class VisitTaskApi(Resource):
       ##programs=getPrograms(user_id,companies)
       
       task_id=request.args.get('task_id')
+
+      
+      task_info=getVisitTaskInfo(task_id)
+
+      task_info['date_start']=task_info['date_start'].strftime('%Y-%m-%d')
+      task_info['date_end']=task_info['date_end'].strftime('%Y-%m-%d')
+      task_info['plots']=ast.literal_eval(task_info['plots'])
+
+      if task_info['task_type_id'] !=1:
+        del(task_info['wetting'])
+        del(task_info['dosage_parts_per_unit'])
+        del(task_info['objectives'])
+        del(task_info['products'])
+        del(task_info['dosage'])
+      else:
+        
+        task_info['dosage_parts_per_unit']=ast.literal_eval(task_info['dosage_parts_per_unit'])
+        task_info['objectives']=ast.literal_eval(task_info['objectives'])
+        task_info['products']=ast.literal_eval(task_info['products'])
+        task_info['dosage']=ast.literal_eval(task_info['dosage'])
+
+
+
+      visit_info=getVisitInfo(task_info['visit_id'])
+      
+      editable=False
+      if user_id== visit_info['user_id']:
+        editable=True
+
+      out_platform=False
+      if  visit_info['company_id']==-1:
+        out_platform=True
+
+      task_info['editable']=editable
+      task_info['out_platform']=out_platform
      
+      print(task_info)
       
     
-      if int(task_id)==1:
-        print('entro')
-
-        task_details= {"editable":True,
-                     "_id": 1,
-                    "task_type_id": 2,
-                    "date_start": "2024-05-25",
-                    "date_end": "2024-05-29",
-                    "observations": "no usar en dias con luna llena",
-                    "plots": [1,2],
-                    "out_platform":False
-
-                }
-      else:
-        print('no entro')
-        task_details= {"editable":True,"_id": 4,
-                    "task_type_id": 1,
-                    "date_start": "2024-05-25",
-                    "date_end": "2024-05-29",
-                    "objectives": [1,2],
-                    "products": [[[5],[1]],[[1]]],
-                    "dosage": [[[10],[5.4]],[[20]]],
-                    "dosage_parts_per_unit": [[[1],[1]],[[2],]],
-                    "wetting": 400,
-                    "observations": "no usar en dias con luna llena",
-                    "plots": [1,2],
-                    "out_platform":False
-                }
       
-      data['task_details']=task_details
+      
+      data['task_details']=task_info
      
       response['data']=data
       
@@ -251,15 +234,9 @@ class VisitApi(Resource):
       
       user_id =  get_jwt_identity()
       body = request.get_json()
-      company_id = body["company_id"]
-      if company_id == -1:
-        company_name = 'new company'
      
-      field_id = body["field_id"]
-      if field_id == -1:
-        field_name = 'new field'
 
-      created=3
+      created=createVisit(user_id,body)
       
       if created== False:
         response['status']=400
@@ -274,7 +251,7 @@ class VisitApi(Resource):
         return {'response': response}, 200
       
       else: 
-        
+        response['status']=400
         return {'response': response}, 400
 
     except Exception as e:
@@ -296,7 +273,7 @@ class VisitApi(Resource):
       visit_id=request.args.get('visit_id')
 
 
-      updated=visit_id
+      updated=updateVisit(user_id,visit_id,body)
       data={}
       if response.get('status') == 200 and updated != False:
             
@@ -334,8 +311,9 @@ class VisitApi(Resource):
 
       
       visit_id=request.args.get('visit_id')
-
-      
+      #ToDo verificar que el que borra sea el usuario que crea
+      deleteVisit(visit_id)
+      70
       deleted=True
       if deleted== False:
         response['status']=400 
@@ -374,24 +352,37 @@ class VisitApi(Resource):
       ##programs=getPrograms(user_id,companies)
       
       visit_id=request.args.get('visit_id')
-     
-      visits={'editable':True,'_id':1,'company_id':1,'company_name':'compania 1','field_id':1,'field_name':'campo 1','date':'2024-05-10','created_by':'asesor 1','user_id':1,'tasks':[1]}
+      visit_info=getVisitInfo(visit_id)
+      visit_tasks=getVisitTasks(visit_id)
+      print(visit_info)
+      print(visit_tasks)
+      editable=False
+      if user_id== visit_info['user_id']:
+        editable=True
+      
+      visit={'editable':editable,'_id':visit_id,
+              'company_id':visit_info['company_id'],'company_name':visit_info['company_name'],
+              'field_id':visit_info['field_id'],'field_name':visit_info['field_name'],
+              'date':visit_info['created_at'].strftime('%Y-%m-%d'),
+              'created_by':visit_info['user_name'],'user_id':visit_info['user_id'],'tasks':visit_tasks}
       
       
       data={}
-      data['visit_details']=visits
+      data['visit_details']=visit
      
       response['data']=data
       
-      if response.get('status') == 200:
+      if response.get('status') == 200 and visit_info!=False and visit_tasks !=False:
 
         return {'response': response}, 200
       
       else: 
+        response['status']=400
         return {'response': response}, 400
 
     except Exception as e:
       print(e)
+      response['status']=400
       return {'response': response}, 400
 
 
@@ -416,7 +407,8 @@ class VisitListApi(Resource):
       data={}
       
       
-      user_company=getUserCompanies(user_id)
+      user_company=[getUserCompanies(user_id)[0]]
+      print(user_company)
   
       companies="( "
       for company in user_company:
@@ -424,11 +416,15 @@ class VisitListApi(Resource):
       companies = companies[:-1]
       companies=companies+" )"
       print(user_id)
+      print(companies)
       ##programs=getPrograms(user_id,companies)
-      
 
-     
-      visits=[{'_id':1,'field_id':1,'field_name':'campo 1','date':'2024-05-10','created_by':'asesor 1'},{'_id':2,'field_id':-1,'field_name':'campo extra','date':'2024-05-15','created_by':'asesor 1'}]
+      visits=getVisits(user_id,companies)
+
+      for visit in visits:
+        visit['date']=visit['date'].strftime('%Y-%m-%d')
+
+
       
       
       data["visits"]=visits
@@ -436,12 +432,54 @@ class VisitListApi(Resource):
       response['data']=data
       
       if response.get('status') == 200:
+        
 
         return {'response': response}, 200
       
       else: 
+        response['status']=400
+        return {'response': response}, 400
+
+    except Exception as e:
+      response['status']=400
+      return {'response': response}, 400
+    
+class VisitPublishApi(Resource):
+
+  @jwt_required()
+  def put(self):
+  
+    try:
+      response={}
+      response['status']=200
+      response['message']=0
+      
+      
+      user_id =  get_jwt_identity()
+      visit_id=request.args.get('visit_id')
+
+
+      updated=publishVisit(user_id,visit_id)
+      data={}
+      if response.get('status') == 200 and updated != False:
+            
+            data['visit_id']=request.args.get('visit_id')
+            response['data']=data
+      if updated== False:
+        response['status']=400
+        response['message']=1
+      
+      
+      
+      
+      if response.get('status') == 200:
+
+        return {'response': response}, 200
+      
+      else: 
+        
         return {'response': response}, 400
 
     except Exception as e:
       print(e)
-      return {'response': response}, 400
+      return {'response': response},500
