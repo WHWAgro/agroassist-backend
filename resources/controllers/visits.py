@@ -364,7 +364,7 @@ class VisitApi(Resource):
               'company_id':visit_info['company_id'],'company_name':visit_info['company_name'],
               'field_id':visit_info['field_id'],'field_name':visit_info['field_name'],
               'date':visit_info['created_at'].strftime('%Y-%m-%d'),
-              'created_by':visit_info['user_name'],'user_id':visit_info['user_id'],'tasks':visit_tasks}
+              'created_by':visit_info['user_name'],'user_id':visit_info['user_id'],'tasks':visit_tasks,"company_mail":visit_info['company_mail']}
       
       
       data={}
