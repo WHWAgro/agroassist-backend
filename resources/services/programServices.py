@@ -138,7 +138,7 @@ def verify_password(username_or_token, password):
     # then check for username and password pair
     if not user:
         user = userClass.query.filter_by(email = username_or_token).first()
-        if not user or not user.verify_password(password):
+        if not user or not user.verify_password(password) or user.active==False:
             return False
     g.user = user
     return True

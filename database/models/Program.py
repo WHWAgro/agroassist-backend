@@ -354,6 +354,7 @@ class userClass(db.Model):
   phone_number= db.Column(db.String(80), nullable=True)
   title_register= db.Column(db.String(80), nullable=True)
   role=db.Column(db.String(80), nullable=True)
+  active=db.Column(db.Boolean, nullable=False)
   
   def __repr__(self):
         return '<user %r>' % self.user_name
