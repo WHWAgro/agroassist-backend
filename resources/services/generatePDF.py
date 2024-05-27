@@ -541,7 +541,7 @@ def generateTaskOrder(body):
         doc.build(pdf_content)
         
 
-        new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number)
+        new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']))
         db.session.add(new_task_order)
         db.session.commit()
         

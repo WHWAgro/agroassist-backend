@@ -255,6 +255,7 @@ class TaskOrderClass(db.Model):
   order_number=db.Column(db.Integer, nullable=False)
   wetting=db.Column(db.Integer, nullable=False)
   application_date=db.Column(db.DateTime, server_default=db.func.now())
+  plots=db.Column(db.String(200), nullable=True)
 
 class MachineryClass(db.Model):
 

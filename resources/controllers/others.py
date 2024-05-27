@@ -841,7 +841,12 @@ class TaskOrderApi(Resource):
 
         id_task= request.args.get('id_task')
         
-        taskOrderFile = getTaskOrders(id_task)
+        taskOrderFile,current_plot = getTaskOrders(id_task)
+        for taskOrder in taskOrderFile:
+           print(taskOrder)
+           
+           del(taskOrder["plots"])
+        
         
         if taskOrderFile== False:
           response['status']=400 

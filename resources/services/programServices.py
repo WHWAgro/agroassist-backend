@@ -665,6 +665,7 @@ def getTask(id_task):
                 left join plots as p on pt.plot_id = p._id
 
                 WHERE pt._id = """+ str(id_task)+"""
+                and pt.from_program = True
                 
              """
         
@@ -757,11 +758,20 @@ def createProgram(program_name,id_user,species):
     
 def getTaskOrders(id_task):
     try:
+        plot_task=PlotTasksClass.query.get(id_task)
         
-        query="""SELECT _id,file_name 
+        query="""
+                    SELECT _id,file_name,plots
                     FROM task_orders
-                    WHERE id_task = """+ str(id_task)+"""
-                    order by order_number asc
+                    WHERE task_orders.id_task in (
+                        SELECT _id 
+                        FROM plot_tasks 
+                        WHERE task_id = (
+                            SELECT task_id 
+                            FROM plot_tasks 
+                            WHERE _id = """+ str(id_task)+"""
+                    ))
+                    order by order_number desc
                 
              """
         
@@ -770,10 +780,13 @@ def getTaskOrders(id_task):
         with db.engine.begin() as conn:
             result = conn.execute(text(query)).fetchall()
             for row in result:
-                row_as_dict = row._mapping
+                row_as_dict = dict(row._mapping)
+                
+                
                 print(row_as_dict)
-                rows.append(dict(row_as_dict))
-            return rows
+                if row_as_dict['plots'] != None and (plot_task.plot_id in ast.literal_eval(row_as_dict['plots'])):
+                    rows.append(row_as_dict)
+            return rows,plot_task.plot_id
         
 
     except Exception as e:
@@ -782,6 +795,8 @@ def getTaskOrders(id_task):
     
 def mailExists(email):
     try:
+
+        
         
         query="""SELECT _id,email
                     FROM users
@@ -1566,13 +1581,47 @@ def getTasks2(company_id,field_id):
        
         
         query="""SELECT pt._id as _id, t.date_start,t.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status,
-         t.id_company as id_company,t.id_moment as id_moment
+         t.id_company as id_company,t.id_moment as id_moment,pt.from_program
                 from plot_tasks as pt
                 left join tasks as t on pt.task_id = t._id
                 left join plots as p on pt.plot_id = p._id
 
                 WHERE t.id_company = """+ str(company_id)+"""
                 and p.id_field = """+ str(field_id)+"""
+                and pt.from_program = True
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+           
+            for row in result:
+                row_as_dict = row._mapping
+                
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def getVisitTasks(company_id,field_id):
+    
+    try:
+
+       
+        
+        query="""SELECT pt._id as _id, t.date_start,t.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status,
+        pt.from_program
+                from plot_tasks as pt
+                left join visit_tasks as t on pt.task_id = t._id
+                left join plots as p on pt.plot_id = p._id
+
+                where p.id_field = """+ str(field_id)+"""
+                and pt.from_program = False
                 
              """
         
@@ -1639,7 +1688,7 @@ def getTaskPlots2(id_task):
             result = conn.execute(text(query)).fetchall()
             for row in result:
                 row_as_dict = row._mapping
-                print(row_as_dict)
+                
                 rows.append(dict(row_as_dict))
             return rows
 
