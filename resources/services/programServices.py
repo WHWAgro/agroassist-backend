@@ -785,6 +785,7 @@ def getTaskOrders(id_task):
                 
                 print(row_as_dict)
                 if row_as_dict['plots'] != None and (plot_task.plot_id in ast.literal_eval(row_as_dict['plots'])):
+                    del(row_as_dict["plots"])
                     rows.append(row_as_dict)
             return rows,plot_task.plot_id
         

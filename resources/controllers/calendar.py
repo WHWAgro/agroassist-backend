@@ -209,7 +209,7 @@ class TaskInsApi(Resource):
               for a in aux_plots:
                   task_plots.append(a['_id'])
 
-            taskOrderFile = getTaskOrders(task_details['_id'])
+            taskOrderFile,current_plot = getTaskOrders(task_details['_id'])
             
            
         

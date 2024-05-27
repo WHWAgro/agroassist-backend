@@ -242,6 +242,7 @@ class PlotTasksClass(db.Model):
   plot_id = db.Column(db.Integer, nullable=False)
   task_id = db.Column(db.Integer, nullable=False)
   status_id = db.Column(db.Integer, nullable=False)
+  from_program=db.Column(db.Boolean, nullable=False)
   
   
   

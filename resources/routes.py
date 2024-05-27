@@ -67,10 +67,10 @@ def initialize_routes(api):
  
  api.add_resource(QuoterProductsApi,'/api/v1.0/quoter/products/download')
  
+
+ #fieldbook
  api.add_resource(FieldBookApi,'/api/v1.0/fieldbook/fields')
-
  api.add_resource(FieldBookFullApi,'/api/v1.0/fieldbook/full/download')
-
  api.add_resource(FieldBookExportApi,'/api/v1.0/fieldbook/export/download')
 
  ##visitas
