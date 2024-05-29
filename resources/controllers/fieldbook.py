@@ -199,23 +199,37 @@ class FieldBookFullApi(Resource):
         objectives=getTableDict("Objectives")
         
         processed_rows=[]
+        p_r=[]
         for row in field_book_data:
-            if str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]) in processed_rows:
-             
-                continue
-            processed_rows.append(str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]))
-            field_fb[str(row["f_id"])]["company"]=row["company_name"]
-            field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
-            field_fb[str(row["f_id"])]["location"]=row["locat"]
+            row_id=str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"])
+            processed=row_id  in processed_rows
             
-            field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
+            
+            if processed ==False:
+                print(row_id not in processed_rows)
+             
+                
+            
+                processed_rows.append(row_id)
+                field_fb[str(row["f_id"])]["company"]=row["company_name"]
+                field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
+                field_fb[str(row["f_id"])]["location"]=row["locat"]
+            if row["application_date"] is None or row["id_status"]!=2 or row_id in p_r  :
+                if row["id_status"]==2:
+                    field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
+                continue
+            if row["id_status"]==2:
+                field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
+                p_r.append(row_id)
+
+            
+            
             products_id=ast.literal_eval(row["id_product"])
             dppus=ast.literal_eval(row["dosage_parts_per_unit"])
             dosages=ast.literal_eval(row["dosage"])
             date_start=row["date_start"].strftime("%d-%m-%Y")
             date_end=row["date_end"].strftime("%d-%m-%Y")
-            if row["application_date"] is None or row["id_status"]!=2:
-                continue
+            
             application_date=row["application_date"].strftime("%d-%m-%Y")
             out_of_cover_days=calculate_date_difference(row["date_end"],row["application_date"])
             
@@ -574,21 +588,36 @@ class FieldBookExportApi(Resource):
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
         processed_rows=[]
+        p_r=[]
         for row in field_book_data:
-            if str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]) in processed_rows:
+            row_id=str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"])
+            processed=row_id  in processed_rows
+            
+            
+            if processed ==False:
+                print(row_id not in processed_rows)
              
+                
+            
+                processed_rows.append(row_id)
+                field_fb[str(row["f_id"])]["company"]=row["company_name"]
+                field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
+                field_fb[str(row["f_id"])]["location"]=row["locat"]
+            if row["application_date"] is None or row["id_status"]!=2 or row_id in p_r  :
+                if row["id_status"]==2:
+                    field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
                 continue
-            processed_rows.append(str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"]))
-            field_fb[str(row["f_id"])]["company"]=row["company_name"]
-            field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
-            field_fb[str(row["f_id"])]["location"]=row["locat"]
-            field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
+            if row["id_status"]==2:
+                field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
+                p_r.append(row_id)
+
+        ##----
+           
             products_id=ast.literal_eval(row["id_product"])
             dppus=ast.literal_eval(row["dosage_parts_per_unit"])
             dosages=ast.literal_eval(row["dosage"])
             date_start=row["date_start"].strftime("%d-%m-%Y")
-            if row["application_date"] is None or row["id_status"]!=2:
-                continue
+            
             application_date=row["application_date"].strftime("%d-%m-%Y")
             
             wetting=row["wetting"]

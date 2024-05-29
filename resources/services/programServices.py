@@ -520,11 +520,11 @@ def getFieldBookData(fields):
     try:
         
         
-        query_tasks="""SELECT ta.id_status,ta._id,ta.date_start,ta.date_end, com.company_name,field._id as f_id,field.sag_code,field.location as locat,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, task_orders.application_date
-FROM public.tasks ta
+        query_tasks="""SELECT pl_t.status_id as id_status,ta._id,ta.date_start,ta.date_end, com.company_name,field._id as f_id,field.sag_code,field.location as locat,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, task_orders.application_date
+FROM plot_tasks as pl_t
+left join tasks as ta on pl_t.task_id= ta._id
 left join program_tasks as pt on pt._id=ta.id_moment
-left join programs as p on p._id = pt.id_program
-left join plots as plot on plot.id_program = p._id
+left join plots as plot on plot._id = pl_t.plot_id
 left join field as field on field._id =plot.id_field
 left join task_objectives as t_o on t_o.id_task = pt._id
 left join objectives as o on o._id =t_o.id_objective
@@ -536,7 +536,7 @@ left join (WITH ranked_tasks AS (
 ) 
 SELECT *
 FROM ranked_tasks
-WHERE rn = 1) as task_orders on task_orders.id_task =ta._id 
+WHERE rn = 1) as task_orders on task_orders.id_task =pl_t._id 
 
 where field._id in """+ str(fields)+"""
              """
