@@ -1328,7 +1328,7 @@ def createQuoter(body,user_id):
                     if  n_cluster_master[product['cluster_id'] ]>1:
                         product["cluster_master"]=False
                 
-                container_unit=2
+                container_unit=3
                 if product['product_needed_unit_id']>4:
                     container_unit=1
                 

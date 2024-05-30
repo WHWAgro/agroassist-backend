@@ -553,6 +553,20 @@ def generateTaskOrder(body):
         return False
     
 def formatter(valor):
+            
+            formated_number='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.').split(',')[0]
+
+            return formated_number
+def formatter2(valor):
+            if valor>10000:
+                valor= valor/1000
+                values='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.').split(',')
+
+                formated_number=values[0]
+                if len(values>2) and values[1]!='00':
+                    formated_number='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.')
+
+            
             formated_number='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.').split(',')[0]
 
             return formated_number
@@ -809,14 +823,21 @@ def generateQuoterProducts(body):
             product_unit=' gr'
             if section["product_needed_unit_id"]>=5:
                 product_unit=' cc'
+                if max(section["product_needed"]-section["product_stored"]) >10000:
+                    product_unit=' Lt'
+            
+            elif (max(section["product_needed"]-section["product_stored"]) >10000):
+                product_unit=' Kg'
+
+            final_product=str(formatter2(max(section["product_needed"]-section["product_stored"],0)))
 
             
             
-            row={"name":products[section["product_id"]]["product_name"],"price":str(formatter(max(section["product_needed"]-section["product_stored"],0)))+product_unit}
+            row={"name":products[section["product_id"]]["product_name"],"price":final_product+product_unit}
             print('siguiente')
             product_data.append(row)
             for alternative in section["alternatives"]:
-                row={"name":products[alternative["product_id"]]["product_name"],"price":str(formatter(max(alternative["product_needed"]-alternative["product_stored"],0)))+product_unit}
+                row={"name":products[alternative["product_id"]]["product_name"],"price":final_product+product_unit}
                 product_data.append(row)
           
 
