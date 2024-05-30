@@ -566,7 +566,7 @@ def formatter2(valor):
                 values='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.').split(',')
 
                 formated_number=values[0]
-                if len(values>2) and values[1]!='00':
+                if len(values)>2 and values[1]!='00':
                     print(2)
                     formated_number='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.')
                 return formated_number
