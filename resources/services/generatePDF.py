@@ -668,7 +668,7 @@ def generatePurchaseOrder(body):
         
         for item in body["products"]:
             format_unit={'1':'cc','2':'Lt','3':'gr','4':'Kg',}
-            item["format_unit"]=format_unit[str('container_unit_id')]
+            item["format_unit"]=format_unit[str(item['container_unit_id'])]
             print("producto ------")
             print(item)
             product_total=item["number_products"]*item["container_price_clp"]
