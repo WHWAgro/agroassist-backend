@@ -242,7 +242,7 @@ class PlotTasksClass(db.Model):
   plot_id = db.Column(db.Integer, nullable=False)
   task_id = db.Column(db.Integer, nullable=False)
   status_id = db.Column(db.Integer, nullable=False)
-  from_program=db.Column(db.Boolean, nullable=False)
+  from_program=db.Column(db.Boolean, nullable=False,default=True)
   
   
   
@@ -355,7 +355,7 @@ class userClass(db.Model):
   phone_number= db.Column(db.String(80), nullable=True)
   title_register= db.Column(db.String(80), nullable=True)
   role=db.Column(db.String(80), nullable=True)
-  active=db.Column(db.Boolean, nullable=False)
+  active=db.Column(db.Boolean, nullable=False,default=True)
   
   def __repr__(self):
         return '<user %r>' % self.user_name
