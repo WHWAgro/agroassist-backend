@@ -568,7 +568,10 @@ def formatter2(valor):
 
                 formated_number=values[0]
                 print(values)
-                if len(values)>2 and values[1]!='00':
+                print(len(values))
+                print(values[1]!='00')
+                
+                if len(values)>=2 and values[1]!='00':
                     print(2)
                     formated_number='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.')
                 return formated_number
