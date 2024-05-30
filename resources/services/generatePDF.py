@@ -829,11 +829,11 @@ def generateQuoterProducts(body):
             if section["product_needed_unit_id"]>=5:
                 print('enter 1')
                 product_unit=' cc'
-                if max(section["product_needed"]-section["product_stored"]) >10000:
+                if max(section["product_needed"]-section["product_stored"],0) >10000:
                     product_unit=' Lt'
                     print('enter 2')
             
-            elif (max(section["product_needed"]-section["product_stored"]) >10000):
+            elif (max(section["product_needed"]-section["product_stored"],0) >10000):
                 print('enter 3')
                 product_unit=' Kg'
             print('exit 1')
