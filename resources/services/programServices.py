@@ -938,7 +938,7 @@ def updateMomentTasks(moment_id,body):
         for task in tasks:
         
             
-            task.id_task_type=body.get('id_moment_type')
+            task.id_task_type=1
             task.date_start=body.get('start_date')
             task.date_end=body.get('end_date')
 
