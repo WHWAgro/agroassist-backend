@@ -563,9 +563,11 @@ def formatter2(valor):
             if valor>10000:
                 print(1)
                 valor= valor/1000
+                print(valor)
                 values='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.').split(',')
 
                 formated_number=values[0]
+                print(values)
                 if len(values)>2 and values[1]!='00':
                     print(2)
                     formated_number='{:,.2f}'.format(float(valor)).replace(',','*').replace('.', ',').replace('*','.')
