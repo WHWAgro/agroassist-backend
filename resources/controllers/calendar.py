@@ -224,7 +224,10 @@ class TaskInsApi(Resource):
             
             aux_plots=getTaskPlots2(task_details['_id'],task_details['from_program'])
             if aux_plots !=False and len(aux_plots)>0:
+
               result['id_program']= aux_plots[0]['id_program']
+              if task_details['from_program']==False:
+                result['id_program']=task_details['id_program']
               result['id_species']= aux_plots[0]['id_species']
               for a in aux_plots:
                   task_plots.append(a['_id'])
