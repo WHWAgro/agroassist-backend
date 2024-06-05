@@ -710,7 +710,7 @@ def getTask(id_task):
              """
         
         query_tasks2="""select pt._id as _id, t.date_start,t.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status, 
-                         t._id as id_moment, pt.from_program
+                         t._id as id_moment, pt.from_program, t.visit_id as id_program
                 from plot_tasks as pt
                 left join visit_tasks as t on pt.task_id = t._id
                 left join plots as p on pt.plot_id = p._id
