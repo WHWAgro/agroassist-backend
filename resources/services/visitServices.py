@@ -1,5 +1,5 @@
 import json
-from database.models.Program import VisitClass,db,auth,CompanyClass,FieldClass,userClass,VisitTaskClass,VisitTaskObjectivesClass
+from database.models.Program import VisitClass,db,auth,CompanyClass,FieldClass,userClass,VisitTaskClass,VisitTaskObjectivesClass,PlotTasksClass
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -229,6 +229,11 @@ def createVisitTask(body):
             db.session.add(task)
             db.session.commit()
 
+        for plot in body.get('plots'):
+            plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+            db.session.add(plot_task)
+        db.session.commit()
+
         return task._id
     except Exception as e:
         print(e)
@@ -245,6 +250,8 @@ def updateVisitTask(task_id,body):
             return False
         
         VisitTaskObjectivesClass.query.filter_by(visit_task_id=task._id).delete()
+
+        plot_tasks=PlotTasksClass.query.filter_by(task_id=task._id)
 
         if body.get('task_type_id')==1:
             
@@ -276,6 +283,28 @@ def updateVisitTask(task_id,body):
 
             db.session.add(task)
             db.session.commit()
+        plots=body.get('plots')
+        plots_with_task=[]
+        for plot_task in plot_tasks:
+            if plot_task.plot_id not in plots:
+                db.session.delete(plot_task)
+                db.session.commit()
+
+                continue
+            plots_with_task.append(plot_task.plot_id)
+
+        print(plots_with_task)
+        for plot in plots:
+            if plot not in plots_with_task:
+                print(plot)
+                print(plot not in plots_with_task)
+                plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                db.session.add(plot_task)
+        db.session.commit()
+
+
+
+
         return task._id
     except Exception as e:
         print(e)
@@ -289,7 +318,10 @@ def deleteVisitTask(task_id):
         
         VisitTaskObjectivesClass.query.filter_by(visit_task_id=task_id).delete()
         db.session.commit()
+        PlotTasksClass.query.filter_by(task_id=task_id).delete()
+        db.session.commit()
         VisitTaskClass.query.filter_by(_id=task_id).delete()
+        
         
 
         

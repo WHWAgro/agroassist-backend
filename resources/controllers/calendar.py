@@ -72,7 +72,7 @@ class CalendarApi(Resource):
         
         task_plots=[]
         
-        aux_plots=getTaskPlots2(task['_id'])
+        aux_plots=getTaskPlots2(task['_id'],task['from_program'])
         
         if aux_plots !=False and len(aux_plots)>0:
            
@@ -136,9 +136,14 @@ class TaskInsApi(Resource):
         if len(task_info)>0:
             task_details=task_info[0]
          
-
+            tasks=[]
             
-            tasks=getTaskDetails(task_details['id_moment'])
+            print(task_details)
+            if task_details['from_program']==True:
+              
+              tasks=getTaskDetails(task_details['id_moment'])
+            else:
+               tasks=getVisitTaskDetails(task_details['id_moment'])
             
 
             dic_result = {}
@@ -148,13 +153,30 @@ class TaskInsApi(Resource):
                 response['message']=1
                 response['data']={}
                 return {'response': response}, 400
+            
             for task in tasks:
                 id = task['_id']
-                products = ast.literal_eval(task['id_product'])
-                dosage = ast.literal_eval(task['dosage'])
+
+                products=None
+                dosage=None
+                dosage_parts_per_unit=None
+                objectives=None
+
+
                 
-                dosage_parts_per_unit=ast.literal_eval(task['dosage_parts_per_unit'])
-                objectives= task['id_objective']
+                if task['id_product']!=None:
+                  products = ast.literal_eval(task['id_product'])
+                  dosage = ast.literal_eval(task['dosage'])
+                  
+                  dosage_parts_per_unit=ast.literal_eval(task['dosage_parts_per_unit'])
+                  
+                  if task_details['from_program']==True:
+                    objectives= task['id_objective']
+                  else:
+                    objectives= ast.literal_eval(task['id_objective'])
+
+                
+                
                 if id in dic_result:
                     
                     dic_result[id]["objectives"].append(objectives)
@@ -181,14 +203,12 @@ class TaskInsApi(Resource):
                
         
 
-            print("entering task format")
+            
 
-        
+            
         
             tasks_format= [{'id_moment_type': dict["id_moment_type"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
-            print(tasks_format)
-
-            print("hola")
+            
             result={}
             result['_id']= task_details['_id']
             result['date_start']= str(task_details['date_start'])
@@ -198,11 +218,11 @@ class TaskInsApi(Resource):
             result['id_status']= task_details['id_status']
             result['id_program']=None
             result['id_species']=None
-            result['from_program']=True
+            result['from_program']=task_details['from_program']
             task_plots=[]
            
             
-            aux_plots=getTaskPlots2(task_details['_id'])
+            aux_plots=getTaskPlots2(task_details['_id'],task_details['from_program'])
             if aux_plots !=False and len(aux_plots)>0:
               result['id_program']= aux_plots[0]['id_program']
               result['id_species']= aux_plots[0]['id_species']
@@ -215,7 +235,7 @@ class TaskInsApi(Resource):
         
             result['plots']=task_plots
            
-            print("chao")
+           
         
         
             if len(tasks_format)==0:

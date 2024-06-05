@@ -156,11 +156,17 @@ class VisitTaskApi(Resource):
       data={}
       
       ##programs=getPrograms(user_id,companies)
+
+      print('getting info')
       
       task_id=request.args.get('task_id')
 
       
       task_info=getVisitTaskInfo(task_id)
+      if task_info==False:
+        return {'response': response}, 400
+      print('hola')
+      print(task_info)
 
       task_info['date_start']=task_info['date_start'].strftime('%Y-%m-%d')
       task_info['date_end']=task_info['date_end'].strftime('%Y-%m-%d')
@@ -180,7 +186,7 @@ class VisitTaskApi(Resource):
         task_info['dosage']=ast.literal_eval(task_info['dosage'])
 
 
-
+      print('chao')
       visit_info=getVisitInfo(task_info['visit_id'])
       
       editable=False
@@ -313,7 +319,7 @@ class VisitApi(Resource):
       visit_id=request.args.get('visit_id')
       #ToDo verificar que el que borra sea el usuario que crea
       deleteVisit(visit_id)
-      70
+      
       deleted=True
       if deleted== False:
         response['status']=400 
