@@ -309,6 +309,7 @@ class ProductClass(db.Model):
   id_objective=db.Column(db.Integer, nullable=True)
   reentry_period = db.Column(db.Double,default=0)
   phi = db.Column(db.Double,default=0)
+  chemical_compounds = db.Column(db.String(250), nullable=True)
 
   def __repr__(self):
         return '<product %r>' % self.product_name
