@@ -125,6 +125,8 @@ class LoginUserApi(Resource):
             data["worker_type"]=[{'_id':1,'worker_type_name':'Administrador'},{'_id':2,'worker_type_name':'Asesor Agrícola'},{'_id':3,'worker_type_name':'En Terreno'}]
             data["machinery_type"]=[{'_id':1,'machinery_type_name':'Tractor'},{'_id':2,'machinery_type_name':'Nebulizador'}]
             data["task_type"]=[{'_id':1,'task_type_name':'Fitosanitario'},{'_id':2,'task_type_name':'Raleo'},{'_id':3,'task_type_name':'Riego'},{'_id':4,'task_type_name':'Cosecha'}]
+            
+            data["event_type"]=[{'_id':1,'event_type_name':'Lluvia'},{'_id':2,'event_type_name':'Plaga'}]
             for product in data['products']:
               if product['dosage_type']==1:
 
