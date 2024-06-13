@@ -88,7 +88,7 @@ def getProductsAlt(products):
                     
                         
                                 
-                productsAlt[so_index][o_index].append(alternatives)
+                productsAlt[o_index].append(alternatives)
                 
 
 
