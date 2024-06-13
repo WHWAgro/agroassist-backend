@@ -714,7 +714,8 @@ def generatePurchaseOrder(body):
             container_size_format=str(formatter(item["container_size"]))
             container_price_format=str(formatter(item["container_price_clp"]))
             row_data = [products[item["id_product"]]["product_name"],container_size_format+" "+item["format_unit"],item["number_products"],"$"+container_price_format,"$"+total_price_format]
-            wrapped_row = [create_wrapped_paragraph(cell) for cell in row_data]
+            print(row_data)
+            wrapped_row = [create_wrapped_paragraph(str(cell)) for cell in row_data]
             
             table_data2.append(wrapped_row)
         table_data2.append(["","","","Sub-Total","$"+str(formatter(subtotal))])
