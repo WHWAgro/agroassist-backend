@@ -46,6 +46,54 @@ def getTableDict(table):
         products_dict[el["_id"]]=el
 
     return products_dict
+
+
+def getProductsAlt(products):
+    productsAlt=[]
+
+    for so_index,so in enumerate(products):
+        productsAlt.append([])
+
+        for o_index,objective in enumerate(so):
+            
+            productsAlt[so_index].append([])
+            for aa_index,and_alt in enumerate(objective):
+                
+                
+                alternatives=[]
+                and_alt_format='('
+                for market in and_alt:
+            
+                    and_alt_format=and_alt_format+str(market)+","
+                and_alt_format = and_alt_format[:-1]
+                and_alt_format=and_alt_format+" )"
+                
+                
+                query="""SELECT DISTINCT p2._id
+                                FROM products p1
+                                left JOIN products p2
+                                ON p1.chemical_compounds = p2.chemical_compounds
+                                WHERE p1._id IN """+ str(and_alt_format)+"""
+                        
+                    """
+                
+
+               
+                with db.engine.begin() as conn:
+                    result = conn.execute(text(query)).fetchall()
+                    for row in result:
+                        row_as_dict = row._mapping
+                            
+                        alternatives.append(row_as_dict['_id'])
+                
+                    
+                        
+                                
+                productsAlt[so_index][o_index].append(alternatives)
+                
+
+
+    return productsAlt
     
 def getMoments(id_program,start,end):
    

@@ -238,7 +238,8 @@ class TaskInsApi(Resource):
         
             result['plots']=task_plots
            
-           
+            print('&&&&&&&&& task format')
+            print(tasks_format)
         
         
             if len(tasks_format)==0:
@@ -248,13 +249,16 @@ class TaskInsApi(Resource):
             else:
                 for ind,val in tasks_format[0].items():
                     result[ind]=val
+                
                 result['task_orders']=taskOrderFile
                 data["task_details"]=result  
 
       
       # id,id_user,program_name,species_name,market_name
 
-      
+        products_list=data['task_details']['products']
+        data['task_details']['products_alt']=getProductsAlt(products_list)
+         
    
       
      
