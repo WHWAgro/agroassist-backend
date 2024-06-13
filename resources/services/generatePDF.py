@@ -331,8 +331,10 @@ def generateTaskOrder(body):
                 
                 product=ast.literal_eval(value["id_product"])
                 i,j=find_element_index(product,item["id_product"])
-                dosage=ast.literal_eval(value["dosage"])[i][j]
-                dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
+
+                #change
+                dosage=ast.literal_eval(value["dosage"])[i][0]
+                dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][0]
             unit=""
             unit_dosage=""
             total_product=0

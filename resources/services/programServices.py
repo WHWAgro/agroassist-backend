@@ -742,7 +742,7 @@ def getTask(id_task):
 
         task = PlotTasksClass.query.get(id_task)
         print('///////')
-        print(task.from_program)
+        
         
         
         query_tasks="""select pt._id as _id, t.date_start,t.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status, 
