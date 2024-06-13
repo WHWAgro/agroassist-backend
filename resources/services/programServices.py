@@ -49,14 +49,13 @@ def getTableDict(table):
 
 
 def getProductsAlt(products):
-    productsAlt=[]
+        productsAlt=[]
 
-    for so_index,so in enumerate(products):
-        productsAlt.append([])
+    
 
         for o_index,objective in enumerate(so):
             
-            productsAlt[so_index].append([])
+            productsAlt.append([])
             for aa_index,and_alt in enumerate(objective):
                 
                 
@@ -93,7 +92,7 @@ def getProductsAlt(products):
                 
 
 
-    return productsAlt
+        return productsAlt
     
 def getMoments(id_program,start,end):
    
