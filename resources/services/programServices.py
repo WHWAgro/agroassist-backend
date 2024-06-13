@@ -68,11 +68,26 @@ def getProductsAlt(products):
                 and_alt_format=and_alt_format+" )"
                 
                 
-                query="""SELECT DISTINCT p2._id
-                                FROM products p1
-                                left JOIN products p2
-                                ON p1.chemical_compounds = p2.chemical_compounds
-                                WHERE p1._id IN """+ str(and_alt_format)+"""
+                query="""WITH RankedProducts AS (
+                                    SELECT 
+                                        p2._id,
+                                        p2.product_name,
+                                        ROW_NUMBER() OVER (PARTITION BY p2.product_name ORDER BY p2._id) AS rn
+                                    FROM 
+                                        products p1
+                                    LEFT JOIN 
+                                        products p2
+                                    ON 
+                                        p1.chemical_compounds = p2.chemical_compounds
+                                    WHERE 
+                                        p1._id IN """ + str(and_alt_format) + """
+                                )
+                                SELECT 
+                                    _id
+                                FROM 
+                                    RankedProducts
+                                WHERE 
+                                    rn = 1;
                         
                     """
                 

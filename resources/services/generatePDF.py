@@ -319,22 +319,46 @@ def generateTaskOrder(body):
         
         phi_list=[]
         reentry_period_list=[]
+
+        similar_products=[]
+
+        #products[item["id_product"]]["reentry_period"]
         for item in data_list2:
+            print(item)
             k_filter1 = "id_objective"
             v_match1 = item["id_objective"]
             filtered_data2={key: value for key, value in filtered_data.items() if (value.get(k_filter1) == v_match1 )}
             
             
+            print(filtered_data2)
             dosage=0
             dosage_unit=1
             for key ,value in filtered_data2.items():
                 
                 product=ast.literal_eval(value["id_product"])
-                i,j=find_element_index(product,item["id_product"])
+                print(product)
+                print('fd')
+                
+
+                similar_products=[]
+                for and_p in product:
+                    for or_p in and_p:
+                        similar_products.append(products[int(or_p)])
+                print('holas')
+                print(similar_products)
+                product_replacement=products[item["id_product"]]
+                product_original=products[item["id_product"]]
+                for s_p in similar_products:
+                    if product_original['_id']==s_p['_id'] or product_original['chemical_compounds']==s_p['chemical_compounds']:
+                        product_replacement=s_p
+                        break
+
+                
+                i,j=find_element_index(product,product_replacement["_id"])
 
                 #change
-                dosage=ast.literal_eval(value["dosage"])[i][0]
-                dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][0]
+                dosage=ast.literal_eval(value["dosage"])[i][j]
+                dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
             unit=""
             unit_dosage=""
             total_product=0
