@@ -53,7 +53,7 @@ def getProductsAlt(products):
 
     
 
-        for o_index,objective in enumerate(so):
+        for o_index,objective in enumerate(products):
             
             productsAlt.append([])
             for aa_index,and_alt in enumerate(objective):
