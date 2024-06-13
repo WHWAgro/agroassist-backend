@@ -116,7 +116,7 @@ class TaskInsApi(Resource):
   def get(self):
   
     try:
-      
+        print('*******begin*****')
         response={}
         response['status']=200
         response['message']=0
@@ -144,7 +144,10 @@ class TaskInsApi(Resource):
               tasks=getTaskDetails(task_details['id_moment'])
             else:
                tasks=getVisitTaskDetails(task_details['id_moment'])
-            
+
+
+            print('hola///////*************')
+            print(tasks)
 
             dic_result = {}
             if tasks==False:
@@ -185,22 +188,37 @@ class TaskInsApi(Resource):
                     
                     dic_result[id]["dosage_parts_per_unit"].append(dosage_parts_per_unit)
                 else:
-                    
-                    dic_result[id]={}
-                    dic_result[id]["id_program"] = task['id_program']
-                    dic_result[id]["id_moment_type"] = task["id_moment_type"] 
-                    dic_result[id]["start_date"] = str(task['start_date'])
-                    
-                    dic_result[id]["moment_value"] = task['moment_value']
-                    dic_result[id]["objectives"] = [objectives]
-                    dic_result[id]["products"] = [products]
-                    dic_result[id]["dosage"] = [dosage]
-                    
-                    dic_result[id]["dosage_parts_per_unit"]=[dosage_parts_per_unit]
-                    
-                    dic_result[id]["wetting"] = task['wetting']
-                    dic_result[id]["observations"] = task['observations']
-               
+                    if task_details['from_program']==True:
+                      dic_result[id]={}
+                      dic_result[id]["id_program"] = task['id_program']
+                      dic_result[id]["id_moment_type"] = task["id_moment_type"] 
+                      dic_result[id]["start_date"] = str(task['start_date'])
+                      
+                      dic_result[id]["moment_value"] = task['moment_value']
+                      dic_result[id]["objectives"] = [objectives]
+                      dic_result[id]["products"] = [products]
+                      dic_result[id]["dosage"] = [dosage]
+                      
+                      dic_result[id]["dosage_parts_per_unit"]=[dosage_parts_per_unit]
+                      
+                      dic_result[id]["wetting"] = task['wetting']
+                      dic_result[id]["observations"] = task['observations']
+                    else:
+                      dic_result[id]={}
+                      dic_result[id]["id_program"] = task['id_program']
+                      dic_result[id]["id_moment_type"] = task["id_moment_type"] 
+                      dic_result[id]["start_date"] = str(task['start_date'])
+                      
+                      dic_result[id]["moment_value"] = task['moment_value']
+                      dic_result[id]["objectives"] = objectives
+                      dic_result[id]["products"] = products
+                      dic_result[id]["dosage"] = dosage
+                      
+                      dic_result[id]["dosage_parts_per_unit"]=dosage_parts_per_unit
+                      
+                      dic_result[id]["wetting"] = task['wetting']
+                      dic_result[id]["observations"] = task['observations']
+
         
 
             
@@ -258,7 +276,7 @@ class TaskInsApi(Resource):
 
         products_list=data['task_details']['products']
         data['task_details']['products_alt']=getProductsAlt(products_list)
-         
+        
    
       
      
