@@ -1,5 +1,5 @@
 import json
-from database.models.Program import PlotTasksClass,FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import TaskOrderClass,PlotTasksClass,FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -911,6 +911,82 @@ def getTaskOrders(id_task):
         print(e)
         return False
     
+def getTaskOrdersFull(id_task):
+    try:
+        plot_task=PlotTasksClass.query.get(id_task)
+        
+        query="""
+                    SELECT _id,file_name,plots
+                    FROM task_orders
+                    WHERE task_orders.id_task in (
+                        SELECT _id 
+                        FROM plot_tasks 
+                        WHERE task_id = (
+                            SELECT task_id 
+                            FROM plot_tasks 
+                            WHERE _id = """+ str(id_task)+"""
+                    ))
+                    order by order_number desc
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = dict(row._mapping)
+                
+                
+                
+                if row_as_dict['plots'] != None and (plot_task.plot_id in ast.literal_eval(row_as_dict['plots'])):
+                    
+                    rows.append(row_as_dict)
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
+
+
+def getAdjacentPlotTasks(id_task,plots):
+    try:
+        plot_task=PlotTasksClass.query.get(id_task)
+        
+        query="""
+                    
+                    
+                        SELECT *
+                        FROM plot_tasks 
+                        WHERE task_id = (
+                            SELECT task_id 
+                            FROM plot_tasks 
+                            WHERE _id = """+ str(id_task)+""")
+                        and plot_id in """+ str(plots)+"""
+                   
+                    
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = dict(row._mapping)
+                
+                
+                print(row_as_dict)
+                
+                rows.append(row_as_dict)
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def mailExists(email):
     try:
 
@@ -1139,11 +1215,37 @@ def updateTaskIns(task_id, body):
 
         if task is None:
             return False
+        
+        batch_update=False
+        if "batch_update" in body:
+            batch_update=body["batch_update"]
 
+        task_orders=getTaskOrdersFull(task_id)
+        task_order=0
+        print(task_orders)
+        if len(task_orders)>0:
+            task_order=task_orders[0]
+
+        print("hola")
         for key,value in body.items():
             if key=="status":
-                print("cambio de status")
-                task.status_id = value
+              
+                if batch_update and len(task_orders)>0 and task_order['plots']!=None :
+                    plots=task_order['plots'].replace('[','(').replace(']',')')
+                   
+                    adjacent_plot_tasks=getAdjacentPlotTasks(task_id,plots)
+                    print(adjacent_plot_tasks)
+                    for apt in adjacent_plot_tasks:
+
+                       
+                        task = PlotTasksClass.query.get(apt['_id'])
+                        task.status_id = value
+                        db.session.add(task)
+
+                else:
+                    print("cambio de status")
+                    task.status_id = value
+                    db.session.add(task)
             #if key=="time_indicator":
             #       print("cambio de tiempo")
             #  task.time_indicator = value
@@ -1155,7 +1257,7 @@ def updateTaskIns(task_id, body):
         
 
 
-        db.session.add(task)
+        
         db.session.commit()
 
         return task._id

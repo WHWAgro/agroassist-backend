@@ -312,7 +312,7 @@ class TaskInsApi(Resource):
        
         
         if response.get('status') == 200 and task != False:
-            print("dds")
+            
             data['id_task']=id_task
             response['data']=data
 
