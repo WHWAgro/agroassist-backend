@@ -150,7 +150,18 @@ class QuoterInitApi(Resource):
                 #el["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
                 el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
                 
-                alternatives=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
+                alternatives_pre=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
+                unique_products_name = []
+                alternatives=[]
+
+                # Iterate over the list and add entries to the dictionary
+                for product in alternatives_pre:
+                    product_name = product["product_name"]
+                    if product_name not in unique_products_name:
+                        unique_products_name.append(product_name)
+                        alternatives.append = product
+
+                
                 print('producto')
                 print(str(id))
                 print(products_list[str(id)])
