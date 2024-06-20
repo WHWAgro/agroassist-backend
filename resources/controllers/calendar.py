@@ -177,6 +177,9 @@ class TaskInsApi(Resource):
                     objectives= task['id_objective']
                   else:
                     objectives= ast.literal_eval(task['id_objective'])
+                  print('no tiene productos')
+                else:
+                   print('tiene productos')
 
                 
                 
@@ -195,6 +198,8 @@ class TaskInsApi(Resource):
                       dic_result[id]["start_date"] = str(task['start_date'])
                       
                       dic_result[id]["moment_value"] = task['moment_value']
+                      
+                      print('is from program')
                       dic_result[id]["objectives"] = [objectives]
                       dic_result[id]["products"] = [products]
                       dic_result[id]["dosage"] = [dosage]
@@ -204,25 +209,28 @@ class TaskInsApi(Resource):
                       dic_result[id]["wetting"] = task['wetting']
                       dic_result[id]["observations"] = task['observations']
                     else:
+                      print('is not from program')
                       dic_result[id]={}
                       dic_result[id]["id_program"] = task['id_program']
                       dic_result[id]["id_moment_type"] = task["id_moment_type"] 
                       dic_result[id]["start_date"] = str(task['start_date'])
                       
                       dic_result[id]["moment_value"] = task['moment_value']
+
+                      print('is not from program2')
                       dic_result[id]["objectives"] = objectives
                       dic_result[id]["products"] = products
                       dic_result[id]["dosage"] = dosage
                       
                       dic_result[id]["dosage_parts_per_unit"]=dosage_parts_per_unit
-                      
+                      print('is not from program3')
                       dic_result[id]["wetting"] = task['wetting']
                       dic_result[id]["observations"] = task['observations']
 
         
 
             
-
+            print('paso 2')
             
         
             tasks_format= [{'id_moment_type': dict["id_moment_type"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
@@ -238,6 +246,8 @@ class TaskInsApi(Resource):
             result['id_species']=None
             result['from_program']=task_details['from_program']
             task_plots=[]
+
+            print('paso 3')
            
             
             aux_plots=getTaskPlots2(task_details['_id'],task_details['from_program'])
@@ -252,7 +262,7 @@ class TaskInsApi(Resource):
 
             taskOrderFile,current_plot = getTaskOrders(task_details['_id'])
             
-           
+            print('paso 4')
         
             result['plots']=task_plots
            
