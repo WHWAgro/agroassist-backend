@@ -119,8 +119,10 @@ def getMoments(id_program,start,end):
                 left join task_objectives  ta
                     on pt._id=ta.id_task
                 WHERE id_program = """+ str(id_program)+"""
-                AND start_date >= DATE('"""+ start+"""')
-                AND start_date < DATE('"""+ end+"""')
+                
+                AND (
+                    (start_date <= DATE('"""+ end +"""') AND end_date >= DATE('"""+ start +"""'))
+                    )
                 
              """
         
