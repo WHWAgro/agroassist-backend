@@ -154,13 +154,13 @@ class QuoterInitApi(Resource):
                 unique_products_name = []
                 alternatives=[]
 
-                print(alternatives_pre)
+                
                 # Iterate over the list and add entries to the dictionary
                 for product in alternatives_pre:
                     product_name = product["product_name"]
                     if product_name not in unique_products_name:
                         unique_products_name.append(product_name)
-                        alternatives.append = product
+                        alternatives.append( product)
 
                 
                 print('producto')
