@@ -218,11 +218,18 @@ class TaskInsApi(Resource):
                       dic_result[id]["moment_value"] = task['moment_value']
 
                       print('is not from program2')
-                      dic_result[id]["objectives"] = objectives
-                      dic_result[id]["products"] = products
-                      dic_result[id]["dosage"] = dosage
-                      
-                      dic_result[id]["dosage_parts_per_unit"]=dosage_parts_per_unit
+                      if dic_result[id]["id_moment_type"] ==1:
+                        dic_result[id]["objectives"] = objectives
+                        dic_result[id]["products"] = products
+                        dic_result[id]["dosage"] = dosage
+                        
+                        dic_result[id]["dosage_parts_per_unit"]=dosage_parts_per_unit
+                      else:
+                        dic_result[id]["objectives"] = []
+                        dic_result[id]["products"] = []
+                        dic_result[id]["dosage"] = []
+                        
+                        dic_result[id]["dosage_parts_per_unit"]=[]
                       print('is not from program3')
                       dic_result[id]["wetting"] = task['wetting']
                       dic_result[id]["observations"] = task['observations']
