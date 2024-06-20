@@ -231,6 +231,7 @@ class TaskInsApi(Resource):
 
             
             print('paso 2')
+            print(dic_result)
             
         
             tasks_format= [{'id_moment_type': dict["id_moment_type"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
