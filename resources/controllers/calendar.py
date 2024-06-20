@@ -234,7 +234,7 @@ class TaskInsApi(Resource):
             
         
             tasks_format= [{'id_moment_type': dict["id_moment_type"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
-            
+            print('paso 2 y medio')
             result={}
             result['_id']= task_details['_id']
             result['date_start']= str(task_details['date_start'])
