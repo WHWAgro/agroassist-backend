@@ -154,6 +154,7 @@ class QuoterInitApi(Resource):
                 unique_products_name = []
                 alternatives=[]
 
+                print(alternatives_pre)
                 # Iterate over the list and add entries to the dictionary
                 for product in alternatives_pre:
                     product_name = product["product_name"]
