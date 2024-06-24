@@ -806,8 +806,11 @@ class TaskOrderApi(Resource):
         body = request.get_json()
         print('processing task order ------')
         taskOrderFile = generateTaskOrder(body)
+        id_task=int(body['id_task'])
+        task_updated=updateTaskIns(id_task,{'batch_update':True,'status':3})
+
         print(taskOrderFile)
-        if taskOrderFile== False:
+        if taskOrderFile== False or task_updated==False:
           response['status']=400 
           response['message']=1
         
