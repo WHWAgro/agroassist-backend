@@ -874,6 +874,50 @@ class TaskOrderApi(Resource):
         return {'response': response},500
       
 
+class TaskOrderTimeApi(Resource):
+  
+
+    @jwt_required()
+    def put(self):
+    
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+
+        body = request.get_json()
+        to_id=request.args.get('task_order_id')
+        taskOrderFile = updateTaskOrder(to_id,body)
+      
+        if taskOrderFile== False :
+          response['status']=400 
+          response['message']=1
+        
+        else:
+
+          data={}
+          data['task_order']=taskOrderFile
+          response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          response['status']=400
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        response['message']=2
+        response['status']=500
+        return {'response': response},500
+      
+    
+      
+
 class DowloadTaskOrderApi(Resource):
   
 

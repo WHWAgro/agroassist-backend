@@ -257,6 +257,8 @@ class TaskOrderClass(db.Model):
   wetting=db.Column(db.Integer, nullable=False)
   application_date=db.Column(db.DateTime, server_default=db.func.now())
   plots=db.Column(db.String(200), nullable=True)
+  time_start=db.Column(db.String(20), nullable=True,default='10:00')
+  time_end=db.Column(db.String(20), nullable=True,default='11:00')
 
 class MachineryClass(db.Model):
 

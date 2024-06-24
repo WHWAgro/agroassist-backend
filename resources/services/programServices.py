@@ -913,6 +913,44 @@ def getTaskOrders(id_task):
         print(e)
         return False
     
+def getTaskOrdersNewFormat(id_task):
+    try:
+        plot_task=PlotTasksClass.query.get(id_task)
+        
+        query="""
+                    SELECT _id,file_name,plots,time_start ,time_end 
+                    FROM task_orders
+                    WHERE task_orders.id_task in (
+                        SELECT _id 
+                        FROM plot_tasks 
+                        WHERE task_id = (
+                            SELECT task_id 
+                            FROM plot_tasks 
+                            WHERE _id = """+ str(id_task)+"""
+                    ))
+                    order by order_number desc
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = dict(row._mapping)
+                
+                
+                print(row_as_dict)
+                if row_as_dict['plots'] != None and (plot_task.plot_id in ast.literal_eval(row_as_dict['plots'])):
+                    del(row_as_dict["plots"])
+                    rows.append(row_as_dict)
+            return rows,plot_task.plot_id
+        
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def getTaskOrdersFull(id_task):
     try:
         plot_task=PlotTasksClass.query.get(id_task)
@@ -1260,6 +1298,47 @@ def updateTaskIns(task_id, body):
 
 
         
+        db.session.commit()
+
+        return task._id
+    
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def updateTaskOrder(to_id, body):
+    try:
+        
+
+        task = TaskOrderClass.query.get(to_id)
+
+        if task is None:
+            return False
+        
+       
+        for key,value in body.items():
+            if key=="time_start":
+              
+                task.time_start = value
+                
+
+            if key=="time_end":
+                task.time_end = value
+                
+            #if key=="time_indicator":
+            #       print("cambio de tiempo")
+            #  task.time_indicator = value
+            #status = body.get('status')
+            #time_indicator = body.get('time_indicator')
+                
+        #task.status = status
+        #task.time_indicator = time_indicator
+        
+
+
+        db.session.add(task)
         db.session.commit()
 
         return task._id

@@ -2,7 +2,7 @@ from .controllers.editProgram import EditProgramApi
 from .controllers.programSelection import ProgramSelectionApi,ProgramApi,ProgramPublishApi
 from .controllers.user import CreateUserApi,LoginUserApi
 from .controllers.tryc import CreationApi
-from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
+from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,TaskOrderTimeApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
 from .controllers.quoter import QuoterProductsApi,QuoterApi,QuoterInitApi,QuoterSelectionApi,PurchaseOrderApi,DowloadPurchaseOrderApi
 from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 from .controllers.fieldbook import FieldBookApi,FieldBookExportApi,FieldBookFullApi
@@ -49,6 +49,7 @@ def initialize_routes(api):
 
 
  api.add_resource(TaskOrderApi,'/api/v1.0/task/order')
+ api.add_resource(TaskOrderTimeApi,'/api/v1.0/task/order/time')
  api.add_resource(DowloadTaskOrderApi,'/api/v1.0/task/order/download')
 
  api.add_resource(PurchaseOrderApi,'/api/v1.0/quoter/order')
