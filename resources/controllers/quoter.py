@@ -55,6 +55,8 @@ class QuoterInitApi(Resource):
       
 
       total_hectares=0
+      plots_visited=[]
+      user_plots=getUserValidPlots(user_id)
       for program in programs:
         program_hectares=0
 
@@ -64,27 +66,37 @@ class QuoterInitApi(Resource):
         v_match1 = int(program)
 
        
-        user_plots=getUserPlots(user_id)
         
         
         
-        filtered_data = {value["_id"]:value  for  value in user_plots if (str(value.get(k_filter1)) == str(v_match1) )}
+        
+        filtered_data = {str(value["_id"])+'-'+str(value["moment_id"]):value  for  value in user_plots if (str(value.get(k_filter1)) == str(v_match1) )}
         
         
-        
+        print(filtered_data)
         for key,value in filtered_data.items():
-          total_hectares=total_hectares+value["size"]
-          program_hectares=program_hectares+value["size"]
+          if value['_id'] not in plots_visited:
+            
+            plots_visited.append(value['_id'])
+            total_hectares=total_hectares+value["size"]
+            program_hectares=program_hectares+value["size"]
           
         if program_hectares==0:
           print("0 hectares")
           continue
   
         moments=getMoments(program,date_begin,date_end)
+        
         print("moments:")
-        print(moments)
+        
         for objective in moments:
-            
+            print("---------------------------------")
+            print((objective))
+            moment_hectares=0
+            for  key,values in filtered_data.items():
+              if values['moment_id']==objective['_id']:
+                moment_hectares=moment_hectares+values['size']
+            print(moment_hectares)
             products_list={}
             products_ids=[]
             id_objective=objective["id_objective"]
@@ -92,16 +104,17 @@ class QuoterInitApi(Resource):
             dosages=list(chain.from_iterable( ast.literal_eval(objective["dosage"])))
             dosages_unit=list(chain.from_iterable( ast.literal_eval(objective["dosage_parts_per_unit"])))
             
+            
             for i,product in enumerate(products):
                 if product in products_ids:
                     products_list[str(product)]["n_applications"]=products_list[str(product)]["n_applications"]+1
                 else:
                     products_ids.append(product)
-                    products_list[str(product)]={"valid_hectares":program_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":float(dosages[i]),"product_needed_unit":dosages_unit[i]}
+                    products_list[str(product)]={"valid_hectares":moment_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":float(dosages[i]),"product_needed_unit":dosages_unit[i]}
                     products_list[str(product)]["n_applications"]=1
+            print(products_ids)
+            print(products_list)
             
-            
- 
             
 
             for p_id,p_value in products_list.items():
@@ -139,9 +152,10 @@ class QuoterInitApi(Resource):
            
             for id in products_ids:
                 valid=list(filter(lambda product: product['_id'] == id , elements))
-                print(valid)
-                print("chao")
+                #print(valid)
+                
                 compound=valid[0]["chemical_compounds"]
+                
                 
                 
                 el={"product_id":id, "objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":int(program),"dosage":products_list[str(id)]["dosage"]}
@@ -149,7 +163,7 @@ class QuoterInitApi(Resource):
                 el["products_needed"]=products_list[str(id)]["product_needed"]
                 #el["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
                 el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
-                
+                #print("chao3")
                 alternatives_pre=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
                 unique_products_name = []
                 alternatives=[]
@@ -163,13 +177,13 @@ class QuoterInitApi(Resource):
                         alternatives.append( product)
 
                 
-                print('producto')
-                print(str(id))
-                print(products_list[str(id)])
-                print('alternativas')
+                #print('producto')
+                #print(str(id))
+                #print(products_list[str(id)])
+                #print('alternativas')
                 #print(product['product_name'])
                 
-                print(alternatives)
+                #print(alternatives)
                 alternatives_list=[]
                 for alternative in alternatives:
                    if alternative["_id"]==id:
@@ -180,6 +194,7 @@ class QuoterInitApi(Resource):
                    lol["products_needed"]=products_list[str(id)]["product_needed"]
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
+                
                 final_list.append(el)
 
       data={}
@@ -188,11 +203,18 @@ class QuoterInitApi(Resource):
       data["clp2usd"]=0.0011
       data["products"]=final_list
 
+      #TO DO revisar como se consolidan los productos para el total hectareas
       consolidated_products=[]
       used_products=[]
+      print('------consolidando-----')
       for product in data["products"]:
+        
        
         if product['product_id'] not in used_products:
+          if product['product_id']==5:
+            print('producto 5')
+          if product['product_id']==1:
+            print('producto 1')
          
           used_products.append(product["product_id"])
           for alternative in product["alternatives"]:
@@ -200,11 +222,23 @@ class QuoterInitApi(Resource):
           consolidated_products.append(product)
           
         else: 
+          if product['product_id']==5:
+            print('producto 5 otro')
+          if product['product_id']==1:
+            print('producto 1 otro')
+            print(product)
           
           for c_product in consolidated_products:
+            
             c_alternatives=[c_alternative["product_id"] for c_alternative in c_product["alternatives"]]
-            if product["product_id"]==c_product["product_id"] or c_product["product_id"] in c_alternatives :
-              
+            if c_product['product_id']==5:
+              if product['product_id']==1:
+                
+                print(c_alternatives)
+                print(c_product["product_id"] in c_alternatives)
+            if product["product_id"]==c_product["product_id"] or (product["product_id"] in c_alternatives) :
+              if product['product_id']==1:
+                print("hola")
               c_product['wetting']=c_product['wetting']+product['wetting']
               c_product['products_needed']=c_product['products_needed']+product['products_needed']
               c_product['valid_hectares']=c_product['valid_hectares']+product['valid_hectares']

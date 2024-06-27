@@ -114,7 +114,7 @@ def getMoments(id_program,start,end):
     
     try:
         
-        query="""SELECT wetting,id_product,dosage,dosage_parts_per_unit,id_objective
+        query="""SELECT pt._id,wetting,id_product,dosage,dosage_parts_per_unit,id_objective
                 FROM program_tasks  pt
                 left join task_objectives  ta
                     on pt._id=ta.id_task
@@ -848,6 +848,48 @@ def getUserPlots(user_id):
         print(e)
         return False
     
+
+def getUserValidPlots(user_id):
+    try:
+
+
+        companies=getUserCompanies(user_id)
+        print(companies)
+        if len(companies)==0:
+            return False
+        company=companies[0]['_id']
+
+        query_tasks="""SELECT pl.*,ts.id_moment as moment_id, pt.status_id
+                FROM plots as pl
+                left join field as fi  on pl.id_field=fi._id
+				left join plot_tasks as pt on pl._id = pt.plot_id
+				left join tasks  as ts on ts._id = pt.task_id
+                
+                where fi.company_id = """+ str(company)+"""
+                and pt.from_program = True
+                and pt.status_id IS NOT NULL
+                and pt.status_id != 2
+                
+             """
+        
+        
+        rows_plots=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_plots.append(dict(row_as_dict))
+        
+        
+        return rows_plots
+
+    except Exception as e:
+        print(e)
+        return False    
 def createProgram(program_name,id_user,species):
     
     try:
@@ -918,7 +960,7 @@ def getTaskOrdersNewFormat(id_task):
         plot_task=PlotTasksClass.query.get(id_task)
         
         query="""
-                    SELECT _id,file_name,plots,time_start ,time_end 
+                    SELECT _id,file_name,plots,time_start ,time_end ,alias
                     FROM task_orders
                     WHERE task_orders.id_task in (
                         SELECT _id 

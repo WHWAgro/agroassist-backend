@@ -119,6 +119,7 @@ def generateTaskOrder(body):
         
         myuuid = uuid.uuid4()
         doc_name = str(myuuid)+".pdf"
+        
         doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
         print(str(myuuid)+".pdf")
         
@@ -566,8 +567,9 @@ def generateTaskOrder(body):
         # Build the PDF document
         doc.build(pdf_content)
         
+        alias='ODA_'+str(application_date)+'_'+campo_data.replace(' ','-')+'_N-'+str(order_number)+'.pdf'
 
-        new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']))
+        new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias)
         db.session.add(new_task_order)
         db.session.commit()
         

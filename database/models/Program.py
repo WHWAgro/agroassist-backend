@@ -259,6 +259,7 @@ class TaskOrderClass(db.Model):
   plots=db.Column(db.String(200), nullable=True)
   time_start=db.Column(db.String(20), nullable=True,default='10:00')
   time_end=db.Column(db.String(20), nullable=True,default='11:00')
+  alias=db.Column(db.String(200), nullable=True,default='ODA.pdf')
 
 class MachineryClass(db.Model):
 
@@ -279,6 +280,7 @@ class PurchaseOrderClass(db.Model):
   file_name=db.Column(db.String(100), nullable=True)
   order_number=db.Column(db.Integer, nullable=False)
   created_at = db.Column(db.DateTime, server_default=db.func.now())
+  alias=db.Column(db.String(200), nullable=True,default='ODC.pdf')
 
 class PhenologicalStageClass(db.Model):
 
