@@ -1788,7 +1788,7 @@ def getProviderPurchaseOrders(quote_id):
  
         
 
-        query="""SELECT file_name,order_number
+        query="""SELECT file_name,order_number,alias
         from purchase_orders
                 WHERE id_quote = """+ str(quote_id)+"""
                 order by order_number

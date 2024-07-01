@@ -776,9 +776,10 @@ def generatePurchaseOrder(body):
 
         # Build the PDF document
         doc.build(pdf_content)
+        alias='ODC_'+str(today_date)+'_'+body["provider_name"].replace(' ','-')+'_N-'+str(order_number)+'.pdf'
 
         print('hola---------')
-        new_purchase_order = PurchaseOrderClass( id_company=company_id,id_quote=body['id_quote'],file_name=doc_name,order_number=order_number)
+        new_purchase_order = PurchaseOrderClass( id_company=company_id,id_quote=body['id_quote'],file_name=doc_name,order_number=order_number,alias=alias)
         db.session.add(new_purchase_order)
         db.session.commit()
 
