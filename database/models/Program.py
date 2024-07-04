@@ -55,8 +55,7 @@ class ProgramClass(db.Model):
   program_name = db.Column(db.String(80), nullable=False)
   published = db.Column(db.Boolean, nullable=False)
   fields = db.relationship('ProgramCompaniesClass', backref='program')
-  updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
-  
+  updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
   def __repr__(self):
         return '<program %r>' % self.program_name
   
