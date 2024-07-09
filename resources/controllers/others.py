@@ -43,16 +43,23 @@ class OnboardingApi(Resource):
            df = pd.read_excel(file)
            df.rename(columns = {df.columns[0]:'name',df.columns[1]:'size',df.columns[2]:'id_species',df.columns[3]:'variety'}, inplace = True)
            df['id_field']=int(id_field)
-           df['id_species']=1
+           
            print(df)
 
            for index, row in df.iterrows():
+            id_species=1
+            if row['id_species']=="Ciruelos":
+               id_species=3
+            if row['id_species']=="Frutillas":
+               id_species=4
+            if row['id_species']=="Arandanos":
+               id_species=2
 
             new_data = PlotClass(
                   id_field=row['id_field'],
                   name=row['name'],
                   size=float(str(row['size']).replace(',','.')),
-                  id_species=1,
+                  id_species=id_species,
                   variety=row['variety']
                   # Add more columns as needed
               )

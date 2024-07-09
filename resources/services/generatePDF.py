@@ -187,10 +187,11 @@ def generateTaskOrder(body):
         products=getTableDict("products")
         task=getTask(id_task)[0]
         print("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")        
-        print(task)
+        
         moments=getTableDict("program_tasks")
         moment_objectives=getTableDict("task_objectives")
         moment_id=task["id_moment"]
+        dict_species=getTableDict("species")
 
         wetting=moments[moment_id]["wetting"]
         
@@ -198,12 +199,15 @@ def generateTaskOrder(body):
         for id_plot in body['id_plots']:
             print("init plot")
             print(id_plot)
-            
+            id_species=plots[id_plot]["id_species"] 
             plots_names = plots_names +', '+plots[id_plot]["name"] 
             print(plots_names)  
             total_plot_size=total_plot_size+plots[id_plot]["size"]
             print(total_plot_size)  
             print("plot end")
+            cultivo_data=dict_species[id_species]["species_name"]
+            print("nuevo cultivo")
+            print(cultivo_data)
         if len(plots_names)>0:
             print("hola")
             plots_names=plots_names[1:]   
