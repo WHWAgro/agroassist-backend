@@ -399,7 +399,7 @@ class FieldBookFullApi(Resource):
             cell=new_sheet.cell(row=start_row+2, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 2, start_column=1, end_row=start_row + 2, end_column=2)
-            cell=new_sheet.cell(row=start_row+2, column=3, value="Cereza")
+            cell=new_sheet.cell(row=start_row+2, column=3, value="Arándanos")
             cell.border = thick_border
 
             cell=new_sheet.cell(row=start_row+3, column=1, value="Variedad: ")
