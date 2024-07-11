@@ -189,13 +189,14 @@ class FieldsApi(Resource):
             
             
             for plot in body["plots"] :
+                _id=None
                 
-                _id=plot['_id']
-                print(_id)
-                print(plot)
-                print("****")
+                print("hola")
+                if '_id' in plot:
+                  _id=plot['_id']
+               
                 user_id =  get_jwt_identity()
-                
+                print("hola")
                 if _id is None:
                    print("no existe")
                    if ("id_program" not in plot) or (plot["id_program"]==""):
@@ -206,8 +207,9 @@ class FieldsApi(Resource):
 
                    db.session.add(plot_instance)
                    db.session.commit()
-                   
-                   add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id)
+                   if plot["id_program"]!=None:
+                    print("no hay problema willy")
+                    add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id)
                    
                 elif _id not in id_current:
                    print("hola")

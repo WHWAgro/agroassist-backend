@@ -1612,7 +1612,7 @@ def add_program_tasks_plot(program_id,plot_id,user_id):
     for task in rows:
         plot_task=PlotTasksClass( plot_id=plot_id,task_id=task["_id"],status_id=1)
         db.session.add(plot_task)
-        print(plot_task)
+        
     db.session.commit()
 
 
