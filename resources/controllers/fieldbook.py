@@ -157,7 +157,8 @@ class FieldBookFullApi(Resource):
         #fields_aux = getFieldMarketFilter(progrmas_format)
         fields = request.args.get('fields').split(",")
         
-        
+        species_id= request.args.get('species')
+        print(request.args)
         if fields== False:
             response['status']=400 
             response['message']=1
@@ -177,7 +178,7 @@ class FieldBookFullApi(Resource):
 
         dfs=[df1,df2]
 
-        print("fields format")
+        
         fields_format="( "
         for field in fields:
             fields_format=fields_format+str(field)+","
@@ -185,10 +186,10 @@ class FieldBookFullApi(Resource):
         fields_format = fields_format[:-1]
         
         fields_format=fields_format+" )"
-        print(fields_format)
+        
 
         field_book_data=getFieldBookData(fields_format)
-        print(field_book_data)
+        
         
         field_fb={
         }
@@ -197,6 +198,7 @@ class FieldBookFullApi(Resource):
 
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
+        dict_species=getTableDict("species")
         
         processed_rows=[]
         p_r=[]
@@ -206,7 +208,7 @@ class FieldBookFullApi(Resource):
             
             
             if processed ==False:
-                print(row_id not in processed_rows)
+                
              
                 
             
@@ -248,21 +250,21 @@ class FieldBookFullApi(Resource):
                 
                 
                 if dosage_unit == 1:
-                    print(" 1")
+                    
                     unit=" gr"
                     unit_dosage="gr/100L"
                     
                     unit_hectare="gr/Há"
                     dosage_hectare=dosage*(wetting/100)
                 elif dosage_unit == 2:
-                    print(" 2")
+                    
                     unit=" Kg"
                     unit_dosage="Kg/100L"
                     
                     unit_hectare="Kg/Há"
                     dosage_hectare=dosage*(wetting/100)
                 elif dosage_unit == 3:
-                    print(" 3")
+                    
                     unit=" gr"
                     unit_dosage="gr/100L"
                     
@@ -270,7 +272,7 @@ class FieldBookFullApi(Resource):
                     dosage_hectare=dosage
                     dosage=str(dosage/(wetting/100))
                 elif dosage_unit == 4:
-                    print(" 4")
+                    
                     unit=" Kg"
                     unit_dosage="Kg/100L"
                     
@@ -329,7 +331,7 @@ class FieldBookFullApi(Resource):
 
         title = pd.DataFrame({'Title': ['Protocolo de Exportación']})
         subtitle = pd.DataFrame({'Información': ['Campos:'+fields_format, 'Mercados: '+markets_format]})
-        print("c fb")
+        
         # Write dataframes to Excel
          # Write the dataframe to an Excel file
         myuuid = uuid.uuid4()
@@ -380,6 +382,12 @@ class FieldBookFullApi(Resource):
             date_string = current_date.strftime("%d-%m-%Y")
 
             varieties=set(field_data["varieties"])
+            print("species")
+            print(species_id)
+            print(dict_species)
+            
+            species=dict_species[int(species_id)]["species_name"]
+            
 
             thick_border = Border(left=Side(style='medium'), 
                       right=Side(style='medium'), 
@@ -399,7 +407,7 @@ class FieldBookFullApi(Resource):
             cell=new_sheet.cell(row=start_row+2, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 2, start_column=1, end_row=start_row + 2, end_column=2)
-            cell=new_sheet.cell(row=start_row+2, column=3, value="Cerezas")
+            cell=new_sheet.cell(row=start_row+2, column=3, value=species)
             cell.border = thick_border
 
             cell=new_sheet.cell(row=start_row+3, column=1, value="Variedad: ")
@@ -575,10 +583,10 @@ class FieldBookExportApi(Resource):
         fields_format = fields_format[:-1]
         
         fields_format=fields_format+" )"
-        print(fields_format)
+       
 
         field_book_data=getFieldBookData(fields_format)
-        print(field_book_data)
+        
         
         field_fb={
         }
@@ -595,7 +603,7 @@ class FieldBookExportApi(Resource):
             
             
             if processed ==False:
-                print(row_id not in processed_rows)
+               
              
                 
             
@@ -641,7 +649,7 @@ class FieldBookExportApi(Resource):
                     unit_hectare="gr/Há"
                     dosage_hectare=dosage*(wetting/100)
                 elif dosage_unit == 2:
-                    print(" 2")
+                    
                     unit=" Kg"
                     unit_dosage="Kg/100L"
                     
@@ -712,7 +720,7 @@ class FieldBookExportApi(Resource):
 
         title = pd.DataFrame({'Title': ['Protocolo de Exportación']})
         subtitle = pd.DataFrame({'Información': ['Campos:'+fields_format, 'Mercados: '+markets_format]})
-        print("c fb")
+        
         # Write dataframes to Excel
          # Write the dataframe to an Excel file
         myuuid = uuid.uuid4()
