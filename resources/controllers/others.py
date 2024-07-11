@@ -40,7 +40,7 @@ class OnboardingApi(Resource):
         else:
            print("existe")
            file=request.files['file']
-           df = pd.read_excel(file)
+           df = pd.read_excel(file, dtype=str)
            df.rename(columns = {df.columns[0]:'name',df.columns[1]:'size',df.columns[2]:'id_species',df.columns[3]:'variety'}, inplace = True)
            df['id_field']=int(id_field)
            
