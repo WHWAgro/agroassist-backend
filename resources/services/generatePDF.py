@@ -227,8 +227,8 @@ def generateTaskOrder(body):
 
         section5_table_data = [
             [" ","Empresa:", empresa_data, " ","Cultivo:", cultivo_data],
-            [" ","Campo:", campo_data, " ","Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.')],
-            [" ",'Mojamieto',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.')]
+            [" ","Campo:", campo_data, " ","Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')],
+            [" ",'Mojamieto',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')]
         ]
         #print('----------4')
 
@@ -308,7 +308,7 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data2 = [[" ",'Producto',"Compuesto Activo",'Objetivo','Dosis x Há','Dosis','Total Producto','cantidad \n x maquinada \n completa']] # Start with the headers as the first row
+        table_data2 = [[" ",'Producto',"Compuesto Activo",'Objetivo','Dosis x Há','Dosis','Total Producto \n Comercial','Cantidad \n x Maquinada \n Completa']] # Start with the headers as the first row
 
         print('hola-productos')
         # Add the data rows
@@ -456,12 +456,12 @@ def generateTaskOrder(body):
                 dosage_hectare=dosage
                 dosage=str(dosage/(wetting/100))
             print("cuartel 1")
-            hola='{:,.2f}'.format(total_product).replace(',','*').replace('.', ',').replace('*','.')
-            dosage='{:,.2f}'.format(float(dosage)).replace(',','*').replace('.', ',').replace('*','.')
+            hola='{:,.2f}'.format(total_product).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')
+            dosage='{:,.2f}'.format(float(dosage)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')
             print("cuartel 2")
-            dosage_hectare='{:,.2f}'.format(float(dosage_hectare)).replace(',','*').replace('.', ',').replace('*','.')
+            dosage_hectare='{:,.2f}'.format(float(dosage_hectare)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')
             print("cuartel 3")
-            totalXmaquinada='{:,.2f}'.format(float(total_product/n_maquinadas)).replace(',','*').replace('.', ',').replace('*','.')
+            totalXmaquinada='{:,.2f}'.format(float(total_product/n_maquinadas)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')
             
             print('----------product')
             phi_list.append(products[item["id_product"]]["phi"])
@@ -503,7 +503,7 @@ def generateTaskOrder(body):
 
 
         section6_table_data = [
-            ["Reingreso:", '{:,.1f}'.format(max(reentry_period_list)).replace(',','*').replace('.', ',').replace('*','.')+" hrs", "Carencia:",'{:,.1f}'.format(max(phi_list)).replace(',','*').replace('.', ',').replace('*','.') +" días"]
+            ["Reingreso:", '{:,.1f}'.format(max(reentry_period_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')+" hrs", "Carencia:",'{:,.1f}'.format(max(phi_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','') +" días"]
             
         ]
         print('hola-0')
