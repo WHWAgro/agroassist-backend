@@ -47,9 +47,14 @@ class ProgramApi(Resource):
             dic_result[id]["markets"] = [market]
             dic_result[id]["published"] = program['published']
             dic_result[id]["updated_at"] = str(program['updated_at'])
+            if program['send_to'] != None:
+              dic_result[id]["emails"] = program['send_to'].split(';;;')
+            else:
+              dic_result[id]["emails"] =[]
+
             
       
-      programs_format= [{'_id': id,'id_user': dict["id_user"],'created_by': dict["created_by"],'program_name': dict["program_name"],'id_species': dict["id_species"] , 'markets': list(filter(None,set(dict["markets"]))),'published': dict["published"],'updated_at':dict["updated_at"]} for id, dict in dic_result.items()]
+      programs_format= [{'_id': id,'emails':dict['emails'],'id_user': dict["id_user"],'created_by': dict["created_by"],'program_name': dict["program_name"],'id_species': dict["id_species"] , 'markets': list(filter(None,set(dict["markets"]))),'published': dict["published"],'updated_at':dict["updated_at"]} for id, dict in dic_result.items()]
       program=""
       if len(programs_format)==0:
         response['status']=400

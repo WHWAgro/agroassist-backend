@@ -56,6 +56,7 @@ class ProgramClass(db.Model):
   published = db.Column(db.Boolean, nullable=False)
   fields = db.relationship('ProgramCompaniesClass', backref='program')
   updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+  send_to = db.Column(db.String(2000), nullable=False)
   def __repr__(self):
         return '<program %r>' % self.program_name
   
@@ -73,6 +74,11 @@ class VisitTaskClass(db.Model):
   observations=db.Column(db.String(500), nullable=True)
   plots=db.Column(db.String(500), nullable=True)
   objectives = db.relationship('VisitTaskObjectivesClass', backref='visit_task')  
+  is_repeatable = db.Column(db.Boolean, nullable=False, default=False)
+  repeat_frequency =db.Column(db.Integer, nullable=True)
+  repeat_unit =db.Column(db.Integer, nullable=True)
+  repeat_until= db.Column(db.DateTime, nullable=True)
+  main_visit_task_id = db.Column(db.Integer, nullable=True)
 
 class VisitTaskObjectivesClass(db.Model):
 

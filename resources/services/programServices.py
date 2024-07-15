@@ -329,7 +329,7 @@ def getProgramDetails(id_usuario,id_programa):
     
     try:
         
-        query="""SELECT p._id as _id,id_species,id_user,user_name,program_name,species_name,market_id,published,updated_at FROM programs as p
+        query="""SELECT p._id as _id,p.send_to,id_species,id_user,user_name,program_name,species_name,market_id,published,updated_at FROM programs as p
                 left join species as s on p.id_species= s._id
                 left join market_program as mp on p._id=mp.program_id
                 left join market as m on m._id=mp.market_id
@@ -1469,6 +1469,10 @@ def updateProgram(program_id, body):
         program.program_name = program_details.get('program_name')
         program.published = program_details.get('published')
         program.id_species = program_details.get('id_species')
+        if len(body.get('emails'))==0:
+            program.send_to = None
+        else:   
+            program.send_to = ";;;".join(body.get('emails'))
 
 
         markets = program_details.get('markets')

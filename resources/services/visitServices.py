@@ -11,6 +11,7 @@ import datetime
 
 
 
+
 def createVisit(user_id,body):
     
     try:
@@ -134,7 +135,7 @@ def getVisitTasks(visit_id):
 
     try:
         
-        tasks=VisitTaskClass.query.filter_by(visit_id=visit_id).all()
+        tasks=VisitTaskClass.query.filter_by(visit_id=visit_id, main_visit_task_id =None).all()
  
         visit_tasks=[]
         for visit in tasks:
@@ -208,6 +209,7 @@ def createVisitTask(body):
             body['end_date']=body.get('start_date')
         
         
+        
         task=''
         if body.get('task_type_id')==1:
             print('aca')
@@ -221,17 +223,83 @@ def createVisitTask(body):
             taskObjective=   VisitTaskObjectivesClass(visit_task_id=task._id, objectives=str(body.get('objectives')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')))
             db.session.add(taskObjective)
             db.session.commit()
+
+            for plot in body.get('plots'):
+                plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                db.session.add(plot_task)
         
     
         else:
             
-            task = VisitTaskClass( visit_id=body.get('visit_id'), task_type_id=body.get('task_type_id'),date_start=body.get('date_start'),date_end=body.get('date_end'),plots=str(body.get('plots')),observations=body.get('observations'))
-            db.session.add(task)
-            db.session.commit()
+            if body.get('is_repeatable'):
 
-        for plot in body.get('plots'):
-            plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
-            db.session.add(plot_task)
+
+                start_date = datetime.datetime.strptime(body.get('date_start'), '%Y-%m-%d')
+                end_date = datetime.datetime.strptime(body.get('date_end'), '%Y-%m-%d')
+                repeat_frequency = int(body.get('repeat_frequency'))
+                repeat_unit = int(body.get('repeat_unit'))
+                repeat_until = datetime.datetime.strptime(body.get('repeat_until'), '%Y-%m-%d')
+
+                task = VisitTaskClass( repeat_frequency=repeat_frequency,repeat_unit=repeat_unit,repeat_until=repeat_until,is_repeatable=True,visit_id=body.get('visit_id'), task_type_id=body.get('task_type_id'),date_start=start_date,date_end=end_date,plots=str(body.get('plots')),observations=body.get('observations'))
+                db.session.add(task)
+                db.session.commit()
+                for plot in body.get('plots'):
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    db.session.add(plot_task)
+
+                current_date = start_date
+                while current_date <= repeat_until:
+                    # Calculate the next date based on repeat_frequency and repeat_unit
+                    if repeat_unit == 1:  # Days
+                        current_date += datetime.timedelta(days=repeat_frequency)
+                    elif repeat_unit == 2:  # Weeks
+                        current_date += datetime.timedelta(weeks=repeat_frequency)
+                   
+
+                    # Check if the new date exceeds repeat_until
+                    if current_date > repeat_until:
+                        break
+
+                    # Create a new task for the next occurrence
+                    new_task = VisitTaskClass(
+                        visit_id=body.get('visit_id'),
+                        task_type_id=body.get('task_type_id'),
+                        date_start=current_date,
+                        date_end=current_date + (end_date - start_date),  # Keep the same duration
+                        plots=str(body.get('plots')),
+                        observations=body.get('observations'),
+                        main_visit_task_id=task._id,
+                        repeat_frequency=repeat_frequency,
+                        repeat_unit=repeat_unit,
+                        repeat_until=repeat_until,
+                        is_repeatable=True
+
+                    )
+                    db.session.add(new_task)
+                    db.session.commit()
+
+                    # Create PlotTasks for the new task
+                    for plot in body.get('plots'):
+                        plot_task = PlotTasksClass(
+                            plot_id=plot,
+                            task_id=new_task._id,
+                            status_id=1,
+                            from_program=False
+                        )
+                        db.session.add(plot_task)
+
+                
+            
+            
+            else:
+                task = VisitTaskClass( visit_id=body.get('visit_id'), task_type_id=body.get('task_type_id'),date_start=body.get('date_start'),date_end=body.get('date_end'),plots=str(body.get('plots')),observations=body.get('observations'))
+                db.session.add(task)
+                db.session.commit()
+                for plot in body.get('plots'):
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    db.session.add(plot_task)
+
+        
         db.session.commit()
 
         return task._id
@@ -251,7 +319,33 @@ def updateVisitTask(task_id,body):
         
         VisitTaskObjectivesClass.query.filter_by(visit_task_id=task._id).delete()
 
+        #----------------deleting repeating tasks
+        repeating_tasks = VisitTaskClass.query.filter_by(main_visit_task_id=task_id).all()
+        repeating_task_ids = [task._id for task in repeating_tasks]
+
+        # Delete all repeating visit tasks and their associated PlotTasks
+        PlotTasksClass.query.filter(
+            PlotTasksClass.task_id.in_(repeating_task_ids),
+            PlotTasksClass.from_program == False
+        ).delete()
+
+        VisitTaskClass.query.filter(VisitTaskClass._id.in_(repeating_task_ids)).delete()
+
+        #----------- deleting repeating tasks
+
         plot_tasks=PlotTasksClass.query.filter_by(task_id=task._id)
+
+        plots=body.get('plots')
+        plots_with_task=[]
+        for plot_task in plot_tasks:
+            if plot_task.plot_id not in plots:
+                db.session.delete(plot_task)
+                db.session.commit()
+
+                continue
+            plots_with_task.append(plot_task.plot_id)
+
+
 
         if body.get('task_type_id')==1:
             
@@ -265,41 +359,103 @@ def updateVisitTask(task_id,body):
             db.session.add(task)
         
 
-            db.session.commit()
+            
             print(task._id)
             
             taskObjective=   VisitTaskObjectivesClass(visit_task_id=task._id, objectives=str(body.get('objectives')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')))
             db.session.add(taskObjective)
+            for plot in plots:
+                if plot not in plots_with_task:
+                    print(plot)
+                    print(plot not in plots_with_task)
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    db.session.add(plot_task)
             db.session.commit()
         
 
         else:
+
+            
+
+        
             task.task_type_id=body.get('task_type_id')
             task.date_start=body.get('date_start')
             task.date_end=body.get('date_end')
             task.wetting=None
             task.observations=body.get('observations')
             task.plots=str(body.get('plots'))
+            task.is_repeatable=body.get('is_repeatable')
+
+            
+                
+            for plot in plots:
+                if plot not in plots_with_task:
+                    print(plot)
+                    print(plot not in plots_with_task)
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    db.session.add(plot_task)
+            
+            if body.get('is_repeatable'):
+                
+                repeat_frequency = int(body.get('repeat_frequency'))
+                repeat_unit = int(body.get('repeat_unit'))
+                repeat_until = datetime.datetime.strptime(body.get('repeat_until'), '%Y-%m-%d')
+                start_date = datetime.datetime.strptime(body.get('date_start'), '%Y-%m-%d')
+                if 'end_date' not in body :
+                    body['end_date']=body.get('start_date')
+                end_date = datetime.datetime.strptime(body.get('date_end'), '%Y-%m-%d')
+                
+                task.repeat_frequency= repeat_frequency
+                task.repeat_unit= repeat_unit
+                task.repeat_until= repeat_until
+                current_date = start_date
+                while current_date <= repeat_until:
+                    # Calculate the next date based on repeat_frequency and repeat_unit
+                    if repeat_unit == 1:  # Days
+                        current_date += datetime.timedelta(days=repeat_frequency)
+                    elif repeat_unit == 2:  # Weeks
+                        current_date += datetime.timedelta(weeks=repeat_frequency)
+                   
+
+                    # Check if the new date exceeds repeat_until
+                    if current_date > repeat_until:
+                        break
+
+                    # Create a new task for the next occurrence
+                    new_task = VisitTaskClass(
+                        visit_id=body.get('visit_id'),
+                        task_type_id=body.get('task_type_id'),
+                        date_start=current_date,
+                        date_end=current_date + (end_date - start_date),  # Keep the same duration
+                        plots=str(body.get('plots')),
+                        observations=body.get('observations'),
+                        main_visit_task_id=task._id,
+                        repeat_frequency=repeat_frequency,
+                        repeat_unit=repeat_unit,
+                        repeat_until=repeat_until,
+                        is_repeatable=True
+
+                    )
+                    db.session.add(new_task)
+                    db.session.commit()
+
+                    # Create PlotTasks for the new task
+                    for plot in body.get('plots'):
+                        plot_task = PlotTasksClass(
+                            plot_id=plot,
+                            task_id=new_task._id,
+                            status_id=1,
+                            from_program=False
+                        )
+                        db.session.add(plot_task)
+                
+                
+                
 
             db.session.add(task)
-            db.session.commit()
-        plots=body.get('plots')
-        plots_with_task=[]
-        for plot_task in plot_tasks:
-            if plot_task.plot_id not in plots:
-                db.session.delete(plot_task)
-                db.session.commit()
-
-                continue
-            plots_with_task.append(plot_task.plot_id)
-
-        print(plots_with_task)
-        for plot in plots:
-            if plot not in plots_with_task:
-                print(plot)
-                print(plot not in plots_with_task)
-                plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
-                db.session.add(plot_task)
+       
+        
+       
         db.session.commit()
 
 
@@ -317,10 +473,30 @@ def deleteVisitTask(task_id):
             return False
         
         VisitTaskObjectivesClass.query.filter_by(visit_task_id=task_id).delete()
-        db.session.commit()
-        PlotTasksClass.query.filter_by(task_id=task_id).delete()
-        db.session.commit()
+        
+        PlotTasksClass.query.filter_by(task_id=task_id,from_program=False).delete()
+
+
+        # Find all repeating visit tasks associated with the main task
+        repeating_tasks = VisitTaskClass.query.filter_by(main_visit_task_id=task_id).all()
+        repeating_task_ids = [task._id for task in repeating_tasks]
+
+        # Delete all repeating visit tasks and their associated PlotTasks
+        PlotTasksClass.query.filter(
+            PlotTasksClass.task_id.in_(repeating_task_ids),
+            PlotTasksClass.from_program == False
+        ).delete()
+
+        VisitTaskClass.query.filter(VisitTaskClass._id.in_(repeating_task_ids)).delete()
+
+        
         VisitTaskClass.query.filter_by(_id=task_id).delete()
+
+
+
+
+
+
         
         
 
