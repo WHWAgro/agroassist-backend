@@ -309,12 +309,16 @@ class ProgramSelectionApi(Resource):
       
       user_company=getUserCompanies(user_id)
       print(user_company)
+      user_company=list(user_company)[0]
+      
+      
       companies="( "
-      for company in user_company:
-        companies=companies+str(company["_id"])+","
-      companies = companies[:-1]
+      companies=companies+str(user_company["_id"])
+      #for company in user_company:
+      #  companies=companies+str(company["_id"])+","
+      #companies = companies[:-1]
       companies=companies+" )"
-      print(user_id)
+      print(companies)
       programs=getPrograms(user_id,companies)
       
 
