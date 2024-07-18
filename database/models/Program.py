@@ -265,6 +265,10 @@ class TaskOrderClass(db.Model):
   time_start=db.Column(db.String(20), nullable=True,default='10:00')
   time_end=db.Column(db.String(20), nullable=True,default='11:00')
   alias=db.Column(db.String(200), nullable=True,default='ODA.pdf')
+  reentry = db.Column(db.Double,default=0)
+  phi = db.Column(db.Double,default=0)
+
+
 
 class MachineryClass(db.Model):
 

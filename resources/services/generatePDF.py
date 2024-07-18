@@ -227,8 +227,8 @@ def generateTaskOrder(body):
 
         section5_table_data = [
             [" ","Empresa:", empresa_data, " ","Cultivo:", cultivo_data],
-            [" ","Campo:", campo_data, " ","Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')],
-            [" ",'Mojamieto',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')]
+            [" ","Campo:", campo_data, " ","Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')],
+            [" ",'Mojamieto',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')]
         ]
         #print('----------4')
 
@@ -245,7 +245,8 @@ def generateTaskOrder(body):
         
         
         section3_table_data = [
-            ["Fecha de aplicacion:", application_date, "Cuarteles:", plots_names]
+            ["Fecha de aplicación:", application_date, "Cuarteles:", plots_names],
+             
             
         ]
         print(section3_table_data)
@@ -254,11 +255,24 @@ def generateTaskOrder(body):
         #print('hola-1')
 
         section3_table = Table(wrapped_row1, colWidths=[150, 150, 100, 150])
+        
         section3_table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'LEFT'),
                                         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica')])
         section3_table.setStyle(section3_table_style)
+
+        section3_table_style = TableStyle([('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                                        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica')])
+
+        section3_table__0_data = [
+            ["","Hora Inicio", "", "Hora Término", ""],
+             
+            
+        ]
+        section3_table_0 = Table(section3_table__0_data, colWidths=[45,150, 148, 100, 150])
+        section3_table_0.setStyle(section3_table_style)
         
         pdf_content.append( section3_table)
+        pdf_content.append( section3_table_0)
         pdf_content.append(Spacer(1,10))
         pdf_content.append(HorizontalLine(550))  # Adjust the width as needed
         pdf_content.append(Spacer(1,10))
@@ -308,7 +322,7 @@ def generateTaskOrder(body):
         
 
         # Create a list to hold the table data
-        table_data2 = [[" ",'Producto',"Compuesto Activo",'Objetivo','Dosis x Há','Dosis','Total Producto \n Comercial','Cantidad \n x Maquinada \n Completa']] # Start with the headers as the first row
+        table_data2 = [[" ",'Producto Comercial',"Compuesto Activo",'Objetivo','Dosis x Há','Dosis','Total Producto \n Comercial','Cantidad \n x Maquinada \n Completa']] # Start with the headers as the first row
 
         print('hola-productos')
         # Add the data rows
@@ -503,9 +517,16 @@ def generateTaskOrder(body):
 
 
         section6_table_data = [
-            ["Reingreso:", '{:,.1f}'.format(max(reentry_period_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')+" hrs", "Carencia:",'{:,.1f}'.format(max(phi_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','') +" días"]
+            ["Reingreso:", '{:,.1f}'.format(max(reentry_period_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')+" hrs", "Carencia:",'{:,.1f}'.format(max(phi_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',0','') +" días"]
             
         ]
+
+        if "reentry" in body and 'phi' in body:
+            section6_table_data = [
+            ["Reingreso:", '{:,.1f}'.format(body["reentry"]).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')+" hrs", "Carencia:",'{:,.1f}'.format(body["phi"]).replace(',','*').replace('.', ',').replace('*','.').replace(',0','') +" días"]
+            
+        ]
+
         print('hola-0')
 
         section6_table = Table(section6_table_data, colWidths=[100, 150, 100, 150])
@@ -573,9 +594,20 @@ def generateTaskOrder(body):
         
         alias='ODA_'+str(application_date)+'_'+campo_data.replace(' ','-')+'_N-'+str(order_number)+'.pdf'
 
-        new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias)
-        db.session.add(new_task_order)
-        db.session.commit()
+        
+        if "reentry" in body and 'phi' in body:
+            new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=body["phi"])
+        
+        
+            db.session.add(new_task_order)
+            db.session.commit()
+        else:
+            new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias)
+        
+        
+        
+            db.session.add(new_task_order)
+            db.session.commit()
         
         print('hola')
         return(str(myuuid)+".pdf")
