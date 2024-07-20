@@ -109,7 +109,13 @@ class LoginUserApi(Resource):
             print(user_dict)
             data= { 'token': token, 'duration': 600 }
             data["user_data"]= user_dict
-            data["products"]=getTable("products")
+            products=getProducts()
+            
+            
+          
+            
+            data["products"]=products
+
             data["markets"] =getTable("market")
             data["species"] =getTable("species")
             data["phenological_stages"] =getTable("phenological_stages")
@@ -127,12 +133,12 @@ class LoginUserApi(Resource):
             data["task_type"]=[{'_id':1,'task_type_name':'Fitosanitario'},{'_id':2,'task_type_name':'Raleo'},{'_id':3,'task_type_name':'Riego'},{'_id':4,'task_type_name':'Cosecha'}]
             
             data["event_type"]=[{'_id':1,'event_type_name':'Lluvia'},{'_id':2,'event_type_name':'Plaga'}]
-            for product in data['products']:
-              if product['dosage_type']==1:
+            #for product in data['products']:
+              #if product['dosage_type']==1:
 
-                product['dosage']={'1':{'min':15,'max':80},'2':{'min':0.015,'max':0.08},'3':{'min':200,'max':240},'4':{'min':0.2,'max':0.24}}
-              else:
-                product['dosage']={'5':{'min':10,'max':20},'6':{'min':0.01,'max':0.02},'7':{'min':100,'max':140},'8':{'min':0.1,'max':0.14}}
+              #  product['dosage']={'1':{'min':15,'max':80},'2':{'min':0.015,'max':0.08},'3':{'min':200,'max':240},'4':{'min':0.2,'max':0.24}}
+              #else:
+               # product['dosage']={'5':{'min':10,'max':20},'6':{'min':0.01,'max':0.02},'7':{'min':100,'max':140},'8':{'min':0.1,'max':0.14}}
             
             response['data']=data
             

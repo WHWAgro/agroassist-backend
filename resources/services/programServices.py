@@ -39,6 +39,29 @@ def getTable(table,field=None,value=None):
         print(e)
         return False
     
+def getProducts():
+   
+           
+    try:
+        
+        query="""SELECT _id,product_name,dosage_unit,id_objective,container_size,container_unit,chemical_compounds,dosage_type,data_sheet
+                FROM products
+             """
+        
+
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
 def getTableDict(table):
     table_elements=getTable(table)
     products_dict={}
