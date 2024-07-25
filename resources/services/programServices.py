@@ -8,6 +8,7 @@ from sqlalchemy.orm import class_mapper
 import ast
 import uuid
 import datetime
+import math
 
 
 
@@ -566,6 +567,59 @@ def getFieldAdminTeamDetails(id_field):
     except Exception as e:
         print(e)
         return False
+    
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371.0  # Earth radius in kilometers
+
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+
+    a = math.sin(dlat / 2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    distance = R * c
+    return distance
+
+def updateFieldWeatherLocation(lat,long,_id):
+    query_locations = "SELECT _id, location_lat, location_long FROM weather_locations"
+    rows_locations = []
+    
+    with db.engine.begin() as conn:
+        result_locations = conn.execute(text(query_locations)).fetchall()
+        
+        for row in result_locations:
+            row_as_dict = row._mapping
+            rows_locations.append(dict(row_as_dict))
+
+    closest_id = None
+    min_distance = float('inf')
+    for row in rows_locations:
+        location_id = row['_id']
+        location_lat = float(row['location_lat'])
+        location_long = float(row['location_long'])
+
+        distance = haversine(lat, long, location_lat, location_long)
+
+        if distance < min_distance:
+            min_distance = distance
+            closest_id = location_id
+    #assigned_location = FieldWeatherLocationsAssignClass.query.get(task_id)
+
+    assigned_location = FieldWeatherLocationsAssignClass.query.filter_by(field_id=_id)
+   
+          
+    field_assignation = FieldWeatherLocationsAssignClass.query.get(assigned_location[0]._id )
+        
+    
+    
+    field_assignation.weather_locations_id = closest_id
+
+    db.session.add(field_assignation)
+    db.session.commit()
+    
+    return closest_id
+
+
     
 def getFieldPlotsDetails(id_field):
     

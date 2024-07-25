@@ -172,6 +172,8 @@ class FieldsApi(Resource):
             field.sag_code=body["general"].get('sag_code')
             db.session.add(field)
             db.session.commit()
+            location=updateFieldWeatherLocation(float(body["general"].get('latitude')),float(body["general"].get('longitude')),id_field)
+            print(location)
             
             
         if "plots" in body:
