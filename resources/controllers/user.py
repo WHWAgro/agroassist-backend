@@ -116,7 +116,9 @@ class LoginUserApi(Resource):
             
             data["products"]=products
 
-            data["markets"] =getTable("market")
+            data["markets"] =sorted(getTable("market"), key=lambda x: x["market_name"])
+            
+
             data["species"] =getTable("species")
             data["phenological_stages"] =getTable("phenological_stages")
             data["moment_types"]=getTable("task_types")
