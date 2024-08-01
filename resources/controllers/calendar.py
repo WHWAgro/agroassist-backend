@@ -207,6 +207,8 @@ class TaskInsApi(Resource):
                       dic_result[id]["dosage_parts_per_unit"]=[dosage_parts_per_unit]
                       
                       dic_result[id]["wetting"] = task['wetting']
+                      dic_result[id]["phi"] = task['phi']
+                      dic_result[id]["reentry"] = task['reentry']
                       dic_result[id]["observations"] = task['observations']
                     else:
                       print('is not from program')
@@ -232,6 +234,8 @@ class TaskInsApi(Resource):
                         dic_result[id]["dosage_parts_per_unit"]=[]
                       print('is not from program3')
                       dic_result[id]["wetting"] = task['wetting']
+                      dic_result[id]["phi"] = 0
+                      dic_result[id]["reentry"] = 0
                       dic_result[id]["observations"] = task['observations']
 
         
@@ -241,7 +245,7 @@ class TaskInsApi(Resource):
             print(dic_result)
             
         
-            tasks_format= [{'id_moment_type': dict["id_moment_type"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'observations':dict['observations']} for id, dict in dic_result.items()]
+            tasks_format= [{'id_moment_type': dict["id_moment_type"],'moment_value': dict["moment_value"] ,'objectives': list(filter(None,dict["objectives"])) ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'phi': dict["phi"],'reentry': dict["reentry"],'observations':dict['observations']} for id, dict in dic_result.items()]
             print('paso 2 y medio')
             result={}
             result['_id']= task_details['_id']
