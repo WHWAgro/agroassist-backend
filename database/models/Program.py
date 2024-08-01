@@ -193,6 +193,8 @@ class ProgramTaskClass(db.Model):
   end_date=db.Column(db.DateTime, nullable=True)
   moment_value=db.Column(db.Integer, nullable=True)
   wetting=db.Column(db.Integer, nullable=True)
+  phi=db.Column(db.Integer, nullable=True,default=0)
+  reentry=db.Column(db.Integer, nullable=True,default=0)
   observations=db.Column(db.String(400), nullable=True)
   objectives = db.relationship('TaskObjectivesClass', backref='task')  
   

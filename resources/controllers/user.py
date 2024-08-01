@@ -132,7 +132,7 @@ class LoginUserApi(Resource):
             data["machinery_type"]=[{'_id':1,'machinery_type_name':'Tractor'},{'_id':2,'machinery_type_name':'Nebulizador'}]
             data["task_type"]=[{'_id':1,'task_type_name':'Fitosanitario'},{'_id':2,'task_type_name':'Otras'},{'_id':3,'task_type_name':'Riego'},{'_id':4,'task_type_name':'Cosecha'}]
             
-            data["event_type"]=[{'_id':1,'event_type_name':'Lluvia'},{'_id':2,'event_type_name':'Plaga'}]
+            data["event_type"]=[{'_id':1,'event_type_name':'Lluvia'},{'_id':2,'event_type_name':'Plaga'},{'_id':3,'event_type_name':'Helada'}]
             #for product in data['products']:
               #if product['dosage_type']==1:
 

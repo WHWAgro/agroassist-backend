@@ -413,7 +413,7 @@ def getTaskDetails(id_moment):
     try:
         
         
-        query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,end_date,start_date,moment_value,wetting,observations,id_objective,id_product,dosage,dosage_parts_per_unit
+        query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,end_date,start_date,moment_value,wetting,phi,reentry,observations,id_objective,id_product,dosage,dosage_parts_per_unit
                 
               
                 from program_tasks as pt 
@@ -1198,8 +1198,11 @@ def createTask(body):
         if 'end_date' not in body :
             body['end_date']=body.get('start_date')
         print("hola")
-
-        task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        task=""
+        if "phi" in body:
+            task = ProgramTaskClass(phi=body.get('phi'),reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        else:    
+            task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
         db.session.add(task)
         print(task._id)
         
@@ -1258,6 +1261,10 @@ def updateMoment(task_id,body):
         task.start_date=body.get('start_date')
         task.moment_value=body.get('moment_value')
         task.wetting=body.get('wetting')
+        if "phi" in body:
+            task.phi=body.get('phi')
+            task.reentry=body.get('reentry')
+
         task.observations=body.get('observations')
         task.end_date=body.get('end_date')
 
