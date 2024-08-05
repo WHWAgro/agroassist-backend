@@ -40,12 +40,12 @@ def getCompanyTaskOrders(id_company):
             result = conn.execute(text(query)).fetchall()
             for row in result:
                 row_as_dict = row._mapping
-                print(row_as_dict)
+                
                 rows.append(dict(row_as_dict))
             return rows
 
     except Exception as e:
-        print(e)
+       
         return False
     
 def getCompanyPurchaseOrders(id_company):
@@ -186,7 +186,7 @@ def generateTaskOrder(body):
         objectives=getTableDict("objectives")
         products=getTableDict("products")
         task=getTask(id_task)[0]
-        print("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")        
+             
         
         moments=getTableDict("program_tasks")
         moment_objectives=getTableDict("task_objectives")
@@ -197,19 +197,16 @@ def generateTaskOrder(body):
         
         #print(plots)
         for id_plot in body['id_plots']:
-            print("init plot")
-            print(id_plot)
+            
             id_species=plots[id_plot]["id_species"] 
             plots_names = plots_names +', '+plots[id_plot]["name"] 
-            print(plots_names)  
+            
             total_plot_size=total_plot_size+plots[id_plot]["size"]
-            print(total_plot_size)  
-            print("plot end")
+            
             cultivo_data=dict_species[id_species]["species_name"]
-            print("nuevo cultivo")
-            print(cultivo_data)
+           
         if len(plots_names)>0:
-            print("hola")
+            
             plots_names=plots_names[1:]   
         total_hectareas_data = total_plot_size
        # print('----------3')
@@ -219,6 +216,17 @@ def generateTaskOrder(body):
        # print('machinery///////////1')
         sprayer_size=1
         data_list = body['asignees']
+        print('QQQQWWWWWW')
+        back_pump=False
+        if data_list[0]['id_sprayer']==None:
+            back_pump=True
+            print('hola')
+            
+            for elem in data_list:
+                print(elem)
+                elem['id_sprayer']= elem['id_tractor']
+
+        print(data_list)
         for item in data_list:
             sprayer_size=machinery[item["id_sprayer"]]["size"]
             
@@ -279,37 +287,72 @@ def generateTaskOrder(body):
 
         ##operadores----------------
         data_list = body['asignees']
+        if back_pump:
+            print("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")  
+            print('maquinaria')
+            print(data_list)
+            for elem in data_list:
+                elem['id_sprayer']= elem['id_tractor']
+            table_data = [['Operador','Bomba de espalda']]  # Start with the headers as the first row
+
+            # Add the data rows
+            workers=getTableDict("workers")
+            machinery=getTableDict("machinery")
+            #print('machinery///////////')
+            sprayer_size=1
+            for item in data_list:
+                row_data = [workers[item["id_operator"]]["name"],machinery[item["id_sprayer"]]["name"]]
+                sprayer_size=machinery[item["id_sprayer"]]["size"]
+                table_data.append(row_data)
+
+            # Create a table with the data
+            table = Table(table_data,colWidths=[150, 150, 150 ])
+
+            # Add style to the table
+            table_style = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen),  # Header background color
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center-align all cells
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
+                
+                ('GRID', (0, 0), (-1, -1), 1, colors.green)  # Gridlines
+            ])
+
+            table.setStyle(table_style)
+            pdf_content.append(table)
+
+        else:
         
-
         # Create a list to hold the table data
-        table_data = [['Operador','Tractor','Nebulizador']]  # Start with the headers as the first row
+            table_data = [['Operador','Tractor','Nebulizador']]  # Start with the headers as the first row
 
-        # Add the data rows
-        workers=getTableDict("workers")
-        machinery=getTableDict("machinery")
-        #print('machinery///////////')
-        sprayer_size=1
-        for item in data_list:
-            row_data = [workers[item["id_operator"]]["name"],machinery[item["id_tractor"]]["name"],machinery[item["id_sprayer"]]["name"]]
-            sprayer_size=machinery[item["id_sprayer"]]["size"]
-            table_data.append(row_data)
+            # Add the data rows
+            workers=getTableDict("workers")
+            machinery=getTableDict("machinery")
+            #print('machinery///////////')
+            sprayer_size=1
+            for item in data_list:
+                row_data = [workers[item["id_operator"]]["name"],machinery[item["id_tractor"]]["name"],machinery[item["id_sprayer"]]["name"]]
+                sprayer_size=machinery[item["id_sprayer"]]["size"]
+                table_data.append(row_data)
 
-        # Create a table with the data
-        table = Table(table_data,colWidths=[150, 150, 150 ])
+            # Create a table with the data
+            table = Table(table_data,colWidths=[150, 150, 150 ])
 
-        # Add style to the table
-        table_style = TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen),  # Header background color
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center-align all cells
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
-            
-            ('GRID', (0, 0), (-1, -1), 1, colors.green)  # Gridlines
-        ])
+            # Add style to the table
+            table_style = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgreen),  # Header background color
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center-align all cells
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Header padding
+                
+                ('GRID', (0, 0), (-1, -1), 1, colors.green)  # Gridlines
+            ])
 
-        table.setStyle(table_style)
-        pdf_content.append(table)
+            table.setStyle(table_style)
+            pdf_content.append(table)
 
 
 
