@@ -288,9 +288,7 @@ def generateTaskOrder(body):
         ##operadores----------------
         data_list = body['asignees']
         if back_pump:
-            print("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")  
-            print('maquinaria')
-            print(data_list)
+           
             for elem in data_list:
                 elem['id_sprayer']= elem['id_tractor']
             table_data = [['Operador','Bomba de espalda']]  # Start with the headers as the first row
@@ -386,28 +384,26 @@ def generateTaskOrder(body):
 
         #products[item["id_product"]]["reentry_period"]
         for item in data_list2:
-            print(item)
+            
             k_filter1 = "id_objective"
             v_match1 = item["id_objective"]
             filtered_data2={key: value for key, value in filtered_data.items() if (value.get(k_filter1) == v_match1 )}
             
             
-            print(filtered_data2)
+            
             dosage=0
             dosage_unit=1
             for key ,value in filtered_data2.items():
                 
                 product=ast.literal_eval(value["id_product"])
-                print(product)
-                print('fd')
+               
                 
 
                 similar_products=[]
                 for and_p in product:
                     for or_p in and_p:
                         similar_products.append(products[int(or_p)])
-                print('holas')
-                print(similar_products)
+               
                 product_replacement=products[item["id_product"]]
                 product_original=products[item["id_product"]]
                 for s_p in similar_products:
