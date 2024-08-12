@@ -30,6 +30,7 @@ class QuoterInitApi(Resource):
   def get(self):
   
     try:
+      print('---------new quoter')
       response={}
       response['status']=200
       response['message']=0
@@ -57,6 +58,7 @@ class QuoterInitApi(Resource):
       total_hectares=0
       plots_visited=[]
       user_plots=getUserValidPlots(user_id)
+      print(user_plots)
       for program in programs:
         program_hectares=0
 
@@ -71,6 +73,7 @@ class QuoterInitApi(Resource):
         
         
         filtered_data = {str(value["_id"])+'-'+str(value["moment_id"]):value  for  value in user_plots if (str(value.get(k_filter1)) == str(v_match1) )}
+        
         
         
         print(filtered_data)
@@ -90,6 +93,7 @@ class QuoterInitApi(Resource):
         print("moments:")
         
         for objective in moments:
+            objective_list=[]
             print("---------------------------------")
             print((objective))
             moment_hectares=0
@@ -116,8 +120,10 @@ class QuoterInitApi(Resource):
             print(products_list)
             
             
-
+            print("calulando cantidad por producto")
             for p_id,p_value in products_list.items():
+              print(p_id)
+              
               dosage=p_value["dosage"]
               wetting=p_value["wetting"]
               total_hectareas_data=p_value["valid_hectares"]
@@ -149,10 +155,12 @@ class QuoterInitApi(Resource):
                 
                 total_product=(dosage*total_hectareas_data)*1000*n_app
               products_list[p_id]["product_needed"]=int(total_product)
+              print(total_product)
+              print('****')
            
             for id in products_ids:
                 valid=list(filter(lambda product: product['_id'] == id , elements))
-                #print(valid)
+                
                 
                 compound=valid[0]["chemical_compounds"]
                 
@@ -161,9 +169,9 @@ class QuoterInitApi(Resource):
                 el={"product_id":id, "objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":int(program),"dosage":products_list[str(id)]["dosage"]}
                 el["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
                 el["products_needed"]=products_list[str(id)]["product_needed"]
-                #el["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
+               
                 el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
-                #print("chao3")
+                
                 alternatives_pre=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
                 unique_products_name = []
                 alternatives=[]
@@ -190,12 +198,31 @@ class QuoterInitApi(Resource):
                       continue
                    lol={"product_id":alternative["_id"]}
                    lol["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
-                   #lol["products_needed"]=round(((el["wetting"]/100.0)*el["dosage"])*products_list[str(id)]["valid_hectares"])
+                  
                    lol["products_needed"]=products_list[str(id)]["product_needed"]
                    alternatives_list.append(lol)
                 el["alternatives"]=alternatives_list
                 
-                final_list.append(el)
+                objective_list.append(el)
+            
+            consolidated_products=[]
+            used_products=[]
+            dict_list={}
+            for product in objective_list:
+              dict_list[product['product_id']]=product
+
+            for product in objective_list:
+              if product['product_id'] in dict_list:
+                used_products.append(product)
+                for alternative in product['alternatives']:
+                  print(alternative)
+                  if alternative['product_id'] in dict_list:
+                    del dict_list[alternative['product_id']]
+            print('hhhhhhhhhHHHHHH')
+            print(used_products)
+            for product in used_products:
+              final_list.append(product)
+            
 
       data={}
       data["hectares"]=total_hectares
