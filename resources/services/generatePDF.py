@@ -391,7 +391,7 @@ def generateTaskOrder(body):
             k_filter1 = "id_objective"
             v_match1 = item["id_objective"]
             filtered_data2={key: value for key, value in filtered_data.items() if (value.get(k_filter1) == v_match1 )}
-            
+            print(filtered_data2)
             print("or0")
             
             dosage=0
@@ -405,30 +405,38 @@ def generateTaskOrder(body):
                 print("or2")
             else:
                 print("essta en plataforma el producto")
+                print(item["id_product"])
                 for key ,value in filtered_data2.items():
                     
                     product=ast.literal_eval(value["id_product"])
+
+                    print(product)
                     
-                
+
                     
 
                     similar_products=[]
                     for and_p in product:
                         for or_p in and_p:
                             similar_products.append(products[int(or_p)])
+                    print(similar_products)
                 
                     product_replacement=products[item["id_product"]]
+                    print("pr0")
                     product_original=products[item["id_product"]]
+                    print("pr1")
                     for s_p in similar_products:
+                        print("pr3")
                         if product_original['_id']==s_p['_id'] or product_original['chemical_compounds']==s_p['chemical_compounds']:
                             product_replacement=s_p
                             break
 
                     
                     i,j=find_element_index(product,product_replacement["_id"])
-
+                    print("pr5")
                     #change
                     dosage=ast.literal_eval(value["dosage"])[i][j]
+                    print("pr6")
                     dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
                     print("or4")
             print("or5")      
