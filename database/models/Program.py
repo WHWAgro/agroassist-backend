@@ -210,6 +210,9 @@ class TaskObjectivesClass(db.Model):
   id_product = db.Column(db.String(400), nullable=True)
   dosage=db.Column(db.String(400), nullable=True)
   dosage_parts_per_unit=db.Column(db.String(400), nullable=True)
+  products_name=db.Column(db.String(400), nullable=True)
+  products_ingredients=db.Column(db.String(400), nullable=True)
+  objective_name=db.Column(db.String(400), nullable=True)
   #max_applications=db.Column(db.String(400), nullable=True)
   
   

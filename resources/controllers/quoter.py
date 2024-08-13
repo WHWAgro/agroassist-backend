@@ -218,8 +218,7 @@ class QuoterInitApi(Resource):
                   print(alternative)
                   if alternative['product_id'] in dict_list:
                     del dict_list[alternative['product_id']]
-            print('hhhhhhhhhHHHHHH')
-            print(used_products)
+           
             for product in used_products:
               final_list.append(product)
             
