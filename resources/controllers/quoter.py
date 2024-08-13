@@ -29,7 +29,7 @@ class QuoterInitApi(Resource):
   @jwt_required()
   def get(self):
   
-    try:
+    #try:
       print('---------new quoter')
       response={}
       response['status']=200
@@ -91,6 +91,7 @@ class QuoterInitApi(Resource):
         moments=getMoments(program,date_begin,date_end)
         
         print("moments:")
+        print(moments)
         
         for objective in moments:
             objective_list=[]
@@ -104,17 +105,37 @@ class QuoterInitApi(Resource):
             products_list={}
             products_ids=[]
             id_objective=objective["id_objective"]
+            
             products= list(chain.from_iterable( ast.literal_eval(objective["id_product"])))
             dosages=list(chain.from_iterable( ast.literal_eval(objective["dosage"])))
             dosages_unit=list(chain.from_iterable( ast.literal_eval(objective["dosage_parts_per_unit"])))
+            objective_name=objective["objective_name"]
+            products_ingredients=list(chain.from_iterable( ast.literal_eval(objective["products_ingredients"])))
+            products_name=list(chain.from_iterable( ast.literal_eval(objective["products_name"])))
             
-            
+            print(products)
+            print('enumernado------*****')
             for i,product in enumerate(products):
+                print(product)
                 if product in products_ids:
+                    if product==0:
+                      product=products_name[i]
+
                     products_list[str(product)]["n_applications"]=products_list[str(product)]["n_applications"]+1
                 else:
+                    
+                    obj_name=None
+                    if objective["id_objective"]==0:
+                      obj_name=objective["objective_name"]
+                    else:
+                      obj_name=objective["id_objective"]
+
+                    if product==0:
+                      product=products_name[i]
+                    
+
                     products_ids.append(product)
-                    products_list[str(product)]={"valid_hectares":moment_hectares,"objective":objective["id_objective"],"wetting":objective["wetting"],"dosage":float(dosages[i]),"product_needed_unit":dosages_unit[i]}
+                    products_list[str(product)]={"product_ingredients":products_ingredients[i],"valid_hectares":moment_hectares,"objective":obj_name,"wetting":objective["wetting"],"dosage":float(dosages[i]),"product_needed_unit":dosages_unit[i]}
                     products_list[str(product)]["n_applications"]=1
             print(products_ids)
             print(products_list)
@@ -159,51 +180,63 @@ class QuoterInitApi(Resource):
               print('****')
            
             for id in products_ids:
-                valid=list(filter(lambda product: product['_id'] == id , elements))
                 
-                
-                compound=valid[0]["chemical_compounds"]
-                
-                
-                
-                el={"product_id":id, "objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":int(program),"dosage":products_list[str(id)]["dosage"]}
-                el["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
-                el["products_needed"]=products_list[str(id)]["product_needed"]
                
-                el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
                 
-                alternatives_pre=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
-                unique_products_name = []
-                alternatives=[]
-
                 
-                # Iterate over the list and add entries to the dictionary
-                for product in alternatives_pre:
-                    product_name = product["product_name"]
-                    if product_name not in unique_products_name:
-                        unique_products_name.append(product_name)
-                        alternatives.append( product)
-
-                
-                #print('producto')
-                #print(str(id))
-                #print(products_list[str(id)])
-                #print('alternativas')
-                #print(product['product_name'])
-                
-                #print(alternatives)
-                alternatives_list=[]
-                for alternative in alternatives:
-                   if alternative["_id"]==id:
-                      continue
-                   lol={"product_id":alternative["_id"]}
-                   lol["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
                   
-                   lol["products_needed"]=products_list[str(id)]["product_needed"]
-                   alternatives_list.append(lol)
-                el["alternatives"]=alternatives_list
                 
-                objective_list.append(el)
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  el={"product_id":id,"product_ingredients":products_list[str(id)]["product_ingredients"], "objective_id":products_list[str(id)]["objective"],"wetting":products_list[str(id)]["wetting"],"program_id":int(program),"dosage":products_list[str(id)]["dosage"]}
+                  el["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
+                  el["products_needed"]=products_list[str(id)]["product_needed"]
+                
+                  el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
+
+                  alternatives_pre=[]
+                  if can_cast_to_number(id)==True:
+                  
+                    valid=list(filter(lambda product: product['_id'] == id , elements))
+                    compound=valid[0]["chemical_compounds"]
+                  
+                    alternatives_pre=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
+                  unique_products_name = []
+                  alternatives=[]
+
+                  
+                  # Iterate over the list and add entries to the dictionary
+                  for product in alternatives_pre:
+                      product_name = product["product_name"]
+                      if product_name not in unique_products_name:
+                          unique_products_name.append(product_name)
+                          alternatives.append( product)
+
+                  
+                  print('producto')
+                  #print(str(id))
+                  #print(products_list[str(id)])
+                  #print('alternativas')
+                  #print(product['product_name'])
+                  
+                  #print(alternatives)
+                  alternatives_list=[]
+                  for alternative in alternatives:
+                    if alternative["_id"]==id:
+                        continue
+                    lol={"product_id":alternative["_id"]}
+                    lol["product_needed_unit"]=products_list[str(id)]["product_needed_unit"]
+                    
+                    lol["products_needed"]=products_list[str(id)]["product_needed"]
+                    alternatives_list.append(lol)
+                  el["alternatives"]=alternatives_list
+                  
+                  objective_list.append(el)
             
             consolidated_products=[]
             used_products=[]
@@ -289,7 +322,7 @@ class QuoterInitApi(Resource):
       else: 
         return {'response': response}, 400
 
-    except Exception as e:
+    #except Exception as e:
       print(e)
       response['status']=500
       response['message']=2
