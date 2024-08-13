@@ -71,11 +71,17 @@ def getTableDict(table):
 
     return products_dict
 
-
-def getProductsAlt(products):
+def can_cast_to_number(value):
+    try:
+        float(value)  # or int(value) if you only want to check for integers
+        return True
+    except (ValueError, TypeError):
+        return False
+    
+def getProductsAlt(products,products_name):
         productsAlt=[]
 
-    
+        print("getting alternatives")
 
         for o_index,objective in enumerate(products):
             
@@ -85,7 +91,10 @@ def getProductsAlt(products):
                 
                 alternatives=[]
                 and_alt_format='('
-                for market in and_alt:
+                for r_index,market in enumerate(and_alt):
+                    print(market)
+                    if market==0:
+                        alternatives.append(products_name[o_index][aa_index][r_index])
             
                     and_alt_format=and_alt_format+str(market)+","
                 and_alt_format = and_alt_format[:-1]
@@ -447,7 +456,7 @@ def getVisitTaskDetails(id_task):
     try:
         
         
-        query_tasks="""SELECT pt._id as _id,visit_id as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date,Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit
+        query_tasks="""SELECT pt._id as _id,visit_id as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date,Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit,id_objective as objective_name,id_products as products_name,id_products as products_ingredients
                 
               
                 from visit_tasks as pt 
