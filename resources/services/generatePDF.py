@@ -392,16 +392,19 @@ def generateTaskOrder(body):
             v_match1 = item["id_objective"]
             filtered_data2={key: value for key, value in filtered_data.items() if (value.get(k_filter1) == v_match1 )}
             
-            
+            print("or0")
             
             dosage=0
             dosage_unit=1
 
             if can_cast_to_number(item["id_product"])==False:
+                print("or1")
                 index = item["products_names"].index(item["id_product"])
                 dosage=item["dosages"][index]
                 dosage_unit=item["id_dosage_unit"][index]
+                print("or2")
             else:
+                print("essta en plataforma el producto")
                 for key ,value in filtered_data2.items():
                     
                     product=ast.literal_eval(value["id_product"])
@@ -427,6 +430,8 @@ def generateTaskOrder(body):
                     #change
                     dosage=ast.literal_eval(value["dosage"])[i][j]
                     dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
+                    print("or4")
+            print("or5")      
             unit=""
             unit_dosage=""
             total_product=0
@@ -436,6 +441,7 @@ def generateTaskOrder(body):
             
             
             dosage=float(dosage)
+            print("or6")
 
             if dosage_unit == 1:
                 print(" 1")
