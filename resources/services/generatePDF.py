@@ -220,7 +220,7 @@ def generateTaskOrder(body):
         back_pump=False
         if data_list[0]['id_sprayer']==None:
             back_pump=True
-            print('hola')
+            print('hola8')
             
             for elem in data_list:
                 print(elem)
@@ -371,19 +371,22 @@ def generateTaskOrder(body):
         
         k_filter1 = "id_task"
         v_match1 = moment_id
-      
+
         filtered_data = {key: value for key, value in moment_objectives.items() if (value.get(k_filter1) == v_match1 )}
         
+        print(filtered_data)
         print("$$$$##############$$$$$")
         
         
-        phi_list=[]
-        reentry_period_list=[]
+       
 
         similar_products=[]
 
-        #products[item["id_product"]]["reentry_period"]
+        
         for item in data_list2:
+
+            print("objectivo")
+            print(item["id_objective"])
             
             k_filter1 = "id_objective"
             v_match1 = item["id_objective"]
@@ -393,30 +396,37 @@ def generateTaskOrder(body):
             
             dosage=0
             dosage_unit=1
-            for key ,value in filtered_data2.items():
-                
-                product=ast.literal_eval(value["id_product"])
-               
-                
 
-                similar_products=[]
-                for and_p in product:
-                    for or_p in and_p:
-                        similar_products.append(products[int(or_p)])
-               
-                product_replacement=products[item["id_product"]]
-                product_original=products[item["id_product"]]
-                for s_p in similar_products:
-                    if product_original['_id']==s_p['_id'] or product_original['chemical_compounds']==s_p['chemical_compounds']:
-                        product_replacement=s_p
-                        break
-
+            if can_cast_to_number(item["id_product"])==False:
+                index = item["products_names"].index(item["id_product"])
+                dosage=item["dosages"][index]
+                dosage_unit=item["id_dosage_unit"][index]
+            else:
+                for key ,value in filtered_data2.items():
+                    
+                    product=ast.literal_eval(value["id_product"])
+                    
                 
-                i,j=find_element_index(product,product_replacement["_id"])
+                    
 
-                #change
-                dosage=ast.literal_eval(value["dosage"])[i][j]
-                dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
+                    similar_products=[]
+                    for and_p in product:
+                        for or_p in and_p:
+                            similar_products.append(products[int(or_p)])
+                
+                    product_replacement=products[item["id_product"]]
+                    product_original=products[item["id_product"]]
+                    for s_p in similar_products:
+                        if product_original['_id']==s_p['_id'] or product_original['chemical_compounds']==s_p['chemical_compounds']:
+                            product_replacement=s_p
+                            break
+
+                    
+                    i,j=find_element_index(product,product_replacement["_id"])
+
+                    #change
+                    dosage=ast.literal_eval(value["dosage"])[i][j]
+                    dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
             unit=""
             unit_dosage=""
             total_product=0
@@ -424,14 +434,7 @@ def generateTaskOrder(body):
             unit_hectare=""
             dosage_hectare=0
             
-            print(dosage_unit)
-            print(type(dosage_unit))
-            print(dosage)
-            print(type(dosage))
-            print(wetting)
-            print(type(wetting))
-            print(total_hectareas_data)
-            print(type(total_hectareas_data))
+            
             dosage=float(dosage)
 
             if dosage_unit == 1:
@@ -516,12 +519,32 @@ def generateTaskOrder(body):
             print("cuartel 3")
             totalXmaquinada='{:,.2f}'.format(float(total_product/n_maquinadas)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')
             
-            print('----------product')
-            phi_list.append(products[item["id_product"]]["phi"])
+            print('----------products')
             
-            reentry_period_list.append(products[item["id_product"]]["reentry_period"])
-            row_data = [" ",products[item["id_product"]]["product_name"],products[item["id_product"]]["chemical_compounds"],objectives[item["id_objective"]]["objective_name"],str(dosage_hectare)+unit_hectare,str(dosage)+unit_dosage,hola+unit,totalXmaquinada+unit]
-            print('producto///////////////')
+            
+            objective=""
+            product_name=""
+            product_chemichal=""
+            if can_cast_to_number(item["id_product"])==False:
+                index = item["products_names"].index(item["id_product"])
+                product_name=item["id_product"]
+                product_chemichal=item["ingredients"][index]
+                
+            else:
+                print("aqui")
+                product_name=products[item["id_product"]]["product_name"]
+                product_chemichal=products[item["id_product"]]["chemical_compounds"]
+
+            print(item["objective_name"])
+            if item["id_objective"]==0:
+                objective=item["objective_name"]
+            else:
+                print("aca")
+                objective=objectives[item["id_objective"]]["objective_name"]
+                print("por aca")
+            
+            row_data = [" ",str(product_name),str(product_chemichal),objective,str(dosage_hectare)+unit_hectare,str(dosage)+unit_dosage,hola+unit,totalXmaquinada+unit]
+            print('productof///////////////')
             print(row_data)
             
             wrapped_row = [create_wrapped_paragraph(cell) for cell in row_data]
@@ -555,10 +578,7 @@ def generateTaskOrder(body):
         pdf_content.append(Spacer(1,15))
 
 
-        section6_table_data = [
-            ["Reingreso:", '{:,.1f}'.format(max(reentry_period_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')+" hrs", "Carencia:",'{:,.1f}'.format(max(phi_list)).replace(',','*').replace('.', ',').replace('*','.').replace(',0','') +" días"]
-            
-        ]
+        section6_table_data = []
 
         if "reentry" in body and 'phi' in body:
             section6_table_data = [
@@ -648,7 +668,7 @@ def generateTaskOrder(body):
             db.session.add(new_task_order)
             db.session.commit()
         
-        print('hola')
+        print('hola10')
         return(str(myuuid)+".pdf")
     
     except Exception as error: 
@@ -706,7 +726,7 @@ def generatePurchaseOrder(body):
         companies=getTableDict("company")
         company=companies[company_id]
         order_number=1
-        print("hola")
+        print("hola4")
         company_purchase_orders = getCompanyPurchaseOrders(company_id)
         print('hola1233')
         print(company_purchase_orders)
@@ -878,7 +898,7 @@ def generateQuoterProducts(body):
         company_id=1
         order_creator='John Doe'
         order_number=1
-        print("hola")
+        print("holaf")
         
         print('hola1233')
        
