@@ -418,7 +418,8 @@ def generateTaskOrder(body):
                     similar_products=[]
                     for and_p in product:
                         for or_p in and_p:
-                            similar_products.append(products[int(or_p)])
+                            if int(or_p) in products:
+                                similar_products.append(products[int(or_p)])
                     print(similar_products)
                 
                     product_replacement=products[item["id_product"]]
