@@ -197,8 +197,8 @@ class TaskInsApi(Resource):
                     dic_result[id]["objectives_name"].append(objectives_name)
                     dic_result[id]["products"].append(products)
                     dic_result[id]["dosage"].append(dosage)
-                    dic_result[id]["product_ingredients"].append(products_ingredients)
-                    dic_result[id]["product_name"].append(products_name)
+                    dic_result[id]["products_ingredients"].append(products_ingredients)
+                    dic_result[id]["products_name"].append(products_name)
                     
                     dic_result[id]["dosage_parts_per_unit"].append(dosage_parts_per_unit)
                 else:
