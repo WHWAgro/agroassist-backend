@@ -144,7 +144,7 @@ class QuoterProductClass(db.Model):
   cluster_id=db.Column(db.String(400), nullable=True)
   cluster_master=db.Column(db.Boolean, nullable=True)
   product_row_id=db.Column(db.Integer, nullable=False)
-  product_id=db.Column(db.Integer, nullable=False)
+  product_id=db.Column(db.String(100), nullable=False)
   product_needed=db.Column(db.Integer, nullable=False)
   product_stored=db.Column(db.Integer, nullable=False)
   product_needed_unit_id=db.Column(db.Integer, nullable=False)

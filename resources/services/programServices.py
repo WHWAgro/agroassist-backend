@@ -456,8 +456,8 @@ def getVisitTaskDetails(id_task):
     try:
         
         
-        query_tasks="""SELECT pt._id as _id,visit_id as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date,Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit,id_objective as objective_name,id_products as products_name,id_products as products_ingredients
-                
+        query_tasks="""SELECT pt._id as _id,visit_id as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date,Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit,objectives as objective_name,products as products_name,
+products as products_ingredients
               
                 from visit_tasks as pt 
                 left join visit_task_objectives as tp on pt._id= tp.visit_task_id
@@ -1748,7 +1748,7 @@ def createQuoter(body,user_id):
 
         n_cluster_master={}
         for product in body["products"]:
-                print("producto:")
+                print("producto:-----------")
                 if len(product)==0:
                     continue
                 if product['cluster_id'] not in clusters:
@@ -1774,10 +1774,14 @@ def createQuoter(body,user_id):
                 print(n_cluster_master[product['cluster_id'] ])
                 print(n_cluster_master)
                 row_id=row_id+1
-                quoter_product=QuoterProductClass(id_quoter=quoter._id,cluster_id=clusters[product['cluster_id'] ],cluster_master=product['cluster_master'],product_row_id=row_id,product_id=product['product_id'],
-                                          product_needed=product['product_needed'],product_stored=product['product_stored'],product_needed_unit_id=product['product_needed_unit_id'],
+
+               
+
+                quoter_product=QuoterProductClass(id_quoter=quoter._id,cluster_id=clusters[product['cluster_id'] ],cluster_master=product['cluster_master'],product_row_id=row_id,product_id=str(product['product_id']),
+                                          product_needed=int(product['product_needed']),product_stored=int(product['product_stored']),product_needed_unit_id=product['product_needed_unit_id'],
                                           valid_hectares=product['valid_hectares'])
                 db.session.add(quoter_product)
+                print(product['product_id'])
 
                 quote_row=QuoteRowClass(quote_id=quote._id,product_row_id=row_id,container_size=0,container_unit_id=container_unit,container_price_clp=0,checked=False)
                 db.session.add(quote_row)
@@ -1790,9 +1794,11 @@ def createQuoter(body,user_id):
                 
                 
                 
+        print('commiting****')
         
         
-        
+        print(db.session.new)
+              
         
         
         db.session.commit()

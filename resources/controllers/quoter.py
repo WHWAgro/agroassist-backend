@@ -29,7 +29,7 @@ class QuoterInitApi(Resource):
   @jwt_required()
   def get(self):
   
-    #try:
+    try:
       print('---------new quoter')
       response={}
       response['status']=200
@@ -322,7 +322,7 @@ class QuoterInitApi(Resource):
       else: 
         return {'response': response}, 400
 
-    #except Exception as e:
+    except Exception as e:
       print(e)
       response['status']=500
       response['message']=2
@@ -371,7 +371,7 @@ class QuoterApi(Resource):
       return {'response': response},500
 
 
-
+  
 
 
   @jwt_required()
@@ -382,7 +382,7 @@ class QuoterApi(Resource):
       response['status']=200
       response['message']=0
       
-      
+      print('creando quoter*********-----')
       user_id =  get_jwt_identity()
       body = request.get_json()
       
