@@ -826,29 +826,25 @@ def generatePurchaseOrder(body):
        
         table_data2 = [['Nombre Producto','Formato Envase','Cantidad','Precio Unitario','Precio Total']] 
         subtotal=0
-        print(products)
+        
         
         for item in body["products"]:
             format_unit={'1':'cc','2':'Lt','3':'gr','4':'Kg',}
             item["format_unit"]=format_unit[str(item['container_unit_id'])]
-            print("producto ------")
-            print(item)
+            
             product_total=item["number_products"]*item["container_price_clp"]
-            print(product_total)
+           
             subtotal=subtotal+product_total
-            print(subtotal)
-            print(products[item["id_product"]]["product_name"])
-            print(str(item["container_size"])+" "+item["format_unit"])
-            print(products[item["id_product"]]["product_name"])
-            print(str(item["container_size"])+" "+item["format_unit"])
-            print("$"+str(item["container_price_clp"]))
-            print("$"+str(item["number_products"]*item["container_price_clp"]))
-            print("chao")
+            
 
             
             total_price_format =str(formatter(item["number_products"]*item["container_price_clp"]))
             container_size_format=str(formatter(item["container_size"]))
             container_price_format=str(formatter(item["container_price_clp"]))
+
+
+
+
             row_data = [products[item["id_product"]]["product_name"],container_size_format+" "+item["format_unit"],item["number_products"],"$"+container_price_format,"$"+total_price_format]
             print(row_data)
             wrapped_row = [create_wrapped_paragraph(str(cell)) for cell in row_data]
@@ -962,36 +958,41 @@ def generateQuoterProducts(body):
         product_data=[]
         
         products=getTableDict("Products")
-        print(products)
+        
         for key,section in body.items():
-            print(section)
-            print("------*")
-            print(section["product_id"])
-            print(section["product_needed"])
-            print(products[section["product_id"]])
+            
 
             product_unit=' gr'
             if section["product_needed_unit_id"]>=5:
                 print('enter 1')
                 product_unit=' cc'
-                if max(section["product_needed"]-section["product_stored"],0) >10000:
+                if max(section["product_needed"]-section["product_stored"],0) >9999:
                     product_unit=' Lt'
                     print('enter 2')
             
-            elif (max(section["product_needed"]-section["product_stored"],0) >10000):
+            elif (max(section["product_needed"]-section["product_stored"],0) >9999):
                 print('enter 3')
                 product_unit=' Kg'
             print('exit 1')
 
             final_product=str(formatter2(max(section["product_needed"]-section["product_stored"],0)))
 
+            product_name=""
+            if can_cast_to_number(section["product_id"]):
+                product_name=products[section["product_id"]]["product_name"]
+            else:
+                product_name=section["product_id"]
             
-            
-            row={"name":products[section["product_id"]]["product_name"],"price":final_product+product_unit}
+            row={"name":product_name,"price":final_product+product_unit}
             print('siguiente')
             product_data.append(row)
             for alternative in section["alternatives"]:
-                row={"name":products[alternative["product_id"]]["product_name"],"price":final_product+product_unit}
+                product_alternative=""
+                if can_cast_to_number(section["product_id"]):
+                    product_alternative=products[section["product_id"]]["product_name"]
+                else:
+                    product_alternative=section["product_id"]
+                row={"name":product_alternative,"price":final_product+product_unit}
                 product_data.append(row)
           
 
