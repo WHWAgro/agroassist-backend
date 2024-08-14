@@ -843,9 +843,12 @@ def generatePurchaseOrder(body):
             container_price_format=str(formatter(item["container_price_clp"]))
 
 
+            if can_cast_to_number(item["product_id"]):
+                product_alternative=products[int(item["product_id"])]["product_name"]
+            else:
+                product_alternative=item["product_id"]
 
-
-            row_data = [products[item["id_product"]]["product_name"],container_size_format+" "+item["format_unit"],item["number_products"],"$"+container_price_format,"$"+total_price_format]
+            row_data = [product_alternative,container_size_format+" "+item["format_unit"],item["number_products"],"$"+container_price_format,"$"+total_price_format]
             print(row_data)
             wrapped_row = [create_wrapped_paragraph(str(cell)) for cell in row_data]
             
@@ -979,7 +982,7 @@ def generateQuoterProducts(body):
 
             product_name=""
             if can_cast_to_number(section["product_id"]):
-                product_name=products[section["product_id"]]["product_name"]
+                product_name=products[int(section["product_id"])]["product_name"]
             else:
                 product_name=section["product_id"]
             
@@ -989,7 +992,7 @@ def generateQuoterProducts(body):
             for alternative in section["alternatives"]:
                 product_alternative=""
                 if can_cast_to_number(section["product_id"]):
-                    product_alternative=products[section["product_id"]]["product_name"]
+                    product_alternative=products[int(section["product_id"])]["product_name"]
                 else:
                     product_alternative=section["product_id"]
                 row={"name":product_alternative,"price":final_product+product_unit}
