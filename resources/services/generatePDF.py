@@ -698,7 +698,7 @@ def formatter(valor):
 def formatter2(valor):
             print('formatter')
             print(valor)
-            if valor>10000:
+            if valor>9999:
                 print(1)
                 valor= valor/1000
                 print(valor)
