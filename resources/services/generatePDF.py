@@ -841,12 +841,11 @@ def generatePurchaseOrder(body):
             total_price_format =str(formatter(item["number_products"]*item["container_price_clp"]))
             container_size_format=str(formatter(item["container_size"]))
             container_price_format=str(formatter(item["container_price_clp"]))
-
-
-            if can_cast_to_number(item["product_id"]):
-                product_alternative=products[int(item["product_id"])]["product_name"]
+            
+            if can_cast_to_number(item["id_product"]):
+                product_alternative=products[int(item["id_product"])]["product_name"]
             else:
-                product_alternative=item["product_id"]
+                product_alternative=item["id_product"]
 
             row_data = [product_alternative,container_size_format+" "+item["format_unit"],item["number_products"],"$"+container_price_format,"$"+total_price_format]
             print(row_data)
