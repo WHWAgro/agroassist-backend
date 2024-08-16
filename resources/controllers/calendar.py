@@ -187,9 +187,9 @@ class TaskInsApi(Resource):
                   else:
                     objectives= ast.literal_eval(task['id_objective'])
                     objectives_name=ast.literal_eval(task['objective_name'])
-                  print('no tiene productos')
+                  print('tiene productos')
                 else:
-                   print('tiene productos')
+                   print('no tiene productos')
 
                 
                 

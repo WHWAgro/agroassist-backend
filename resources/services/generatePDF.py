@@ -130,7 +130,11 @@ def generateTaskOrder(body):
         order_creator=user_name[0]["user_name"]
         order_number=1
 
-        company_task_orders = getCompanyTaskOrders(1)
+        user_companies=getUserCompanies(user_id)
+       
+        company_id=user_companies[0]["_id"]
+
+        company_task_orders = getCompanyTaskOrders(company_id)
         #print(2)
         if len(company_task_orders)>0:
            order_number = company_task_orders[0]['order_number']+1
