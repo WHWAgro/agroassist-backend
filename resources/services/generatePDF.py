@@ -550,8 +550,9 @@ def generateTaskOrder(body):
                 product_name=products[item["id_product"]]["product_name"]
                 product_chemichal=products[item["id_product"]]["chemical_compounds"]
 
-            print(item["objective_name"])
+            print(item["objective name"])
             if item["id_objective"]==0:
+                print('ff')
                 objective=item["objective_name"]
             else:
                 print("aca")
