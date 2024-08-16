@@ -123,7 +123,7 @@ def generateTaskOrder(body):
         doc = SimpleDocTemplate("files/"+doc_name, pagesize=letter, topMargin=10,leftMargin=10)
         print(str(myuuid)+".pdf")
         
-        company_id=1
+        
         id_task=int(body['id_task'])
         user_name=getUserData(user_id)
         
