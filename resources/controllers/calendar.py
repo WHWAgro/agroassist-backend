@@ -158,6 +158,8 @@ class TaskInsApi(Resource):
                 return {'response': response}, 400
             
             for task in tasks:
+                print('---======-------======-')
+                print(task)
                 id = task['_id']
 
                 products=None
