@@ -165,7 +165,7 @@ class TaskInsApi(Resource):
                 dosage_parts_per_unit=None
                 objectives=None
 
-                objectives_name=None
+                objectives_name=''
                 products_ingredients=None
                 products_name=None
 
