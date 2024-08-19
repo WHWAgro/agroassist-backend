@@ -134,7 +134,8 @@ def generateTaskOrder(body):
        
         company_id=user_companies[0]["_id"]
 
-        company_task_orders = getCompanyTaskOrders(company_id)
+        #cambiar nombres ya que ahora busca segun campo y no compañia ya que cada uno trabaja con distintas ordenes de aplicacion
+        company_task_orders = getCompanyTaskOrders(body['id_field'])
         #print(2)
         if len(company_task_orders)>0:
            order_number = company_task_orders[0]['order_number']+1

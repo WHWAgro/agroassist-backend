@@ -793,7 +793,7 @@ class MailApi(Resource):
 
         
         exists = mailExists(email)
-        
+        is_valid = validEmail(email)
         
         if exists== False:
           response['status']=400 
@@ -801,9 +801,15 @@ class MailApi(Resource):
         
 
         data={}
-        data['email']=False
-        if len(exists)>0:
-           data['email']=True
+        data['email']=4
+        if len(exists)>0 and len(is_valid)>0:
+           data['email']=1
+        elif len(exists)==0 and len(is_valid)>0:
+           data['email']=2
+        elif len(exists)>0 and len(is_valid)==0:
+           data['email']=3
+
+
         response['data']=data
         
         if response.get('status') == 200:

@@ -1177,6 +1177,33 @@ def mailExists(email):
     except Exception as e:
         print(e)
         return False
+    
+
+def validEmail(email):
+    try:
+        
+        
+        
+        query="""SELECT _id,email,accepted
+                    FROM invitations
+                    WHERE email = '"""+ str(email)+"""'
+                    and accepted=1
+                    
+                
+             """
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
 def process_nested_list(lst):
     result = []
     for item in lst:

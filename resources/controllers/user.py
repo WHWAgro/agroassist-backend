@@ -123,7 +123,7 @@ class LoginUserApi(Resource):
             data["phenological_stages"] =getTable("phenological_stages")
             data["moment_types"]=getTable("task_types")
             data["company"]=getUserCompanies(user_dict["_id"])
-            data["products"]=getTable("products")
+            data["products"]=sorted_data = sorted(getTable("products"), key=lambda x: x['product_name'])
             data["objectives"]=getTable("objectives")
             data["container_units"]=getTable("container_units")
             data["product_types"]=getTable("product_types")
