@@ -12,6 +12,7 @@ import math
 
 
 
+
 def getTable(table,field=None,value=None):
    
     
@@ -174,6 +175,77 @@ def getMoments(id_program,start,end):
     except Exception as e:
         print(e)
         return False
+
+
+def getCompanyMainUsers(company_id):
+    try:
+        
+
+        query="""SELECT *
+FROM (
+    SELECT DISTINCT ON (user_id) *
+    FROM user_company
+    WHERE company_id = """ + str(company_id) + """
+    ORDER BY user_id, _id ASC
+) AS uc
+ORDER BY uc._id ASC;
+                            
+                            
+                            
+                                
+        
+        
+        
+             """
+        
+
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False  
+
+
+def getInvitedPrograms(company_id,email):
+    try:
+        
+
+        query="""select pr._id, pr.send_to
+                    from programs as pr
+                    left join(select *
+                            from user_company
+                            where company_id="""+str(company_id)+"""
+                            order by _id asc
+                            
+                            
+                                ) as uc on pr.id_user=uc.user_id
+                    where send_to LIKE '%"""+str(email)+"""%'
+        
+        
+        
+             """
+        
+
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False  
+
 
 def getUserCompanies(user):
    

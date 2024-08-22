@@ -13,7 +13,14 @@ from datetime import timedelta
 
 auth = HTTPBasicAuth()
 
+class InvitationsClass(db.Model):
 
+  __tablename__ = 'invitations'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  accepted= db.Column(db.Integer, nullable=False)
+  email=db.Column(db.String(100), nullable=False)
+  company_id= db.Column(db.Integer, nullable=False)
+  invitation_code=db.Column(db.String(100), nullable=False)
 
 class WeatherLocationsClass(db.Model):
 

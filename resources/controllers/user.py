@@ -6,7 +6,7 @@ from datetime import datetime
 #from get_project_root import root_path
 from resources.errors import  InternalServerError
 
-from database.models.Program import UserCompanyClass,CompanyClass,userClass,db
+from database.models.Program import UserCompanyClass,CompanyClass,userClass,db,InvitationsClass,ProgramCompaniesClass
 from resources.services.programServices import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import jwt_required,get_jwt_identity
@@ -26,15 +26,32 @@ class CreateUserApi(Resource):
       response['message']=0
       
       body = request.get_json()
-      user_name = body.get("name")+" "+body.get("surname")
       email = body.get("email")
+      invitation=None
+      if "invitation_code" in body:
+        if body["invitation_code"]!=None and body["invitation_code"]!="":
+          invitation=InvitationsClass.query.filter_by(email=email,invitation_code=body["invitation_code"],accepted=1).first()
+          if invitation==None:
+            data={}
+            data['user']=email
+            response['data']=data
+            response['status']=400
+            print("chao")
+            return {'response': response}, 400
+
+      
+
+
+      user_name = body.get("name")+" "+body.get("surname")
+      
+     
       phone = body.get("phone_number")
       password = body.get("password")
       role=body.get("id_user_type")
-
+      
       
       password=generate_password_hash(password)
-      
+      print("password")
 
       if user_name is None or password is None or email is None:
         response['status']=400
@@ -59,7 +76,39 @@ class CreateUserApi(Resource):
           user_company = UserCompanyClass( company_id=company._id,user_id=user._id)
           db.session.add(user_company)
           db.session.commit()
-      
+
+        if "invitation_code" in body:
+          if body["invitation_code"]!=None and body["invitation_code"]!="":
+            invitation.accepted=2
+            db.session.add(invitation)
+            programs=getInvitedPrograms(invitation.company_id,email)
+            print(programs)
+            if programs!=False:
+              for program in programs:
+                program_update=ProgramClass.query.get(program["_id"] )
+                
+
+                send_to_list = program_update.send_to.split(";;;")
+
+                # Remove the specific element from the list
+                
+                if email in send_to_list:
+                    send_to_list.remove(email)
+                    updated_send_to = ";;;".join(send_to_list) if send_to_list else None
+                    program_update.send_to=updated_send_to
+                    db.session.add(program_update)
+                    program_company = ProgramCompaniesClass( id_program=program["_id"],id_company=company._id)
+                    db.session.add(program_company)
+            company_users=getCompanyMainUsers(invitation.company_id)
+            if company_users !=False:
+              for us in company_users:
+                us_new_company=UserCompanyClass(company_id=company._id,user_id=us["user_id"])
+                db.session.add(us_new_company)
+
+            db.session.commit()
+
+
+
      
       
       if response.get('status') == 200:
@@ -70,6 +119,7 @@ class CreateUserApi(Resource):
         return {'response': response}, 200
       
       else: 
+        print("400x")
         
         return {'response': response}, 400
 
