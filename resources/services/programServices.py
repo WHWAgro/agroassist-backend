@@ -1940,6 +1940,7 @@ def getQuoterProducts(quoter_id):
         query="""SELECT *
                 from quoter_products
                 where id_quoter = """+ str(quoter_id)+"""
+                order by _id
                 """
         
        

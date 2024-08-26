@@ -1004,7 +1004,7 @@ def generateQuoterProducts(body):
             
 
             product_unit=' gr'
-            if section["product_needed_unit_id"]>=5:
+            if section["product_needed_unit_id"]>=5 and not (section["product_needed_unit_id"]  in (9,10)):
                 print('enter 1')
                 product_unit=' cc'
                 if max(section["product_needed"]-section["product_stored"],0) >9999:
@@ -1028,12 +1028,39 @@ def generateQuoterProducts(body):
             print('siguiente')
             product_data.append(row)
             for alternative in section["alternatives"]:
+                print('******alternative')
+                print(alternative)
                 product_alternative=""
-                if can_cast_to_number(section["product_id"]):
-                    product_alternative=products[int(section["product_id"])]["product_name"]
+                if can_cast_to_number(alternative["product_id"]):
+                    product_alternative=products[int(alternative["product_id"])]["product_name"]
                 else:
                     product_alternative=section["product_id"]
+                print('nombre agragado')
+                product_unit=' gr'
+                if alternative["product_needed_unit_id"]>=5 and not (alternative["product_needed_unit_id"]  in (9,10)):
+                    print('enter 1')
+                    product_unit=' cc'
+                    if max(alternative["product_needed"]-alternative["product_stored"],0) >9999:
+                        product_unit=' Lt'
+                        print('enter 2')
+                
+                elif (max(alternative["product_needed"]-alternative["product_stored"],0) >9999):
+                    print('enter 3')
+                    product_unit=' Kg'
+                print('exit 1')
+
+                final_product=str(formatter2(max(alternative["product_needed"]-alternative["product_stored"],0)))
+
+                product_name=""
+                if can_cast_to_number(alternative["product_id"]):
+                    product_name=products[int(alternative["product_id"])]["product_name"]
+                else:
+                    product_name=alternative["product_id"]
+
+
                 row={"name":product_alternative,"price":final_product+product_unit}
+
+
                 product_data.append(row)
           
 
@@ -1043,6 +1070,7 @@ def generateQuoterProducts(body):
 
         # Create a table for product data
         product_table_data = [["Producto", "Cantidad"]]
+        print('listo')
         
         for product in product_data:
             product_table_data.append([product["name"], product['price']])
