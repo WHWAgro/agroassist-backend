@@ -178,7 +178,7 @@ class LoginUserApi(Resource):
             data["container_units"]=getTable("container_units")
             data["product_types"]=getTable("product_types")
             data["dosage_units"]=getTable("units")
-            data["dosage_parts_per_unit"]={ "1":{"1":"gr/100L","2":"kg/100L","3":"g/Ha",4:"Kg/Ha"}, "2":{"5":"cc/100L","6":"L/100L","7":"cc/Ha","8":"L/Ha"}}
+            data["dosage_parts_per_unit"]={ "1":{"1":"gr/100L","2":"Kg/100L","3":"g/Ha","4":"Kg/Ha","9":"gr Ingrediente Activo/100L","10":"Kg Ingrediente Activo/100L"}, "2":{"5":"cc/100L","6":"L/100L","7":"cc/Ha","8":"L/Ha","11":"cc Ingrediente Activo/100L","12":"L Ingrediente Activo/100L"}}
             data["task_status"]=[{'_id':1,'status_name':'Pendiente'},{'_id':3,'status_name':'Orden Generada'},{'_id':4,'status_name':'En Proceso'},{'_id':5,'status_name':'Omitida'},{'_id':2,'status_name':'Finalizada'}]
             data["worker_type"]=[{'_id':1,'worker_type_name':'Administrador'},{'_id':2,'worker_type_name':'Asesor Agrícola'},{'_id':3,'worker_type_name':'En Terreno'}]
             data["machinery_type"]=[{'_id':1,'machinery_type_name':'Tractor'},{'_id':2,'machinery_type_name':'Nebulizador'},{'_id':3,'machinery_type_name':'Bomba de espalda'}]

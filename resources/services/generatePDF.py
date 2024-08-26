@@ -467,12 +467,29 @@ def generateTaskOrder(body):
                     unit=" Kg"
                 unit_hectare="gr/Há"
                 dosage_hectare=dosage*(wetting/100)
+            elif dosage_unit == 9:
+                print(" 1")
+                unit=" gr Ingrediente Activo"
+                unit_dosage="gr Ingrediente Activo/100L"
+                total_product=dosage*(wetting/100)*total_hectareas_data
+                if total_product>1000:
+                    total_product=total_product/1000
+                    unit=" Kg Ingrediente Activo"
+                unit_hectare="grIngrediente Activo /Há"
+                dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 2:
                 print(" 2")
                 unit=" Kg"
                 unit_dosage="Kg/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
                 unit_hectare="Kg/Há"
+                dosage_hectare=dosage*(wetting/100)
+            elif dosage_unit == 10:
+                print(" 2")
+                unit=" Kg Ingrediente Activo"
+                unit_dosage="Kg Ingrediente Activo/100L"
+                total_product=dosage*(wetting/100)*total_hectareas_data
+                unit_hectare="Kg Ingrediente Activo/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 3:
                 print(" 3")
@@ -504,12 +521,29 @@ def generateTaskOrder(body):
                     unit=" L"
                 unit_hectare="cc/Há"
                 dosage_hectare=dosage*(wetting/100)
+            if dosage_unit == 11:
+                print(" 5")
+                unit=" cc Ingrediente Activo"
+                unit_dosage="cc Ingrediente Activo/100L"
+                total_product=dosage*(wetting/100)*total_hectareas_data
+                if total_product>1000:
+                    total_product=total_product/1000
+                    unit=" L Ingrediente Activo"
+                unit_hectare="cc Ingrediente Activo/Há"
+                dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 6:
                 print(" 6")
                 unit=" L"
                 unit_dosage="L/100L"
                 total_product=dosage*(wetting/100)*total_hectareas_data
                 unit_hectare="L/Há"
+                dosage_hectare=dosage*(wetting/100)
+            elif dosage_unit == 12:
+                print(" 6")
+                unit=" L Ingrediente Activo"
+                unit_dosage="L Ingrediente Activo/100L"
+                total_product=dosage*(wetting/100)*total_hectareas_data
+                unit_hectare="L Ingrediente Activo/Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 7:
                 print(" 7")

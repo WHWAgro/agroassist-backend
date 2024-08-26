@@ -256,12 +256,26 @@ class FieldBookFullApi(Resource):
                     
                     unit_hectare="gr/Há"
                     dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 9:
+                    
+                    unit=" gr ingrediente activo"
+                    unit_dosage="gr ingrediente activo/100L"
+                    
+                    unit_hectare="gr ingrediente activo/Há"
+                    dosage_hectare=dosage*(wetting/100)
                 elif dosage_unit == 2:
                     
                     unit=" Kg"
                     unit_dosage="Kg/100L"
                     
                     unit_hectare="Kg/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 10:
+                    
+                    unit=" Kg Ingrediente Activo"
+                    unit_dosage="Kg Ingrediente Activo/100L"
+                    
+                    unit_hectare="Kg Ingrediente Activo/Há"
                     dosage_hectare=dosage*(wetting/100)
                 elif dosage_unit == 3:
                     
@@ -287,12 +301,26 @@ class FieldBookFullApi(Resource):
                     
                     unit_hectare="cc/Há"
                     dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 11:
+                    print(" 5")
+                    unit=" cc Ingrediente Activo"
+                    unit_dosage="cc Ingrediente Activo/100L"
+                    
+                    unit_hectare="cc Ingrediente Activo/Há"
+                    dosage_hectare=dosage*(wetting/100)
                 elif dosage_unit == 6:
                     print(" 6")
                     unit=" L"
                     unit_dosage="L/100L"
                     
                     unit_hectare="L/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 12:
+                    print(" 6")
+                    unit=" L Ingrediente Activo"
+                    unit_dosage="L Ingrediente Activo/100L"
+                    
+                    unit_hectare="L Ingrediente Activo/Há"
                     dosage_hectare=dosage*(wetting/100)
                 elif dosage_unit == 7:
                     print(" 7")

@@ -1301,6 +1301,8 @@ def createTask(body):
     
     try:
         
+
+
         if 'end_date' not in body :
             body['end_date']=body.get('start_date')
         print("hola")
@@ -1310,6 +1312,9 @@ def createTask(body):
         else:    
             task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
         db.session.add(task)
+        program=ProgramClass.query.get(body.get('id_program'))
+        program.updated_at=db.func.now()
+        db.session.add(program)
         
         
        
@@ -1372,6 +1377,11 @@ def updateMoment(task_id,body):
 
         task.observations=body.get('observations')
         task.end_date=body.get('end_date')
+
+
+        program=ProgramClass.query.get(body.get('id_program'))
+        program.updated_at=db.func.now()
+        db.session.add(program)
 
 
     
@@ -1748,6 +1758,11 @@ def deleteTask(id_moment):
         db.session.commit()
 
         task = ProgramTaskClass.query.filter_by(_id=id_moment).first()
+
+        program=ProgramClass.query.get(task.id_program)
+        program.updated_at=db.func.now()
+        db.session.add(program)
+
         if task:
             for product in task.objectives:
                 db.session.delete(product)
