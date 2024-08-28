@@ -33,7 +33,8 @@ def changeProgramFile(program_id,new_file):
             new_file_path = os.path.join( file_path, new_uuid)
             new_file.save(new_file_path)
             # Delete the old file
-        except:
+        except Exception as e:
+            print(e)
             print('3 paso')
             return False
         
