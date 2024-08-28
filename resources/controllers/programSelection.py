@@ -56,15 +56,16 @@ class ProgramFileApi(Resource):
         response['status']=200
         response['message']=0
         
-        
+        print('sending files')
         user_id =  get_jwt_identity()
         
         program_id=request.form['program_id']
 
         file=request.files['file']
         created = changeProgramFile(program_id,file)
+        print('file sent')
         if created== False:
-          response['status']=400
+          response['status']=401
           response['message']=1
         
         data={}

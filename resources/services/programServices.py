@@ -21,19 +21,24 @@ def changeProgramFile(program_id,new_file):
    
     
     try:
+        print('0 pasp')
         program=ProgramClass.query.get(program_id)
         old_file=program.file
         new_uuid=str(uuid.uuid4())+".pdf"
         file_path='files/programs/'
+        print('primer pasp')
 
         try :
+            print('2 paso')
             new_file_path = os.path.join( file_path, new_uuid)
             new_file.save(new_file_path)
             # Delete the old file
         except:
+            print('3 paso')
             return False
         
         if old_file:
+            print('4 paso')
             old_file_path = os.path.join( file_path, old_file)
             if os.path.exists(old_file_path):
                 os.remove(old_file_path)
