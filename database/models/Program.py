@@ -17,10 +17,15 @@ class InvitationsClass(db.Model):
 
   __tablename__ = 'invitations'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  accepted= db.Column(db.Integer, nullable=False)
+  accepted= db.Column(db.Integer, nullable=False,default=1)
   email=db.Column(db.String(100), nullable=False)
   company_id= db.Column(db.Integer, nullable=False)
   invitation_code=db.Column(db.String(100), nullable=False)
+  program_id=db.Column(db.String(100), nullable=False)
+  to_send = db.Column(db.Boolean, nullable=False,default=False)
+  created_at = db.Column(db.DateTime, default=db.func.now())
+  updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+  
 
 class WeatherLocationsClass(db.Model):
 
@@ -63,7 +68,8 @@ class ProgramClass(db.Model):
   published = db.Column(db.Boolean, nullable=False)
   fields = db.relationship('ProgramCompaniesClass', backref='program')
   updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
-  send_to = db.Column(db.String(2000), nullable=False)
+  send_to = db.Column(db.String(2000), nullable=True)
+  file= db.Column(db.String(100), nullable=True)
   def __repr__(self):
         return '<program %r>' % self.program_name
   

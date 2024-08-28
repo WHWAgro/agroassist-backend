@@ -1,5 +1,5 @@
 from .controllers.editProgram import EditProgramApi
-from .controllers.programSelection import ProgramSelectionApi,ProgramApi,ProgramPublishApi
+from .controllers.programSelection import ProgramSendApi,ProgramFileApi,ProgramSelectionApi,ProgramApi,ProgramPublishApi
 from .controllers.user import CreateUserApi,LoginUserApi
 from .controllers.tryc import CreationApi
 from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,TaskOrderTimeApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
@@ -67,6 +67,9 @@ def initialize_routes(api):
 
  
  api.add_resource(QuoterProductsApi,'/api/v1.0/quoter/products/download')
+
+ api.add_resource(ProgramFileApi,'/api/v1.0/program/upload')
+ api.add_resource(ProgramSendApi,'/api/v1.0/program/send')
  
 
  #fieldbook

@@ -1,5 +1,5 @@
 import json
-from database.models.Program import TaskOrderClass,PlotTasksClass,FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import UserCompanyClass,InvitationsClass,TaskOrderClass,PlotTasksClass,FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -9,8 +9,48 @@ import ast
 import uuid
 import datetime
 import math
+import os
 
 
+
+
+
+
+
+def changeProgramFile(program_id,new_file):
+   
+    
+    try:
+        program=ProgramClass.query.get(program_id)
+        old_file=program.file
+        new_uuid=str(uuid.uuid4())+".pdf"
+        file_path='files/programs/'
+
+        try :
+            new_file_path = os.path.join( file_path, new_uuid)
+            new_file.save(new_file_path)
+            # Delete the old file
+        except:
+            return False
+        
+        if old_file:
+            old_file_path = os.path.join( file_path, old_file)
+            if os.path.exists(old_file_path):
+                os.remove(old_file_path)
+            else:
+                print("Old file not found")
+
+       
+
+        program.file = new_uuid
+
+        db.session.add(program)
+        db.session.commit()
+
+
+    except Exception as e:
+        print(e)
+        return False
 
 
 def getTable(table,field=None,value=None):
@@ -182,13 +222,14 @@ def getCompanyMainUsers(company_id):
         
 
         query="""SELECT *
-FROM (
-    SELECT DISTINCT ON (user_id) *
-    FROM user_company
-    WHERE company_id = """ + str(company_id) + """
-    ORDER BY user_id, _id ASC
-) AS uc
-ORDER BY uc._id ASC;
+            FROM (
+                SELECT DISTINCT ON (user_id) *
+                FROM user_company
+                
+                ORDER BY user_id, _id ASC
+            ) AS uc
+            WHERE company_id = """ + str(company_id) + """
+            ORDER BY uc._id ASC;
                             
                             
                             
@@ -1423,15 +1464,10 @@ def updateMomentTasks(moment_id,body):
         print(e)
         return False
     
-
-    
-def createTasks(program_id, body):
+def createTasksNewUser(program_id,assigned_company):
     try:
-        program_details = body.get('program_details')
-
-        if program_details is None:
-            return False
-        assigned_companies = body.get('assigned_companies')
+        
+        assigned_companies = [assigned_company]
         print("assigned companies")
         print(assigned_companies)
         query="""SELECT m._id as _id, m.id_program, m.start_date, m.end_date, t._id as id_task,t.id_company
@@ -1474,6 +1510,68 @@ def createTasks(program_id, body):
                     db.session.commit()
                     print('creando_task')
                     print(task_instance._id)
+                    program_plots=PlotClass.query.filter_by(id_program=program_id)
+                    for plot in program_plots:
+                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1)
+                        db.session.add(plot_task)
+                    db.session.commit()
+                    
+        db.session.commit()                       
+
+        return True
+
+    except Exception as e:
+        print(e)
+        return False
+
+    
+def createTasks(program_id, body):
+    try:
+        program_details = body.get('program_details')
+
+        if program_details is None:
+            return False
+        assigned_companies = body.get('assigned_companies')
+       
+        query="""SELECT m._id as _id, m.id_program, m.start_date, m.end_date, t._id as id_task,t.id_company
+                    FROM program_tasks as m
+                    left join tasks  as t on m._id = t.id_moment
+                    
+                    WHERE m.id_program = """+ str(program_id)+"""
+                    
+                    """
+        rows=[]
+        with db.engine.begin() as conn:
+                result = conn.execute(text(query)).fetchall()
+                
+                for row in result:
+                    row_as_dict = row._mapping
+                    
+                    rows.append(dict(row_as_dict))
+        
+
+        tasks={}
+        for el in rows:   
+            tasks[el['_id']]  =el
+          
+        
+
+        for company_id in assigned_companies:
+            created = [dicc for dicc in rows if dicc['id_company'] ==company_id]
+            created_tasks={}
+            for el in created:
+                created_tasks[el['_id']]  =el
+  
+ 
+            for moment_id,task in tasks.items():
+                if 'end_date' not in task:
+                    task['end_date']=task['start_date']
+
+                if moment_id not in created_tasks:
+                    task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='AM' ,id_status=1,id_company=company_id)
+                    db.session.add(task_instance)
+                    db.session.commit()
+                    
                     program_plots=PlotClass.query.filter_by(id_program=program_id)
                     for plot in program_plots:
                         plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1)
@@ -1646,6 +1744,32 @@ def updateQuotes( body):
     except Exception as e:
         print(e)
         return False
+    
+
+def getProgramInvitations(program_id):
+    try:
+
+        
+        
+        query="""SELECT *
+                    FROM invitations
+                    WHERE program_id = '"""+ str(program_id)+"""'
+                    
+                
+             """
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
 
 
 def updateProgram(program_id, body):
@@ -1656,6 +1780,8 @@ def updateProgram(program_id, body):
             return False
 
         program = ProgramClass.query.get(program_id)
+
+        user_company=UserCompanyClass.query.filter_by(user_id=program.id_user).first().company_id
 
         if program is None:
             return False
@@ -1668,10 +1794,38 @@ def updateProgram(program_id, body):
         program.program_name = program_details.get('program_name')
         program.published = program_details.get('published')
         program.id_species = program_details.get('id_species')
-        if len(body.get('emails'))==0:
-            program.send_to = None
-        else:   
-            program.send_to = ";;;".join(body.get('emails'))
+
+        if True:
+            if len(body.get('emails'))==0:
+                program.send_to = None
+            else:   
+                program.send_to = ";;;".join(body.get('emails'))
+            invitations=getProgramInvitations(program._id)
+            current_emails=[]
+            for email in body.get('emails'):
+                current_emails.append(email)
+            print(current_emails)
+                
+            invitations_emails=[]
+            
+            for invitation in invitations:
+                if invitation["email"] not in current_emails and invitation["accepted"] ==1:
+                    InvitationsClass.query.filter_by(_id=invitation["_id"]).delete()
+                    print("deleted invitation")
+                    print(invitation["email"])
+                else:
+                    print("mo es nuevo")
+                    invitations_emails.append(invitation["email"])
+            print(invitations_emails)
+            
+            for email in body.get('emails'):
+                if email not in invitations_emails:
+                    new_uuid=str(uuid.uuid4())
+                    new_invitation = InvitationsClass(email=email, program_id=program._id,company_id=user_company,invitation_code=new_uuid)
+                    db.session.add(new_invitation)
+
+            
+            db.session.commit()
 
 
         markets = program_details.get('markets')
@@ -1689,6 +1843,24 @@ def updateProgram(program_id, body):
         db.session.commit()
 
         return program._id
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def sendInvitations(program_id):
+   
+    
+    try:
+       
+        invitations=InvitationsClass.query.filter_by(program_id=program_id,accepted=1)
+       
+        for invitation in invitations:
+            invitation.to_send = True
+
+            db.session.add(invitation)
+        db.session.commit()
+
 
     except Exception as e:
         print(e)

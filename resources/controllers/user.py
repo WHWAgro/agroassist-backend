@@ -99,6 +99,7 @@ class CreateUserApi(Resource):
                     db.session.add(program_update)
                     program_company = ProgramCompaniesClass( id_program=program["_id"],id_company=company._id)
                     db.session.add(program_company)
+                    new_program_tasks=createTasksNewUser(program["_id"],company._id)
             company_users=getCompanyMainUsers(invitation.company_id)
             if company_users !=False:
               for us in company_users:

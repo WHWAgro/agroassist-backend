@@ -11,6 +11,77 @@ from flask_jwt_extended import jwt_required,get_jwt_identity
 
 
 
+class ProgramSendApi(Resource):
+    @jwt_required()
+    def put(self):
+  
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+        
+        user_id =  get_jwt_identity()
+        program_id=request.args.get('program_id')
+        
+        
+        created = sendInvitations(program_id)
+        if created== False:
+          response['status']=400
+          response['message']=1
+        
+        data={}
+        
+        response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        return {'response': response},500
+
+
+class ProgramFileApi(Resource):
+    @jwt_required()
+    def post(self):
+  
+      try:
+        response={}
+        response['status']=200
+        response['message']=0
+        
+        
+        user_id =  get_jwt_identity()
+        
+        program_id=request.form['program_id']
+
+        file=request.files['file']
+        created = changeProgramFile(program_id,file)
+        if created== False:
+          response['status']=400
+          response['message']=1
+        
+        data={}
+        
+        response['data']=data
+        
+        if response.get('status') == 200:
+
+          return {'response': response}, 200
+        
+        else: 
+          
+          return {'response': response}, 400
+
+      except Exception as e:
+        print(e)
+        return {'response': response},500
 
 class ProgramApi(Resource):
   
