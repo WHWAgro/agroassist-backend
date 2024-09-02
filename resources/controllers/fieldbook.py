@@ -35,16 +35,19 @@ class FieldBookApi(Resource):
         
         user_company=getUserCompanies(user_id)
         
+        
 
         
         
         companies="( "
         for company in user_company:
             companies=companies+str(company["_id"])+","
+            break
         companies = companies[:-1]
         companies=companies+" )"
         markets = request.args.get('markets').split(",")
         print("hola0")
+
         markets_format="( "
         for market in markets:
             
@@ -68,7 +71,7 @@ class FieldBookApi(Resource):
         
 
         print(programs)
-        fields = getFieldMarketFilter(progrmas_format)
+        fields = getFieldMarketFilter(progrmas_format,companies)
         
         if fields== False:
             response['status']=400 

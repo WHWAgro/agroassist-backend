@@ -396,7 +396,7 @@ def getPrograms(id_usuario,company_id):
 def getProgramsMarketFilter(id_usuario,company_id,markets):
     
     try:
-        
+        #p.id_user = """+ str(id_usuario)+""" deberia ir primero en caso de que los usuarios acepten 
         query="""SELECT distinct(p._id)  FROM programs as p
                 left join species as s on p.id_species= s._id
                 left join market_program as mp on p._id=mp.program_id
@@ -405,7 +405,7 @@ def getProgramsMarketFilter(id_usuario,company_id,markets):
                 or pc.id_company in """+ str(company_id)+""") 
                 and mp.market_id in """+ str(markets)+"""
 
-                 
+                
                 
              """
         
@@ -777,7 +777,7 @@ def getFieldPlotsDetails(id_field):
         print(e)
         return False
     
-def getFieldMarketFilter(programs):
+def getFieldMarketFilter(programs,companies):
     
     try:
         
@@ -786,6 +786,8 @@ def getFieldMarketFilter(programs):
                 FROM field as fi
 				left join plots as pl on pl.id_field= fi._id
                 where pl.id_program in """+ str(programs)+"""
+                and fi.company_id in """+ str(companies)+"""
+                
              """
         rows_tasks=[]
         with db.engine.begin() as conn:
@@ -1375,7 +1377,7 @@ def createTask(body):
           db.session.add(taskObjective)
         db.session.commit()
         return task._id
-    except Exception as e:
+    except Exception as e: 
         print(e)
         return False
     
