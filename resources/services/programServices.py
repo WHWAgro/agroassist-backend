@@ -777,7 +777,7 @@ def getFieldPlotsDetails(id_field):
         print(e)
         return False
     
-def getFieldMarketFilter(programs,companies):
+def getFieldMarketFilter(programs,companies,species):
     
     try:
         
@@ -787,6 +787,9 @@ def getFieldMarketFilter(programs,companies):
 				left join plots as pl on pl.id_field= fi._id
                 where pl.id_program in """+ str(programs)+"""
                 and fi.company_id in """+ str(companies)+"""
+                and pl.id_species = """+ str(species)+"""
+
+
                 
              """
         rows_tasks=[]
