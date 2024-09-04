@@ -643,7 +643,31 @@ class FieldBookFullApi(Resource):
             if len(field_data["data"])==0:
                 print('este campo no tiene ODAs')
 
-                field_data["data"].append({"Fecha Aplicación":"No hay ODAs Completadas"
+                field_data["data"].append({"Fecha Aplicación":"No hay ODAs Completadas",
+                                           
+                                                                
+                                                                "Hora Inicio":"",
+                                                                "Hora Fin":"",
+                                                                "Cuartel":"",
+                                                                "Superficie (Hás)":"",
+                                                                "Especie":"",
+                                                                "Variedad":"",
+                                                                "Objetivo":"",
+                                                                "Producto Comercial":"",
+                                                                "Ingrediente Activo":"",
+                                                                "Dosis/100 L":"",
+                                                                "Dosis/Há":"",
+                                                                "Mojamiento (L/Há )":"",
+                                                                "Volumen Total (L)":"",
+                                                                "Horas Reingreso":"",
+                                                                "Dias Carencia":"",
+                                                                "Fecha Viable de Cosecha":"",
+                                                                "Método de Aplicación":"",
+                                                                "Codigo Máquina":"",
+                                                                "Tractor":"",
+                                                                "Nombre Dosificador":"",
+                                                                "Nombre Aplicador":"",
+                                                                'Responsable técnico':""
                                                             })
 
             df=pd.DataFrame(field_data["data"])
