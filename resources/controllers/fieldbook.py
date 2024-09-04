@@ -221,6 +221,7 @@ class FieldBookFullApi(Resource):
         objectives=getTableDict("Objectives")
         machinery=getTableDict("machinery")
         workers=getTableDict("workers")
+        users=getTableDict("users")
         
         
         checked_fields=[]
@@ -392,6 +393,8 @@ class FieldBookFullApi(Resource):
                 method="Bomba de espalda"
                 maquina=""
                 tractor=""
+                responsable=users[row['program_id_user']]['user_name']
+                
 
                 if row["t_o_application_method"] == 1:
                     for m in row["t_o_sprayer"]:
@@ -405,15 +408,17 @@ class FieldBookFullApi(Resource):
                     for m in row["t_o_tractor"]:
                         maquina=maquina+machinery[m]["name"]+";"
                     maquina=maquina[:-1]
-
+                print("hola")
                 aplicador=""
                 dosificador=""
 
                 for d in row["t_o_dosage_responsible"]:
+                    print(workers[d])
                     dosificador=dosificador+workers[d]["name"]+";"
                 dosificador=dosificador[:-1]
 
                 for d in row["t_o_operators"]:
+                    print(workers[d])
                     aplicador=aplicador+workers[d]["name"]+";"
                 aplicador=aplicador[:-1]
                 
@@ -443,7 +448,8 @@ class FieldBookFullApi(Resource):
                                                                 "Codigo Máquina":maquina,
                                                                 "Tractor":tractor,
                                                                 "Nombre Dosificador":dosificador,
-                                                                "Nombre Aplicador":aplicador
+                                                                "Nombre Aplicador":aplicador,
+                                                                'Responsable técnico':responsable
 
                                                                 
                                                                 })

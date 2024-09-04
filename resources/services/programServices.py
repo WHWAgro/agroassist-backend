@@ -886,10 +886,13 @@ def getFieldBookDataFull(fields,species):
                     task_orders.sprayer as t_o_sprayer,
                     task_orders.tractor as t_o_tractor,
                     task_orders.operators as t_o_operators,
-                    task_orders.dosage_responsible as t_o_dosage_responsible
+                    task_orders.dosage_responsible as t_o_dosage_responsible,
+                    program.id_user as program_id_user
                     FROM  field as field
                     left join company as com on com._id = field.company_id
                     left join plots as plot on field._id =plot.id_field
+                    left join programs as program on program._id = plot.id_program
+                    
                     left join plot_tasks as pl_t on  plot._id = pl_t.plot_id
                     left join (WITH ranked_tasks AS (
                         SELECT *,
