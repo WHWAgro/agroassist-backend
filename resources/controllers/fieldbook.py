@@ -2,7 +2,7 @@ from flask import Response, request,send_file
 import pandas as pd
 from flask_restful import Resource
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 #import pandas as pd
 #from get_project_root import root_path
 from resources.errors import  InternalServerError
@@ -119,31 +119,34 @@ class FieldBookFullApi(Resource):
         
         
         user_company=getUserCompanies(user_id)
-        markets_dict=getTableDict("market")
-        markets_final=""
+
         companies="( "
         for company in user_company:
             companies=companies+str(company["_id"])+","
+
+        #esta seccion consigue el valor de markets
+        markets_dict=getTableDict("market")
+        markets_final=""
         companies = companies[:-1]
         companies=companies+" )"
         markets = request.args.get('markets').split(",")
-        print("hola0")
+       
         markets_format="( "
         for market in markets:
-            markets_final=markets_final+str(markets_dict[int(market)]["market_name"])+","
+            markets_final=markets_final+str(markets_dict[int(market)]["market_name"])+", "
             markets_format=markets_format+str(market)+","
-        print("hola0")
+       
         markets_format = markets_format[:-1]
         markets_format=markets_format+" )"
-        markets_final = markets_final[:-1]
+        markets_final = markets_final[:-2]
         print(companies)
         print(markets_format)
-        print("hola1")
-
+        
+        #---------------------
         
 
        
-    
+        print('----&&&&&&&&&&&&&7comeinzo&&&&&&&&&&&&&&&&&&&&&&&----')
        
         
         ##programs=getProgramsMarketFilter(user_id,companies,markets_format)
@@ -158,9 +161,27 @@ class FieldBookFullApi(Resource):
         #print("programs")
         #print(programs)
         #fields_aux = getFieldMarketFilter(progrmas_format)
-        fields = request.args.get('fields').split(",")
         
+        ##----especies
+        
+        dict_species=getTableDict("species")
+        species= request.args.get('species').split(",")
         species_id= request.args.get('species')
+
+        species_final=""
+        species_format="( "
+        for specie in species:
+            species_final=species_final+str(dict_species[int(specie)]["species_name"])+", "
+            species_format=species_format+str(specie)+","
+       
+        species_format = species_format[:-1]
+        species_format=species_format+" )"
+        species_final = species_final[:-2]
+        #----------------------
+
+       
+        fields = request.args.get('fields').split(",")
+
         print(request.args)
         if fields== False:
             response['status']=400 
@@ -172,14 +193,7 @@ class FieldBookFullApi(Resource):
         response['data']=data
 
 
-        data1 = {'tasks': ['test1', 'test2', 'test3'],
-            }
-        df1 = pd.DataFrame(data1)
-        data2 = {'tasks': ['test5', 'test3', 'test4'],
-            }
-        df2 = pd.DataFrame(data2)
-
-        dfs=[df1,df2]
+       
 
         
         fields_format="( "
@@ -189,6 +203,10 @@ class FieldBookFullApi(Resource):
         fields_format = fields_format[:-1]
         
         fields_format=fields_format+" )"
+       
+
+        field_book_data_full=getFieldBookDataFull(fields_format,species_format)
+        
         
 
         field_book_data=getFieldBookData(fields_format)
@@ -197,15 +215,246 @@ class FieldBookFullApi(Resource):
         field_fb={
         }
         for field in fields:
-            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","location":"","varieties":[]}
+            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","location":"","size":0}
 
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
-        dict_species=getTableDict("species")
+        machinery=getTableDict("machinery")
+        workers=getTableDict("workers")
+        
+        
+        checked_fields=[]
+        checked_plots=[]
+        for row in field_book_data_full:
+            if row['f_id'] not in checked_fields:
+                checked_fields.append(row['f_id'])
+                field_fb[str(row["f_id"])]["company"]=row["company_name"]
+                field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
+                field_fb[str(row["f_id"])]["location"]=row["locat"]
+            if row['plot_id'] not in checked_plots:
+                print(row)
+                checked_plots.append(row['plot_id'])
+                field_fb[str(row["f_id"])]["size"]=row["plot_size"]+field_fb[str(row["f_id"])]["size"]
+
+
+        print("----------*********")
+        
+
+        for row in field_book_data_full:
+            
+
+            if row["plot_task_status_id"] !=2 or row["t_o_objectives"] ==None:
+                continue
+            print(row)
+
+            row["t_o_objectives"]= ast.literal_eval(row["t_o_objectives"])
+            row["t_o_products"]= ast.literal_eval(row["t_o_products"])
+            row["t_o_ingredients"]= ast.literal_eval(row["t_o_ingredients"])
+            row["t_o_dosage"]= ast.literal_eval(row["t_o_dosage"])
+            row["t_o_dosage_unit"]= ast.literal_eval(row["t_o_dosage_unit"])
+            row["t_o_tractor"]= ast.literal_eval(row["t_o_tractor"])
+            row["t_o_sprayer"]= ast.literal_eval(row["t_o_sprayer"])
+            row["t_o_operators"]= ast.literal_eval(row["t_o_operators"])
+            row["t_o_dosage_responsible"]= ast.literal_eval(row["t_o_dosage_responsible"])
+
+            
+            for index,elem in enumerate(row["t_o_objectives"]):
+                print(elem)
+                wetting=int(row["t_o_wetting"])
+                objetivo=elem
+                producto=row["t_o_products"][index]
+                ingrediente=row["t_o_ingredients"][index]
+                
+                
+                if can_cast_to_number(elem):
+                    objetivo=objectives[elem]["objective_name"]
+                    
+                if can_cast_to_number(producto):
+                    producto=products[producto]["product_name"]
+                    
+                if can_cast_to_number(ingrediente):
+                    ingrediente=products[ingrediente]["chemical_compounds"]
+                    
+                print("productos")
+
+                dosage_unit=row["t_o_dosage_unit"][index]
+                dosage=row["t_o_dosage"][index]
+
+                unit_dosage=""
+                
+
+                unit_hectare=""
+                dosage_hectare=0
+            
+            
+                dosage=float(dosage)
+                print("or6")
+
+                if dosage_unit == 1:
+                    print(" 1")
+                    unit=" gr"
+                    unit_dosage="gr/100L"
+                   
+                    unit_hectare="gr/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 9:
+                    print(" 1")
+                    unit=" gr Ingrediente Activo"
+                    unit_dosage="gr Ingrediente Activo/100L"
+                    
+                    unit_hectare="gr Ingrediente Activo /Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 2:
+                    print(" 2")
+                    unit=" Kg"
+                    unit_dosage="Kg/100L"
+                    
+                    unit_hectare="Kg/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 10:
+                    print(" 2")
+                    unit=" Kg Ingrediente Activo"
+                    unit_dosage="Kg Ingrediente Activo/100L"
+                    
+                    unit_hectare="Kg Ingrediente Activo/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 3:
+                    print(" 3")
+                    unit=" gr"
+                    unit_dosage="gr/100L"
+                    
+                    
+                    unit_hectare="gr/Há"
+                    dosage_hectare=dosage
+                    dosage=str(dosage/(wetting/100))
+                elif dosage_unit == 4:
+                    print(" 4")
+                    unit=" Kg"
+                    unit_dosage="Kg/100L"
+                    
+                    
+                    unit_hectare="Kg/Há"
+                    dosage_hectare=dosage
+                    dosage=str(dosage/(wetting/100))
+                if dosage_unit == 5:
+                    print(" 5")
+                    unit=" cc"
+                    unit_dosage="cc/100L"
+                   
+                   
+                    unit_hectare="cc/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                if dosage_unit == 11:
+                    print(" 5")
+                    unit=" cc Ingrediente Activo"
+                    unit_dosage="cc Ingrediente Activo/100L"
+                   
+                   
+                    unit_hectare="cc Ingrediente Activo/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 6:
+                    print(" 6")
+                    unit=" L"
+                    unit_dosage="L/100L"
+                   
+                    unit_hectare="L/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 12:
+                    print(" 6")
+                    unit=" L Ingrediente Activo"
+                    unit_dosage="L Ingrediente Activo/100L"
+                    unit_hectare="L Ingrediente Activo/Há"
+                    dosage_hectare=dosage*(wetting/100)
+                elif dosage_unit == 7:
+                    print(" 7")
+                    unit=" cc"
+                    unit_dosage="cc/100L"
+                    unit_hectare="cc/Há"
+                    dosage_hectare=dosage
+                    dosage=str(dosage/(wetting/100))
+                elif dosage_unit == 8:
+                    print(" 8")
+                    unit=" L"
+                    unit_dosage="L/100L"
+                    unit_hectare="L/Há"
+                    dosage_hectare=dosage
+                    dosage=str(dosage/(wetting/100))
+                print("cuartel 1")
+                dosage='{:,.2f}'.format(float(dosage)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')+" "+unit_dosage 
+                print("cuartel 2")
+                dosage_hectare='{:,.2f}'.format(float(dosage_hectare)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')+" "+unit_hectare
+                    
+
+                application_date=row["t_o_application_date"]
+
+                harvest_date=application_date+timedelta(days=int(row["t_o_phi"]))
+
+                method="Bomba de espalda"
+                maquina=""
+                tractor=""
+
+                if row["t_o_application_method"] == 1:
+                    for m in row["t_o_sprayer"]:
+                        maquina=maquina+machinery[m]["name"]+";"
+                    maquina=maquina[:-1]
+                    for m in row["t_o_tractor"]:
+                        tractor=tractor+machinery[m]["name"]+";"
+                    tractor=tractor[:-1]
+                    method="Nebulizador"
+                else:
+                    for m in row["t_o_tractor"]:
+                        maquina=maquina+machinery[m]["name"]+";"
+                    maquina=maquina[:-1]
+
+                aplicador=""
+                dosificador=""
+
+                for d in row["t_o_dosage_responsible"]:
+                    dosificador=dosificador+workers[d]["name"]+";"
+                dosificador=dosificador[:-1]
+
+                for d in row["t_o_operators"]:
+                    aplicador=aplicador+workers[d]["name"]+";"
+                aplicador=aplicador[:-1]
+                
+
+                
+
+            
+                field_fb[str(row["f_id"])]["data"].append({
+                                                                "Fecha Aplicación":application_date.strftime("%Y-%m-%d"),
+                                                                "Hora Inicio":row["t_o_time_start"],
+                                                                "Hora Fin":row["t_o_time_end"],
+                                                                "Cuartel":row["plot_name"],
+                                                                "Superficie (Hás)":str(row["plot_size"]),
+                                                                "Especie":str(dict_species[int(row["plot_species_id"])]["species_name"]),
+                                                                "Variedad":row["plot_variety"],
+                                                                "Objetivo":objetivo,
+                                                                "Producto Comercial":producto,
+                                                                "Ingrediente Activo":ingrediente,
+                                                                "Dosis/100 L":dosage,
+                                                                "Dosis/Há":dosage_hectare,
+                                                                "Mojamiento (L/Há )":wetting,
+                                                                "Volumen Total (L)":str(row["t_o_volumen"]),
+                                                                "Horas Reingreso":str(row["t_o_reentry"]),
+                                                                "Dias Carencia":str(row["t_o_phi"]),
+                                                                "Fecha Viable de Cosecha":harvest_date.strftime("%Y-%m-%d"),
+                                                                "Método de Aplicación":method,
+                                                                "Codigo Máquina":maquina,
+                                                                "Tractor":tractor,
+                                                                "Nombre Dosificador":dosificador,
+                                                                "Nombre Aplicador":aplicador
+
+                                                                
+                                                                })
+        
+        print("----------------")
+        
         
         processed_rows=[]
         p_r=[]
         for row in field_book_data:
+            continue
             row_id=str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"])
             processed=row_id  in processed_rows
             
@@ -360,8 +609,6 @@ class FieldBookFullApi(Resource):
             
 
 
-        title = pd.DataFrame({'Title': ['Protocolo de Exportación']})
-        subtitle = pd.DataFrame({'Información': ['Campos:'+fields_format, 'Mercados: '+markets_format]})
         
         # Write dataframes to Excel
          # Write the dataframe to an Excel file
@@ -374,7 +621,7 @@ class FieldBookFullApi(Resource):
         # Access the active worksheet (assuming there's only one sheet)
         original_sheet = wb.active
         images = []
-        start_row = 14  # For example, starting from row 4
+        start_row = 6  # For example, starting from row 4
         for img in original_sheet._images:
             images.append(img)
 
@@ -388,21 +635,16 @@ class FieldBookFullApi(Resource):
 
             field_data=field_fb[field_id]
             if len(field_data["data"])==0:
+                print('este campo no tiene ODAs')
 
-                field_data["data"].append({"Objetivo":"No hay ODAs Completadas",
-                                                            "Fecha Aplicacion":"",
-                                                            "Producto Comercial":"",
-                                                            "Ingredientes Activos":"",
-                                                            "Dosis/100L":"",
-                                                            "Días fuera cobertura":"",
-                                                            "Aplicacion en estado fenologico correcto":"",
-                                                            "Aplicacion producto en programa ":""})
+                field_data["data"].append({"Fecha Aplicación":"No hay ODAs Completadas"
+                                                            })
 
             df=pd.DataFrame(field_data["data"])
             new_sheet = wb.copy_worksheet(original_sheet)
             new_sheet.title = f'Datos {field_data["CSG_code"]}' 
             
-            print("hola")
+            
 
             from datetime import datetime
 
@@ -412,18 +654,29 @@ class FieldBookFullApi(Resource):
             # Format the date as "day-month-year"
             date_string = current_date.strftime("%d-%m-%Y")
 
-            varieties=set(field_data["varieties"])
-            print("species")
-            print(species_id)
-            print(dict_species)
             
-            species=dict_species[int(species_id)]["species_name"]
+            
+            
+            
+
+            print("------ret1")
             
 
             thick_border = Border(left=Side(style='medium'), 
                       right=Side(style='medium'), 
                       top=Side(style='medium'), 
                       bottom=Side(style='medium'))
+            
+
+
+
+            cell=new_sheet.cell(row=start_row+0, column=1, value="Compañia: ")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+0, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 0, start_column=1, end_row=start_row + 0, end_column=2)
+            cell=new_sheet.cell(row=start_row+0, column=3, value=field_data["company"])
+            cell.border = thick_border
 
             cell=new_sheet.cell(row=start_row+1, column=1, value="Código SAG predio (CSG): ")
             cell.border=thick_border
@@ -432,49 +685,55 @@ class FieldBookFullApi(Resource):
             new_sheet.merge_cells(start_row=start_row + 1, start_column=1, end_row=start_row + 1, end_column=2)
             cell=new_sheet.cell(row=start_row+1, column=3, value=field_data["CSG_code"])
             cell.border = thick_border
+            
 
-            cell=new_sheet.cell(row=start_row+2, column=1, value="Especie: ")
+            cell=new_sheet.cell(row=start_row+2, column=1, value="Especies: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+2, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 2, start_column=1, end_row=start_row + 2, end_column=2)
-            cell=new_sheet.cell(row=start_row+2, column=3, value=species)
+            cell=new_sheet.cell(row=start_row+2, column=3, value=species_final)
             cell.border = thick_border
+            
+           
 
-            cell=new_sheet.cell(row=start_row+3, column=1, value="Variedad: ")
+            cell=new_sheet.cell(row=start_row+3, column=1, value="Región:")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+3, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 3, start_column=1, end_row=start_row + 3, end_column=2)
-            cell=new_sheet.cell(row=start_row+3, column=3, value=', '.join(varieties))
+            cell=new_sheet.cell(row=start_row+3, column=3, value="VI")
             cell.border = thick_border
+            
 
-            cell=new_sheet.cell(row=start_row+4, column=1, value="Región:")
+            cell=new_sheet.cell(row=start_row+4, column=1, value="Comuna: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+4, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 4, start_column=1, end_row=start_row + 4, end_column=2)
-            cell=new_sheet.cell(row=start_row+4, column=3, value="VI")
+            cell=new_sheet.cell(row=start_row+4, column=3, value=field_data["location"])
             cell.border = thick_border
-
-            cell=new_sheet.cell(row=start_row+5, column=1, value="Comuna: ")
+            
+            cell=new_sheet.cell(row=start_row+5, column=1, value="Paises a Exportar: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+5, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 5, start_column=1, end_row=start_row + 5, end_column=2)
-            cell=new_sheet.cell(row=start_row+5, column=3, value=field_data["location"])
+           
+            cell=new_sheet.cell(row=start_row+5, column=3, value=markets_final)
             cell.border = thick_border
-            print('dfsfdsfdsf')
-            cell=new_sheet.cell(row=start_row+6, column=1, value="Paises a Exportar: ")
+          
+
+            cell=new_sheet.cell(row=start_row+6, column=1, value="Superficie Total: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+6, column=2, value=" ")
             cell.border=thick_border
             new_sheet.merge_cells(start_row=start_row + 6, start_column=1, end_row=start_row + 6, end_column=2)
-            print('dfsfdsfdsf')
-            cell=new_sheet.cell(row=start_row+6, column=3, value=markets_final)
-            cell.border = thick_border
-            print('dfsfdsfdsf2')
             
+            cell=new_sheet.cell(row=start_row+6, column=3, value=str(field_data["size"])+' Há')
+            cell.border = thick_border
+            
+            print("----datos inciales")
             
 
             

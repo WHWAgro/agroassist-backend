@@ -268,7 +268,7 @@ class PlotTasksClass(db.Model):
   from_program=db.Column(db.Boolean, nullable=False,default=True)
   
   
-  
+
 class TaskOrderClass(db.Model):
 
   __tablename__ = 'task_orders'
@@ -285,6 +285,21 @@ class TaskOrderClass(db.Model):
   alias=db.Column(db.String(200), nullable=True,default='ODA.pdf')
   reentry = db.Column(db.Double,default=0)
   phi = db.Column(db.Double,default=0)
+  objectives=db.Column(db.String(400), nullable=True)
+  products=db.Column(db.String(400), nullable=True)
+  ingredients=db.Column(db.String(400), nullable=True)
+  dosage=db.Column(db.String(400), nullable=True)
+  dosage_unit=db.Column(db.String(400), nullable=True)
+  application_method=db.Column(db.Integer, nullable=True)
+  dosage_responsible=db.Column(db.String(400), nullable=True)
+  operators=db.Column(db.String(400), nullable=True)
+  sprayer=db.Column(db.String(400), nullable=True)
+  tractor=db.Column(db.String(400), nullable=True)
+  volumen_total=db.Column(db.Double, nullable=True)
+  
+  
+
+
 
 
 

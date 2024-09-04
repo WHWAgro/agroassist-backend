@@ -190,15 +190,13 @@ def generateTaskOrder(body):
         ##tablas
         objectives=getTableDict("objectives")
         products=getTableDict("products")
-        task=getTask(id_task)[0]
+        
              
         
-        moments=getTableDict("program_tasks")
-        moment_objectives=getTableDict("task_objectives")
-        moment_id=task["id_moment"]
+        
         dict_species=getTableDict("species")
 
-        wetting=moments[moment_id]["wetting"]
+        
         
         #print(plots)
         for id_plot in body['id_plots']:
@@ -230,10 +228,9 @@ def generateTaskOrder(body):
             for elem in data_list:
                 print(elem)
                 elem['id_sprayer']= elem['id_tractor']
-
-        print(data_list)
+       
         for item in data_list:
-            sprayer_size=machinery[item["id_sprayer"]]["size"]
+            sprayer_size=machinery[item["id_sprayer"]]["size"]+sprayer_size
             
         wetting=body['wetting']
         n_maquinadas=float(total_hectareas_data*(wetting/sprayer_size))
@@ -241,7 +238,7 @@ def generateTaskOrder(body):
         section5_table_data = [
             [" ","Empresa:", empresa_data, " ","Cultivo:", cultivo_data],
             [" ","Campo:", campo_data, " ","Total Hectareas:", '{:,.1f}'.format(total_hectareas_data).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')],
-            [" ",'Mojamieto',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')]
+            [" ",'Mojamiento',str(wetting)+"L"," ",'N Maquinadas',  '{:,.1f}'.format(n_maquinadas).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')]
         ]
         #print('----------4')
 
@@ -374,29 +371,60 @@ def generateTaskOrder(body):
         # Add the data rows
         
         
-        k_filter1 = "id_task"
-        v_match1 = moment_id
-
-        filtered_data = {key: value for key, value in moment_objectives.items() if (value.get(k_filter1) == v_match1 )}
         
-        print(filtered_data)
+
+        
+        
         print("$$$$##############$$$$$")
         
         
        
 
-        similar_products=[]
+        
 
         
-        for item in data_list2:
+        objetivos=[]
+        productos=[]
+        ingredientes=[]
+        dosis=[]
+        dosis_unidad=[]
+        application_method=1
+        dosis_responsible=[]
+        operators=[]
+        sprayer=[]
+        tractor=[]
+        volumen_total=total_hectareas_data*wetting
 
-            print("objectivo")
-            print(item["id_objective"])
+        dosage_responsible=body['dosification_responsible']
+        for el in dosage_responsible:
+            dosis_responsible.append(el['id_operator'])
+
+        asignees=body['asignees']
+        for asig in asignees:
+            operators.append(asig['id_operator'])
+            sprayer.append(asig['id_sprayer'])
+            tractor.append(asig['id_tractor'])
+
+        if back_pump:
+            application_method=2
+
+
+
+        for item in data_list2:
+            print("$$$$##############$$$$$------------------------------------------------------------------------------*******")
+
+            if item["id_objective"]!=0:
+                objetivos.append(item["id_objective"])
+            else:
+                objetivos.append(item["objective_name"])
+
+
+
+           
             
             k_filter1 = "id_objective"
             v_match1 = item["id_objective"]
-            filtered_data2={key: value for key, value in filtered_data.items() if (value.get(k_filter1) == v_match1 )}
-            print(filtered_data2)
+            
             print("or0")
             
             dosage=0
@@ -408,43 +436,45 @@ def generateTaskOrder(body):
                 dosage=item["dosages"][index]
                 dosage_unit=item["id_dosage_unit"][index]
                 print("or2")
+                productos.append(item["id_product"])
+                ingredientes.append(item["ingredients"][index])
+                dosis.append(dosage)
+                dosis_unidad.append(dosage_unit)
             else:
                 print("essta en plataforma el producto")
-                print(item["id_product"])
-                for key ,value in filtered_data2.items():
-                    
-                    product=ast.literal_eval(value["id_product"])
-
-                    print(product)
-                    
-
-                    
-
-                    similar_products=[]
-                    for and_p in product:
-                        for or_p in and_p:
-                            if int(or_p) in products:
-                                similar_products.append(products[int(or_p)])
-                    print(similar_products)
                 
-                    product_replacement=products[item["id_product"]]
-                    print("pr0")
-                    product_original=products[item["id_product"]]
-                    print("pr1")
-                    for s_p in similar_products:
-                        print("pr3")
-                        if product_original['_id']==s_p['_id'] or product_original['chemical_compounds']==s_p['chemical_compounds']:
-                            product_replacement=s_p
-                            break
+                
+                product=item["id_product"]
+                found=False
+                for index, option in enumerate(item["products_ids"]):
+                    if int(option)==0:
+                        continue
 
                     
-                    i,j=find_element_index(product,product_replacement["_id"])
-                    print("pr5")
-                    #change
-                    dosage=ast.literal_eval(value["dosage"])[i][j]
-                    print("pr6")
-                    dosage_unit=ast.literal_eval(value["dosage_parts_per_unit"])[i][j]
-                    print("or4")
+
+                    if int(product) == int(option):
+                        found=True
+                        print('esta')
+                        
+
+                   
+                    elif int(product) in products:
+                                
+                               if products[int(option)]['chemical_compounds']==products[int(product)]['chemical_compounds']:
+                                   print('buscandolo')
+                                   found=True
+                  
+
+                    
+                    
+                    if found==True:
+                        productos.append(product)
+                        ingredientes.append(product)
+                        dosis.append(item["dosages"][index])
+                        dosis_unidad.append(item["id_dosage_unit"][index])
+                        dosage=item["dosages"][index]
+                        dosage_unit=item["id_dosage_unit"][index]
+                        break
             print("or5")      
             unit=""
             unit_dosage=""
@@ -475,7 +505,7 @@ def generateTaskOrder(body):
                 if total_product>1000:
                     total_product=total_product/1000
                     unit=" Kg Ingrediente Activo"
-                unit_hectare="grIngrediente Activo /Há"
+                unit_hectare="gr Ingrediente Activo /Há"
                 dosage_hectare=dosage*(wetting/100)
             elif dosage_unit == 2:
                 print(" 2")
@@ -573,7 +603,7 @@ def generateTaskOrder(body):
             print("cuartel 3")
             totalXmaquinada='{:,.2f}'.format(float(total_product/n_maquinadas)).replace(',','*').replace('.', ',').replace('*','.').replace(',00','')
             
-            print('----------products')
+            print('-products')
             
             
             objective=""
@@ -707,9 +737,14 @@ def generateTaskOrder(body):
         
         alias='ODA_'+str(application_date)+'_'+campo_data.replace(' ','-')+'_N-'+str(order_number)+'.pdf'
 
+
+      
+
         
         if "reentry" in body and 'phi' in body:
-            new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=body["phi"])
+            new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=body["phi"]
+            ,objectives=str(objetivos),products=str(productos),ingredients=str(ingredientes),dosage=str(dosis),dosage_unit=str(dosis_unidad),application_method=application_method
+            ,dosage_responsible=str(dosis_responsible),operators=str(operators),sprayer=str(sprayer),tractor=str(tractor),volumen_total=volumen_total)
         
         
             db.session.add(new_task_order)

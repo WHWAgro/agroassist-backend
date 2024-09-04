@@ -859,7 +859,64 @@ where field._id in """+ str(fields)+"""
                 row_as_dict = row._mapping
                 
                 rows_tasks.append(dict(row_as_dict))
-        print(rows_tasks)
+        
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def getFieldBookDataFull(fields,species):
+    
+    try:
+        
+        
+        query_tasks="""SELECT com.company_name,field._id as f_id,field.sag_code,field.location as locat,
+                    plot._id as plot_id,plot.id_species as plot_species_id,plot.variety as plot_variety,plot.name as plot_name,plot.size as plot_size,
+                    pl_t._id as plot_task_id,pl_t.status_id as plot_task_status_id,
+                    task_orders._id as t_o_id, task_orders.wetting as t_o_wetting, task_orders.application_date as t_o_application_date,
+                    task_orders.time_start as t_o_time_start,task_orders.time_end as t_o_time_end,
+                    task_orders.products as t_o_products,task_orders.objectives as t_o_objectives,task_orders.ingredients as t_o_ingredients,
+                    task_orders.dosage as t_o_dosage,task_orders.dosage_unit as t_o_dosage_unit,
+                    task_orders.volumen_total as t_o_volumen,
+                    task_orders.phi as t_o_phi,task_orders.reentry as t_o_reentry,
+                    task_orders.application_method as t_o_application_method,
+                    task_orders.sprayer as t_o_sprayer,
+                    task_orders.tractor as t_o_tractor,
+                    task_orders.operators as t_o_operators,
+                    task_orders.dosage_responsible as t_o_dosage_responsible
+                    FROM  field as field
+                    left join company as com on com._id = field.company_id
+                    left join plots as plot on field._id =plot.id_field
+                    left join plot_tasks as pl_t on  plot._id = pl_t.plot_id
+                    left join (WITH ranked_tasks AS (
+                        SELECT *,
+                            ROW_NUMBER() OVER (PARTITION BY id_task ORDER BY _id DESC) AS rn
+                        FROM task_orders
+                    ) 
+                    SELECT *
+                    FROM ranked_tasks
+                    WHERE rn = 1) as task_orders on task_orders.id_task =pl_t._id 
+
+                    where field._id in """+ str(fields)+"""
+                    and plot.id_species in """+ str(species)+"""
+                    order by plot._id,plot_task_id
+
+
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        
         
         return rows_tasks
 
