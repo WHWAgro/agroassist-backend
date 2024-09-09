@@ -1266,14 +1266,8 @@ def getTaskOrdersNewFormat(id_task):
         query="""
                     SELECT _id,file_name,plots,time_start ,time_end ,alias
                     FROM task_orders
-                    WHERE task_orders.id_task in (
-                        SELECT _id 
-                        FROM plot_tasks 
-                        WHERE task_id = (
-                            SELECT task_id 
-                            FROM plot_tasks 
-                            WHERE _id = """+ str(id_task)+"""
-                    ))
+                    WHERE task_orders.id_task = """+ str(id_task)+"""
+                
                     order by order_number desc
                 
              """
@@ -1286,7 +1280,7 @@ def getTaskOrdersNewFormat(id_task):
                 row_as_dict = dict(row._mapping)
                 
                 
-                print(row_as_dict)
+                
                 if row_as_dict['plots'] != None and (plot_task.plot_id in ast.literal_eval(row_as_dict['plots'])):
                     del(row_as_dict["plots"])
                     rows.append(row_as_dict)
@@ -1304,14 +1298,8 @@ def getTaskOrdersFull(id_task):
         query="""
                     SELECT _id,file_name,plots
                     FROM task_orders
-                    WHERE task_orders.id_task in (
-                        SELECT _id 
-                        FROM plot_tasks 
-                        WHERE task_id = (
-                            SELECT task_id 
-                            FROM plot_tasks 
-                            WHERE _id = """+ str(id_task)+"""
-                    ))
+                    WHERE task_orders.id_task = """+ str(id_task)+"""
+                    
                     order by order_number desc
                 
              """
@@ -1363,7 +1351,7 @@ def getAdjacentPlotTasks(id_task,plots):
                 row_as_dict = dict(row._mapping)
                 
                 
-                print(row_as_dict)
+                
                 
                 rows.append(row_as_dict)
             return rows
@@ -1708,7 +1696,7 @@ def updateTaskIns(task_id, body):
 
         task_orders=getTaskOrdersFull(task_id)
         task_order=0
-        print(task_orders)
+        
         if len(task_orders)>0:
             task_order=task_orders[0]
 

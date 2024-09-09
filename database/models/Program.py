@@ -296,6 +296,7 @@ class TaskOrderClass(db.Model):
   sprayer=db.Column(db.String(400), nullable=True)
   tractor=db.Column(db.String(400), nullable=True)
   volumen_total=db.Column(db.Double, nullable=True)
+  field_id=db.Column(db.Integer, nullable=True)
   
   
 

@@ -845,6 +845,7 @@ class TaskOrderApi(Resource):
         body = request.get_json()
         print('processing task order ------')
         taskOrderFile = generateTaskOrder(body)
+        print("updating_taks_status")
         id_task=int(body['id_task'])
         task_updated=updateTaskIns(id_task,{'batch_update':True,'status':3})
 

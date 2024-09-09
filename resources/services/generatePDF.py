@@ -33,8 +33,28 @@ def getCompanyTaskOrders(id_company):
                     order by order_number desc
                 
              """
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+       
+        return False
+    
+def getFieldTaskOrders(field_id):
+    try:
         
-        
+        query="""SELECT *
+                    FROM task_orders
+                    WHERE field_id = """+ str(field_id)+"""
+                    order by order_number desc
+                
+             """
         rows=[]
         with db.engine.begin() as conn:
             result = conn.execute(text(query)).fetchall()
@@ -133,9 +153,14 @@ def generateTaskOrder(body):
         user_companies=getUserCompanies(user_id)
        
         company_id=user_companies[0]["_id"]
+        print("compañia")
+        print(company_id)
+        print(body['id_field'])
 
         #cambiar nombres ya que ahora busca segun campo y no compañia ya que cada uno trabaja con distintas ordenes de aplicacion
-        company_task_orders = getCompanyTaskOrders(body['id_field'])
+        company_task_orders = getFieldTaskOrders(body['id_field'])
+
+
         #print(2)
         if len(company_task_orders)>0:
            order_number = company_task_orders[0]['order_number']+1
@@ -742,16 +767,29 @@ def generateTaskOrder(body):
 
         
         if "reentry" in body and 'phi' in body:
-            new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=body["phi"]
-            ,objectives=str(objetivos),products=str(productos),ingredients=str(ingredientes),dosage=str(dosis),dosage_unit=str(dosis_unidad),application_method=application_method
-            ,dosage_responsible=str(dosis_responsible),operators=str(operators),sprayer=str(sprayer),tractor=str(tractor),volumen_total=volumen_total)
+            print("reentry")
+          
+            
+            plots_format=str(body['id_plots']).replace('[','(').replace(']',')')
+
+            adjacent_plot_tasks=getAdjacentPlotTasks(id_task,plots_format)
+                    
+            for apt in adjacent_plot_tasks:
+                
+                apt_id=apt['_id']
+                       
+                new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=apt_id,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=body["phi"]
+                ,objectives=str(objetivos),products=str(productos),ingredients=str(ingredientes),dosage=str(dosis),dosage_unit=str(dosis_unidad),application_method=application_method
+                ,dosage_responsible=str(dosis_responsible),operators=str(operators),sprayer=str(sprayer),tractor=str(tractor),volumen_total=volumen_total,field_id=body['id_field'])
+
         
-        
-            db.session.add(new_task_order)
+                db.session.add(new_task_order)
+                        
+                        
             db.session.commit()
         else:
             new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias)
-        
+
         
         
             db.session.add(new_task_order)
