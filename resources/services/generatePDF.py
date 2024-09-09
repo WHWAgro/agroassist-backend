@@ -764,7 +764,7 @@ def generateTaskOrder(body):
 
 
       
-
+        real_task_id=None
         
         if "reentry" in body and 'phi' in body:
             print("reentry")
@@ -777,6 +777,7 @@ def generateTaskOrder(body):
             for apt in adjacent_plot_tasks:
                 
                 apt_id=apt['_id']
+                real_task_id=apt_id
                        
                 new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=apt_id,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=body["phi"]
                 ,objectives=str(objetivos),products=str(productos),ingredients=str(ingredientes),dosage=str(dosis),dosage_unit=str(dosis_unidad),application_method=application_method
@@ -792,15 +793,15 @@ def generateTaskOrder(body):
 
         
         
-            db.session.add(new_task_order)
+            db.session.add(new_task_order,real_task_id)
             db.session.commit()
         
         print('hola10')
-        return(str(myuuid)+".pdf")
+        return(str(myuuid)+".pdf"),
     
     except Exception as error: 
         print(error)
-        return False
+        return False,False
     
 def formatter(valor):
             
