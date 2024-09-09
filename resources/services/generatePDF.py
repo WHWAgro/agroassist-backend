@@ -797,7 +797,7 @@ def generateTaskOrder(body):
             db.session.commit()
         
         print('hola10')
-        return(str(myuuid)+".pdf"),
+        return(str(myuuid)+".pdf"),real_task_id
     
     except Exception as error: 
         print(error)
