@@ -873,7 +873,7 @@ def getFieldBookDataFull(fields,species):
     try:
         
         
-        query_tasks="""SELECT com.company_name,field._id as f_id,field.sag_code,field.location as locat,
+        query_tasks="""SELECT com.company_name,field._id as f_id,field.sag_code,field.location as locat,f_w.weather_locations_id as f_w_location,
                     plot._id as plot_id,plot.id_species as plot_species_id,plot.variety as plot_variety,plot.name as plot_name,plot.size as plot_size,
                     pl_t._id as plot_task_id,pl_t.status_id as plot_task_status_id,
                     task_orders._id as t_o_id, task_orders.wetting as t_o_wetting, task_orders.application_date as t_o_application_date,
@@ -890,6 +890,7 @@ def getFieldBookDataFull(fields,species):
                     program.id_user as program_id_user
                     FROM  field as field
                     left join company as com on com._id = field.company_id
+                    left join field_weather_location_assign as f_w on field._id =f_w.field_id
                     left join plots as plot on field._id =plot.id_field
                     left join programs as program on program._id = plot.id_program
                     
@@ -906,6 +907,40 @@ def getFieldBookDataFull(fields,species):
                     where field._id in """+ str(fields)+"""
                     and plot.id_species in """+ str(species)+"""
                     order by plot._id,plot_task_id
+
+
+             """
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+    
+def getFieldWeather(locations):
+    
+    try:
+        
+        
+        query_tasks="""
+                    SELECT *
+                    FROM weather_day
+                    where weather_locations_id in """+ str(locations)+"""
+
+                    
+                    
+                    
 
 
              """

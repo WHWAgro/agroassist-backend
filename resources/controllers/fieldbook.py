@@ -194,7 +194,7 @@ class FieldBookFullApi(Resource):
 
 
        
-
+        
         
         fields_format="( "
         for field in fields:
@@ -206,22 +206,26 @@ class FieldBookFullApi(Resource):
        
 
         field_book_data_full=getFieldBookDataFull(fields_format,species_format)
+
+    
         
         
 
-        field_book_data=getFieldBookData(fields_format)
+        field_weather_location=[]
         
         
         field_fb={
         }
         for field in fields:
-            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","location":"","size":0}
+            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","location":"","size":0,"weather_location":""}
+            
 
         products=getTableDict("Products")
         objectives=getTableDict("Objectives")
         machinery=getTableDict("machinery")
         workers=getTableDict("workers")
         users=getTableDict("users")
+        
         
         
         checked_fields=[]
@@ -232,13 +236,28 @@ class FieldBookFullApi(Resource):
                 field_fb[str(row["f_id"])]["company"]=row["company_name"]
                 field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
                 field_fb[str(row["f_id"])]["location"]=row["locat"]
+                field_fb[str(row["f_id"])]["weather_location"]=row["f_w_location"]
+                field_weather_location.append(row["f_w_location"])
             if row['plot_id'] not in checked_plots:
                 print(row)
                 checked_plots.append(row['plot_id'])
                 field_fb[str(row["f_id"])]["size"]=row["plot_size"]+field_fb[str(row["f_id"])]["size"]
-
-
+        print("hola")
+        print(field_weather_location)
         print("----------*********")
+        f_w_location_format="( "
+        for field in field_weather_location:
+             f_w_location_format= f_w_location_format+str(field)+","
+        
+        f_w_location_format=  f_w_location_format[:-1]
+        
+        f_w_location_format= f_w_location_format+" )"
+
+        print("hola")
+        print(f_w_location_format)
+        print("----------*********")
+
+        field_weather=getFieldWeather(f_w_location_format)
         
 
         for row in field_book_data_full:
@@ -425,6 +444,11 @@ class FieldBookFullApi(Resource):
 
                 
 
+                weather={"temperature_min":"","temperature_max":"","wind":"","wind_direction":"","humidity":""}
+                for weather_day in field_weather:
+                    if weather_day["date"]==application_date.strftime("%Y-%m-%d") and weather_day["weather_locations_id"]==row["f_w_location"]:
+                        weather=weather_day
+                        break
             
                 field_fb[str(row["f_id"])]["data"].append({
                                                                 "Fecha Aplicación":application_date.strftime("%Y-%m-%d"),
@@ -449,7 +473,12 @@ class FieldBookFullApi(Resource):
                                                                 "Tractor":tractor,
                                                                 "Nombre Dosificador":dosificador,
                                                                 "Nombre Aplicador":aplicador,
-                                                                'Responsable técnico':responsable
+                                                                'Responsable técnico':responsable,
+                                                                "T mínima (C°)":weather["temperature_min"],
+                                                                "T máxima (C°)":weather["temperature_max"],
+                                                                "Humedad (%)":weather["humidity"],
+                                                                "Vel Viento (km/h)":weather["wind"],
+                                                                "Dir Viento":weather["wind_direction"]
 
                                                                 
                                                                 })
@@ -457,159 +486,8 @@ class FieldBookFullApi(Resource):
         print("----------------")
         
         
-        processed_rows=[]
-        p_r=[]
-        for row in field_book_data:
-            continue
-            row_id=str(row["_id"])+'-'+str(row["f_id"])+'-'+str(row["to_id"])
-            processed=row_id  in processed_rows
-            
-            
-            if processed ==False:
-                
-             
-                
-            
-                processed_rows.append(row_id)
-                field_fb[str(row["f_id"])]["company"]=row["company_name"]
-                field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
-                field_fb[str(row["f_id"])]["location"]=row["locat"]
-            if row["application_date"] is None or row["id_status"]!=2 or row_id in p_r  :
-                if row["id_status"]==2:
-                    field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
-                continue
-            if row["id_status"]==2:
-                field_fb[str(row["f_id"])]["varieties"].append(row["variety"])
-                p_r.append(row_id)
-
-            
-            
-            products_id=ast.literal_eval(row["id_product"])
-            dppus=ast.literal_eval(row["dosage_parts_per_unit"])
-            dosages=ast.literal_eval(row["dosage"])
-            date_start=row["date_start"].strftime("%d-%m-%Y")
-            date_end=row["date_end"].strftime("%d-%m-%Y")
-            
-            application_date=row["application_date"].strftime("%d-%m-%Y")
-            out_of_cover_days=calculate_date_difference(row["date_end"],row["application_date"])
-            
-            
-            wetting=row["wetting"]
-
-            for i in range(0,len(products_id)):
-                product_id=products_id[i][0]
-                product=products[product_id]
-                product_name=product["product_name"]
-                active_ingredient=product["chemical_compounds"]
-                dosage=float(dosages[i][0])
-                dosage_unit=dppus[i][0]
-                unit_dosage=""
-                
-                
-                
-                if dosage_unit == 1:
-                    
-                    unit=" gr"
-                    unit_dosage="gr/100L"
-                    
-                    unit_hectare="gr/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 9:
-                    
-                    unit=" gr ingrediente activo"
-                    unit_dosage="gr ingrediente activo/100L"
-                    
-                    unit_hectare="gr ingrediente activo/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 2:
-                    
-                    unit=" Kg"
-                    unit_dosage="Kg/100L"
-                    
-                    unit_hectare="Kg/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 10:
-                    
-                    unit=" Kg Ingrediente Activo"
-                    unit_dosage="Kg Ingrediente Activo/100L"
-                    
-                    unit_hectare="Kg Ingrediente Activo/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 3:
-                    
-                    unit=" gr"
-                    unit_dosage="gr/100L"
-                    
-                    unit_hectare="gr/Há"
-                    dosage_hectare=dosage
-                    dosage=str(dosage/(wetting/100))
-                elif dosage_unit == 4:
-                    
-                    unit=" Kg"
-                    unit_dosage="Kg/100L"
-                    
-                    
-                    unit_hectare="Kg/Há"
-                    dosage_hectare=dosage
-                    dosage=str(dosage/(wetting/100))
-                if dosage_unit == 5:
-                    print(" 5")
-                    unit=" cc"
-                    unit_dosage="cc/100L"
-                    
-                    unit_hectare="cc/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 11:
-                    print(" 5")
-                    unit=" cc Ingrediente Activo"
-                    unit_dosage="cc Ingrediente Activo/100L"
-                    
-                    unit_hectare="cc Ingrediente Activo/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 6:
-                    print(" 6")
-                    unit=" L"
-                    unit_dosage="L/100L"
-                    
-                    unit_hectare="L/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 12:
-                    print(" 6")
-                    unit=" L Ingrediente Activo"
-                    unit_dosage="L Ingrediente Activo/100L"
-                    
-                    unit_hectare="L Ingrediente Activo/Há"
-                    dosage_hectare=dosage*(wetting/100)
-                elif dosage_unit == 7:
-                    print(" 7")
-                    unit=" cc"
-                    unit_dosage="cc/100L"
-                    
-                    
-                    unit_hectare="cc/Há"
-                    dosage_hectare=dosage
-                    dosage=str(dosage/(wetting/100))
-                elif dosage_unit == 8:
-                    print(" 8")
-                    unit=" L"
-                    unit_dosage="L/100L"
-                    
-                    unit_hectare="L/Há"
-                    dosage_hectare=dosage
-                    dosage=str(dosage/(wetting/100))
-                dosage='{:,.2f}'.format(float(dosage)).replace(',','*').replace('.', ',').replace('*','.')
-
-
-                objective=objectives[product["id_objective"]]["objective_name"]
-                field_fb[str(row["f_id"])]["data"].append({"Objetivo":objective,
-                                                            "Fecha Aplicacion":application_date,
-                                                            "Producto Comercial":product_name,
-                                                            "Ingredientes Activos":active_ingredient,
-                                                            "Dosis/100L":dosage+unit,
-                                                            "Días fuera cobertura":out_of_cover_days,
-                                                            "Aplicacion en estado fenologico correcto":"Sí",
-                                                            "Aplicacion producto en programa ":"Sí"})
-                
+        
+        
                 
             
             
@@ -667,7 +545,12 @@ class FieldBookFullApi(Resource):
                                                                 "Tractor":"",
                                                                 "Nombre Dosificador":"",
                                                                 "Nombre Aplicador":"",
-                                                                'Responsable técnico':""
+                                                                'Responsable técnico':"",
+                                                                "T mínima (C°)":"",
+                                                                "T máxima (C°)":"",
+                                                                "Humedad (%)":"",
+                                                                "Vel Viento (km/h)":"",
+                                                                "Dir Viento":""
                                                             })
 
             df=pd.DataFrame(field_data["data"])
