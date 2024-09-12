@@ -183,7 +183,10 @@ class TaskInsApi(Resource):
                   products_phis=[]
 
                   print('products_phis incio')
-                  if ("products_phis" not in task or task['products_phis']==None) and "phi" in task:
+                  if "products_phis" not in task:
+                     task['products_phis']=None
+
+                  if  task['products_phis']==None and "phi" in task:
                     products_phis=replace_values_ast(products_name, task["phi"])
                   else:
                     products_phis=ast.literal_eval(task['products_phis'])
