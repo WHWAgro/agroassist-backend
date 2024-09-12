@@ -126,7 +126,7 @@ def can_cast_to_number(value):
     except (ValueError, TypeError):
         return False
     
-def getProductsAlt(products,products_name):
+def getProductsAlt(products,products_name,products_phis):
         productsAlt=[]
 
         print("getting alternatives")
@@ -536,6 +536,13 @@ def getProgramDetails(id_usuario,id_programa):
         print(e)
         return False
     
+def replace_values_ast(obj, new_value):
+    if isinstance(obj, list):
+        return [replace_values_ast(item, new_value) for item in obj]
+    elif isinstance(obj, tuple):
+        return tuple(replace_values_ast(item, new_value) for item in obj)
+    else:
+        return new_value
 
 def getTaskDetails(id_moment):
     
@@ -543,7 +550,7 @@ def getTaskDetails(id_moment):
         
         
         query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,end_date,start_date,moment_value,wetting,phi,reentry,observations,id_objective,id_product,dosage,dosage_parts_per_unit,objective_name,products_name,products_ingredients
-                
+                ,products_phis
               
                 from program_tasks as pt 
                 left join task_objectives as tp on pt._id=tp.id_task
@@ -1443,10 +1450,26 @@ def createTask(body):
             body['end_date']=body.get('start_date')
         print("hola")
         task=""
-        if "phi" in body:
+        max_phi=0
+        if "products_phis" in body:
+       
+            for m in body.get('products_phis'):
+                for a in m:
+                    for o in a:
+                        print(o)
+                        if o>max_phi:
+                            max_phi=o
+
+        
+            task = ProgramTaskClass(phi=max_phi,reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        elif "phi" in body:
             task = ProgramTaskClass(phi=body.get('phi'),reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        
         else:    
             task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+       
+       
+       
         db.session.add(task)
         program=ProgramClass.query.get(body.get('id_program'))
         program.updated_at=db.func.now()
@@ -1459,7 +1482,7 @@ def createTask(body):
         print(task._id)
         for idx, objective in enumerate(body.get('objectives')):
           
-          taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,objective_name=str(body.get('objectives_name')[idx]),products_ingredients=str(body.get('products_ingredients')[idx]),products_name=str(body.get('products_name')[idx]),id_product=str(body.get('products')[idx]),dosage=str(process_nested_list(body.get('dosage')[idx])),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
+          taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,objective_name=str(body.get('objectives_name')[idx]),products_ingredients=str(body.get('products_ingredients')[idx]),products_phis=str(body.get('products_phis')[idx]),products_name=str(body.get('products_name')[idx]),id_product=str(body.get('products')[idx]),dosage=str(process_nested_list(body.get('dosage')[idx])),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
           db.session.add(taskObjective)
         db.session.commit()
         return task._id
@@ -1507,9 +1530,27 @@ def updateMoment(task_id,body):
         task.start_date=body.get('start_date')
         task.moment_value=body.get('moment_value')
         task.wetting=body.get('wetting')
-        if "phi" in body:
+        
+        
+        
+        max_phi=0
+        if "products_phis" in body:
+       
+            for m in body.get('products_phis'):
+                for a in m:
+                    for o in a:
+                        print(o)
+                        if o>max_phi:
+                            max_phi=o
+
+            task.phi=max_phi
+        
+        
+        elif "phi" in body:
             task.phi=body.get('phi')
+        if "reentry" in body:
             task.reentry=body.get('reentry')
+        
 
         task.observations=body.get('observations')
         task.end_date=body.get('end_date')
@@ -1522,8 +1563,15 @@ def updateMoment(task_id,body):
 
     
         for idx, objective in enumerate(body.get('objectives')):
+          products_phis=[]
+          if 'products_phis' in body:
+            products_phis=body.get('products_phis')[idx]
+          elif "phi" in body:
+            products_phis=replace_values_ast(body.get('products')[idx], body.get('phi'))
+          else:
+            products_phis=replace_values_ast(body.get('products')[idx], 1)
           
-          taskObjective =  TaskObjectivesClass(products_ingredients=str(body.get('products_ingredients')[idx]),products_name=str(body.get('products_name')[idx]),objective_name=str(body.get('objectives_name')[idx]),id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
+          taskObjective =  TaskObjectivesClass(products_ingredients=str(body.get('products_ingredients')[idx]),products_phis=str(products_phis),products_name=str(body.get('products_name')[idx]),objective_name=str(body.get('objectives_name')[idx]),id_task=task._id, id_objective=objective,id_product=str(body.get('products')[idx]),dosage=str(body.get('dosage')[idx]),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
           db.session.add(taskObjective)
         db.session.add(task)
         db.session.commit()
