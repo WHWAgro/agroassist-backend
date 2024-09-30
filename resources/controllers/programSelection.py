@@ -16,6 +16,7 @@ class ProgramSendApi(Resource):
     def put(self):
   
       try:
+        print('sending program invitations')
         response={}
         response['status']=200
         response['message']=0
@@ -26,10 +27,11 @@ class ProgramSendApi(Resource):
         
         
         created = sendInvitations(program_id)
+        print(created)
         if created== False:
           response['status']=400
           response['message']=1
-        
+        print('invitations sent')
         data={}
         
         response['data']=data
@@ -52,21 +54,23 @@ class ProgramFileApi(Resource):
     def post(self):
   
       try:
+        print('creating file')
         response={}
         response['status']=200
         response['message']=0
         
-        print('sending files')
+       
         user_id =  get_jwt_identity()
         
         program_id=request.form['program_id']
 
         file=request.files['file']
         created = changeProgramFile(program_id,file)
-        print('file sent')
+        print('created')
         if created== False:
           response['status']=401
           response['message']=1
+        print('file created')
         
         data={}
         

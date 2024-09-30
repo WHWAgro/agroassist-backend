@@ -537,11 +537,10 @@ class TaskApi(Resource):
             else:
               products_phis=ast.literal_eval(task['products_phis'])
             objectives_name= task['objective_name']
-            print("comenzando---------------------")
+            
             dosage_parts_per_unit=ast.literal_eval(task['dosage_parts_per_unit'])
             objectives= task['id_objective']
-            print(objectives)
-            print(objectives_name)
+           
             if id in dic_result:
                 dic_result[id]["objectives"].append(objectives)
                 dic_result[id]["objectives_name"].append(objectives_name)
@@ -558,10 +557,10 @@ class TaskApi(Resource):
                 dic_result[id]["id_moment_type"] = task["id_moment_type"] 
                 dic_result[id]["start_date"] = str(task['start_date'])
                 if 'end_date' in task:
-                  print("MMMMMMMM esta")
+                  
                   dic_result[id]["end_date"] = str(task['end_date'])
                 else:
-                  print("MMMMMMMM no esta")
+                  
                   dic_result[id]["end_date"] = str(task['start_date'])
                 dic_result[id]["moment_value"] = task['moment_value']
                 dic_result[id]["objectives"] = [objectives]
@@ -580,12 +579,7 @@ class TaskApi(Resource):
                 dic_result[id]["phi"] = task['phi']
                 dic_result[id]["observations"] = task['observations']
 
-        print(dic_result)
-
-        for id, dict in dic_result.items():
-
-          print( list(filter(None,dict["objectives"])))
-          print(dict["objectives"])
+      
         
         data={}
         tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'end_date': dict["end_date"],'moment_value': dict["moment_value"] ,'objectives': dict["objectives"],"objectives_name":dict["objectives_name"],"products_name":dict["products_name"],"products_ingredients":dict["products_ingredients"],"products_phis":dict["products_phis"]   ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'reentry': dict["reentry"],'phi': dict["phi"],'observations':dict['observations']} for id, dict in dic_result.items()]
@@ -604,7 +598,7 @@ class TaskApi(Resource):
 
       
       
-
+       
 
         response['data']=data
         
@@ -615,6 +609,7 @@ class TaskApi(Resource):
         else: 
             
             return {'response': response}, 400
+      
 
     except Exception as e:
       print(e)

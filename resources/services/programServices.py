@@ -1917,6 +1917,7 @@ def getProgramInvitations(program_id):
 
 def updateProgram(program_id, body):
     try:
+        print('updating program')
         program_details = body.get('program_details')
 
         if program_details is None:
@@ -1984,6 +1985,7 @@ def updateProgram(program_id, body):
 
         db.session.add(program)
         db.session.commit()
+        print('program updated')
 
         return program._id
 
@@ -1995,7 +1997,7 @@ def sendInvitations(program_id):
    
     
     try:
-       
+        print('sending invitations')
         invitations=InvitationsClass.query.filter_by(program_id=program_id,accepted=1)
        
         for invitation in invitations:
