@@ -16,7 +16,7 @@ class ProgramSendApi(Resource):
     def put(self):
   
       try:
-        print('sending program invitations')
+        print('sending program invitations---------------')
         response={}
         response['status']=200
         response['message']=0
@@ -31,7 +31,7 @@ class ProgramSendApi(Resource):
         if created== False:
           response['status']=400
           response['message']=1
-        print('invitations sent')
+        print('invitations sent-------------*')
         data={}
         
         response['data']=data
