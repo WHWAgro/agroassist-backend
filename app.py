@@ -27,6 +27,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object('config.Config')
 api = Api(app)
 api = Api(app, errors=errors)
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
 CORS(app,resources={r"/*": {"origins": "*"}})
 
