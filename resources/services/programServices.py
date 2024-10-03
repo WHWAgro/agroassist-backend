@@ -2104,7 +2104,7 @@ def create_logic():
         return False
 
 def delete_program_tasks_plot(plot_id):
-    PlotTasksClass.query.filter_by(plot_id=plot_id).delete()
+    PlotTasksClass.query.filter_by(plot_id=plot_id).filter(PlotTasksClass.status_id != 2).delete()
     db.session.commit()
 
 
@@ -2121,6 +2121,8 @@ def add_program_tasks_plot(program_id,plot_id,user_id):
                 left join programs as p on p._id=pt.id_program
                 where t.id_company = """+ str(user_company_id)+"""
                 and p._id="""+ str(program_id)+"""
+                and pt.ignore = False
+                and t.ignore = False
 
                 """
         

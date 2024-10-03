@@ -210,6 +210,7 @@ class ProgramTaskClass(db.Model):
   reentry=db.Column(db.Double, nullable=True,default=0)
   observations=db.Column(db.String(400), nullable=True)
   objectives = db.relationship('TaskObjectivesClass', backref='task')  
+  ignore = db.Column(db.Boolean, nullable=True, default=False)
   
   def __repr__(self):
         return '<task %r>' % self.program_name
@@ -245,6 +246,7 @@ class TaskClass(db.Model):
   time_indicator=db.Column(db.String(80), nullable=False)
   id_status=db.Column(db.Integer, nullable=False)
   id_company=db.Column(db.Integer, nullable=False)
+  ignore = db.Column(db.Boolean, nullable=True, default=False)
   
 
 class PlotClass(db.Model):
