@@ -225,7 +225,7 @@ def createVisitTask(body):
             db.session.commit()
 
             for plot in body.get('plots'):
-                plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'))
                 db.session.add(plot_task)
         
     
@@ -244,7 +244,7 @@ def createVisitTask(body):
                 db.session.add(task)
                 db.session.commit()
                 for plot in body.get('plots'):
-                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=start_date,date_end=end_date)
                     db.session.add(plot_task)
 
                 current_date = start_date
@@ -284,7 +284,9 @@ def createVisitTask(body):
                             plot_id=plot,
                             task_id=new_task._id,
                             status_id=1,
-                            from_program=False
+                            from_program=False,
+                            date_start=current_date,
+                            date_end=current_date + (end_date - start_date)
                         )
                         db.session.add(plot_task)
 
@@ -296,7 +298,7 @@ def createVisitTask(body):
                 db.session.add(task)
                 db.session.commit()
                 for plot in body.get('plots'):
-                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'))
                     db.session.add(plot_task)
 
         
@@ -368,7 +370,7 @@ def updateVisitTask(task_id,body):
                 if plot not in plots_with_task:
                     print(plot)
                     print(plot not in plots_with_task)
-                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'))
                     db.session.add(plot_task)
             db.session.commit()
         
@@ -392,7 +394,7 @@ def updateVisitTask(task_id,body):
                 if plot not in plots_with_task:
                     print(plot)
                     print(plot not in plots_with_task)
-                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False)
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'))
                     db.session.add(plot_task)
             
             if body.get('is_repeatable'):
@@ -445,7 +447,9 @@ def updateVisitTask(task_id,body):
                             plot_id=plot,
                             task_id=new_task._id,
                             status_id=1,
-                            from_program=False
+                            from_program=False,
+                            date_start=current_date,
+                            date_end=current_date + (end_date - start_date)
                         )
                         db.session.add(plot_task)
                 

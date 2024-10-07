@@ -852,6 +852,8 @@ class TaskOrderApi(Resource):
         print("updating_taks_status")
         id_task=int(body['id_task'])
         task_updated=updateTaskIns(int(new_task_id),{'batch_update':True,'status':3})
+        print(task_updated)
+        print(taskOrderFile)
 
         print(taskOrderFile)
         if taskOrderFile== False or task_updated==False:

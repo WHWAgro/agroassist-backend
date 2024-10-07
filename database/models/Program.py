@@ -269,6 +269,8 @@ class PlotTasksClass(db.Model):
   task_id = db.Column(db.Integer, nullable=False)
   status_id = db.Column(db.Integer, nullable=False)
   from_program=db.Column(db.Boolean, nullable=False,default=True)
+  date_start=db.Column(db.DateTime, nullable=True)
+  date_end=db.Column(db.DateTime, nullable=True)
   
   
 

@@ -434,7 +434,7 @@ def generateTaskOrder(body):
             application_method=2
 
 
-
+        final_phis=[]
         for item in data_list2:
             print("$$$$##############$$$$$------------------------------------------------------------------------------*******")
 
@@ -454,12 +454,15 @@ def generateTaskOrder(body):
             
             dosage=0
             dosage_unit=1
-
+            
+            
             if can_cast_to_number(item["id_product"])==False:
                 print("or1")
+                print(item)
                 index = item["products_names"].index(item["id_product"])
                 dosage=item["dosages"][index]
                 dosage_unit=item["id_dosage_unit"][index]
+                final_phis.append(item["phis"][index])
                 print("or2")
                 productos.append(item["id_product"])
                 ingredientes.append(item["ingredients"][index])
@@ -499,6 +502,7 @@ def generateTaskOrder(body):
                         dosis_unidad.append(item["id_dosage_unit"][index])
                         dosage=item["dosages"][index]
                         dosage_unit=item["id_dosage_unit"][index]
+                        final_phis.append(item["phis"][index])
                         break
             print("or5")      
             unit=""
@@ -688,12 +692,16 @@ def generateTaskOrder(body):
 
 
         section6_table_data = []
+        print('-----**********finalizando phis')
+        print(final_phis)
 
-        if "reentry" in body and 'phi' in body:
+
+        if "reentry" in body:
             section6_table_data = [
-            ["Reingreso:", '{:,.1f}'.format(body["reentry"]).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')+" hrs", "Carencia:",'{:,.1f}'.format(body["phi"]).replace(',','*').replace('.', ',').replace('*','.').replace(',0','') +" días"]
+            ["Reingreso:", '{:,.1f}'.format(body["reentry"]).replace(',','*').replace('.', ',').replace('*','.').replace(',0','')+" hrs", "Carencia:",'{:,.1f}'.format(max(final_phis)).replace(',','*').replace('.', ',').replace('*','.').replace(',0','') +" días"]
             
         ]
+            print(section6_table_data)
 
         print('hola-0')
 
@@ -761,12 +769,12 @@ def generateTaskOrder(body):
         doc.build(pdf_content)
         
         alias='ODA_'+str(application_date)+'_'+campo_data.replace(' ','-')+'_N-'+str(order_number)+'.pdf'
-
+        print("creando pdf2")
 
       
         real_task_id=None
         
-        if "reentry" in body and 'phi' in body:
+        if "reentry" in body :
             print("reentry")
           
             
@@ -779,7 +787,7 @@ def generateTaskOrder(body):
                 apt_id=apt['_id']
                 real_task_id=apt_id
                        
-                new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=apt_id,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=body["phi"]
+                new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=apt_id,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=max(final_phis)
                 ,objectives=str(objetivos),products=str(productos),ingredients=str(ingredientes),dosage=str(dosis),dosage_unit=str(dosis_unidad),application_method=application_method
                 ,dosage_responsible=str(dosis_responsible),operators=str(operators),sprayer=str(sprayer),tractor=str(tractor),volumen_total=volumen_total,field_id=body['id_field'])
 

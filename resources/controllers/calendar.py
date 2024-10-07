@@ -146,8 +146,7 @@ class TaskInsApi(Resource):
                tasks=getVisitTaskDetails(task_details['id_moment'])
 
 
-            print('hola///////*************')
-            print(tasks)
+            
 
             dic_result = {}
             if tasks==False:

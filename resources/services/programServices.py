@@ -1073,7 +1073,7 @@ def getTask(id_task):
         print(task.from_program)
         
         
-        query_tasks="""select pt._id as _id, t.date_start,t.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status, 
+        query_tasks="""select pt._id as _id, pt.date_start,pt.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status, 
                         t.id_company as id_company,t.id_moment as id_moment, pt.from_program
                 from plot_tasks as pt
                 left join tasks as t on pt.task_id = t._id
@@ -1084,7 +1084,7 @@ def getTask(id_task):
                 
              """
         
-        query_tasks2="""select pt._id as _id, t.date_start,t.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status, 
+        query_tasks2="""select pt._id as _id, pt.date_start,pt.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status, 
                          t._id as id_moment, pt.from_program, t.visit_id as id_program
                 from plot_tasks as pt
                 left join visit_tasks as t on pt.task_id = t._id
@@ -1303,7 +1303,7 @@ def getTaskOrdersFull(id_task):
         plot_task=PlotTasksClass.query.get(id_task)
         
         query="""
-                    SELECT _id,file_name,plots
+                    SELECT _id,file_name,plots,application_date
                     FROM task_orders
                     WHERE task_orders.id_task = """+ str(id_task)+"""
                     
@@ -1329,6 +1329,54 @@ def getTaskOrdersFull(id_task):
     except Exception as e:
         print(e)
         return False
+    
+
+def getNextCompanyTask(task_id):
+    try:
+        
+        print(task_id)
+        query="""
+
+                    WITH current_task AS (
+                    SELECT TO_CHAR(t.date_start, 'YYYY-MM-DD') as sd, t.id_company, pt.id_program
+                    FROM tasks t
+                    JOIN program_tasks pt ON t.id_moment = pt._id
+                    WHERE t._id = """+ str(task_id)+"""
+                    )
+                    SELECT t.*,pt.moment_value
+                    FROM tasks t
+                    JOIN program_tasks pt ON t.id_moment = pt._id
+                    WHERE TO_CHAR(t.date_start, 'YYYY-MM-DD') > (SELECT sd FROM current_task)
+                    AND t.id_company = (SELECT id_company FROM current_task)
+                    AND pt.id_program = (SELECT id_program FROM current_task)
+                    AND pt.id_moment_type = 3
+                    ORDER BY t.date_start ASC
+                    LIMIT 1;
+
+                    
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = dict(row._mapping)
+                
+                
+                
+                
+                    
+                rows.append(row_as_dict)
+            print('kkkkkk')
+            print(rows)
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
 
 
 def getAdjacentPlotTasks(id_task,plots):
@@ -1344,6 +1392,41 @@ def getAdjacentPlotTasks(id_task,plots):
                             SELECT task_id 
                             FROM plot_tasks 
                             WHERE _id = """+ str(id_task)+""")
+                        and plot_id in """+ str(plots)+"""
+                   
+                    
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            for row in result:
+                row_as_dict = dict(row._mapping)
+                
+                
+                
+                
+                rows.append(row_as_dict)
+            return rows
+        
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def getNextAdjacentPlotTasks(id_task,plots):
+    try:
+        
+        
+        query="""
+                    
+                    
+                        SELECT *
+                        FROM plot_tasks 
+                        WHERE task_id = """+ str(id_task)+"""
                         and plot_id in """+ str(plots)+"""
                    
                     
@@ -1655,7 +1738,7 @@ def createTasksNewUser(program_id,assigned_company):
                     print(task_instance._id)
                     program_plots=PlotClass.query.filter_by(id_program=program_id)
                     for plot in program_plots:
-                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1)
+                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1,date_start=task["start_date"],date_end=task["end_date"])
                         db.session.add(plot_task)
                     db.session.commit()
                     
@@ -1717,7 +1800,7 @@ def createTasks(program_id, body):
                     
                     program_plots=PlotClass.query.filter_by(id_program=program_id)
                     for plot in program_plots:
-                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1)
+                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1,date_start=task["start_date"],date_end=task["end_date"])
                         db.session.add(plot_task)
                     db.session.commit()
                     
@@ -1745,29 +1828,51 @@ def updateTaskIns(task_id, body):
         task_orders=getTaskOrdersFull(task_id)
         task_order=0
         
+
+        company_task=False
         if len(task_orders)>0:
             task_order=task_orders[0]
+            company_tasks=getNextCompanyTask(task.task_id)
+            if len(company_tasks)>0:
+                company_task=company_tasks[0]
 
         print("hola")
         for key,value in body.items():
             if key=="status":
               
-                if batch_update and len(task_orders)>0 and task_order['plots']!=None :
-                    plots=task_order['plots'].replace('[','(').replace(']',')')
+                if len(task_orders)>0 and task_order['plots']!=None :
+                    plots='('+str(task.plot_id) +')'
+                    if batch_update:
+                        plots=task_order['plots'].replace('[','(').replace(']',')')
                    
                     adjacent_plot_tasks=getAdjacentPlotTasks(task_id,plots)
-                    print(adjacent_plot_tasks)
+                    
                     for apt in adjacent_plot_tasks:
 
                        
                         task = PlotTasksClass.query.get(apt['_id'])
                         task.status_id = value
                         db.session.add(task)
+                    if company_task!=False:
+                        adjacent_next_plot_tasks=getNextAdjacentPlotTasks(company_task['_id'],plots)
+                        
+                        for npt in adjacent_next_plot_tasks:
+                            npt_updated = PlotTasksClass.query.get(npt['_id'])
+                            new_date=task_order['application_date']+ datetime.timedelta(days=company_task['moment_value'])
+                            npt_updated.date_start=new_date 
+                            npt_updated.date_end=new_date
+                            db.session.add(npt_updated)
+                        
 
                 else:
-                    print("cambio de status")
+                    
                     task.status_id = value
                     db.session.add(task)
+
+                print("cambio de status")
+                
+                print()
+
             #if key=="time_indicator":
             #       print("cambio de tiempo")
             #  task.time_indicator = value
@@ -2137,7 +2242,7 @@ def add_program_tasks_plot(program_id,plot_id,user_id):
     
     
     for task in rows:
-        plot_task=PlotTasksClass( plot_id=plot_id,task_id=task["_id"],status_id=1)
+        plot_task=PlotTasksClass( plot_id=plot_id,task_id=task["_id"],status_id=1,date_start=task["date_start"],date_end=task["date_end"])
         db.session.add(plot_task)
         
     db.session.commit()
@@ -2457,7 +2562,7 @@ def getTasks2(company_id,field_id):
 
        
         
-        query="""SELECT pt._id as _id, t.date_start,t.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status,
+        query="""SELECT pt._id as _id, pt.date_start,pt.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status,
          t.id_company as id_company,t.id_moment as id_moment,pt.from_program
                 from plot_tasks as pt
                 left join tasks as t on pt.task_id = t._id
@@ -2491,7 +2596,7 @@ def getVisitTasks(company_id,field_id):
 
        
         
-        query="""SELECT pt._id as _id, t.date_start,t.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status,
+        query="""SELECT pt._id as _id, pt.date_start,pt.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status,
         pt.from_program
                 from plot_tasks as pt
                 left join visit_tasks as t on pt.task_id = t._id
