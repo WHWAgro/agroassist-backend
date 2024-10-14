@@ -301,7 +301,7 @@ def getUserCompanies(user):
     try:
         
 
-        query="""SELECT c._id,c.company_name as company_name 
+        query="""SELECT c._id,c.company_name as company_name ,c.visible
                     FROM user_company as  uc
                     left join company as c
                     on c._id=uc.company_id
@@ -322,6 +322,8 @@ def getUserCompanies(user):
     except Exception as e:
         print(e)
         return False  
+    
+
 
 def getUserData(user):
    
@@ -794,7 +796,7 @@ def getFieldMarketFilter(programs,companies,species):
 				left join plots as pl on pl.id_field= fi._id
                 where pl.id_program in """+ str(programs)+"""
                 and fi.company_id in """+ str(companies)+"""
-                and pl.id_species = """+ str(species)+"""
+                and pl.id_species in """+ str(species)+"""
 
 
                 

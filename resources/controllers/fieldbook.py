@@ -34,19 +34,34 @@ class FieldBookApi(Resource):
         
         
         user_company=getUserCompanies(user_id)
+  
         
         
 
         
         
         companies="( "
-        for company in user_company:
-            companies=companies+str(company["_id"])+","
-            break
+        for i,company in enumerate(user_company):
+            if i==0:
+                companies=companies+str(company["_id"])+","
+            else:
+                if company['visible']:
+                    companies=companies+str(company["_id"])+","
+            
         companies = companies[:-1]
         companies=companies+" )"
         markets = request.args.get('markets').split(",")
         species=request.args.get('species')
+
+        
+
+        #species_format="( "
+        #for specie in species:
+            
+         #   species_format=species_format+str(specie)+","
+        
+        #species_format = species_format[:-1]
+        #species_format=species_format+" )"
 
         markets_format="( "
         for market in markets:
@@ -56,9 +71,7 @@ class FieldBookApi(Resource):
         markets_format=markets_format+" )"
         
 
-        print(companies)
-        print(markets_format)
-        print("hola1")
+    
         
         programs=getProgramsMarketFilter(user_id,companies,markets_format)
 

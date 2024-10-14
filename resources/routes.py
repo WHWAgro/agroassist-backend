@@ -7,6 +7,7 @@ from .controllers.quoter import QuoterProductsApi,QuoterApi,QuoterInitApi,Quoter
 from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 from .controllers.fieldbook import FieldBookApi,FieldBookExportApi,FieldBookFullApi
 from .controllers.visits import VisitApi,VisitListApi,VisitTaskApi,VisitPublishApi
+from .controllers.company import CompanyVisibilityApi
 
 
 def initialize_routes(api):
@@ -82,6 +83,7 @@ def initialize_routes(api):
  api.add_resource(VisitListApi,'/api/v1.0/visit/list')
  api.add_resource(VisitTaskApi,'/api/v1.0/visit/task')
  api.add_resource(VisitPublishApi,'/api/v1.0/visit/publish')
+ api.add_resource(CompanyVisibilityApi,'/api/v1.0/company/visibility')
  
 
  
