@@ -1616,6 +1616,7 @@ def updateMoment(task_id,body):
         task.moment_value=body.get('moment_value')
         task.wetting=body.get('wetting')
         if 'end_date' not in body :
+            
             body['end_date']=body.get('start_date')
         
         
@@ -1684,7 +1685,9 @@ def updateMomentTasks(moment_id,body):
             
             task.id_task_type=1
             task.date_start=body.get('start_date')
+            
             if 'end_date' not in body :
+                
                 body['end_date']=body.get('start_date')
             task.date_end=body.get('end_date')
 
