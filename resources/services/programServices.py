@@ -1608,7 +1608,7 @@ def updateMoment(task_id,body):
         
         TaskObjectivesClass.query.filter_by(id_task=task._id).delete()
         
-
+      
         
         task.id_program=body.get('id_program')
         task.id_moment_type=body.get('id_moment_type')

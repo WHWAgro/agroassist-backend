@@ -631,6 +631,11 @@ class TaskApi(Resource):
 
         products = body.get('products')
 
+        
+        
+
+       
+
         task = createTask(body)   
         print("task creada")
         print(task)
@@ -680,7 +685,10 @@ class TaskApi(Resource):
         response['message']=0
         body = request.get_json()
 
-        
+        if body.get('start_date') == 'None':
+            body['start_date']=None
+        if body.get('end_date') == 'None':
+            body['end_date']=None
 
         id_moment=request.args.get('id_moment')
         moment = updateMoment(id_moment,body)
