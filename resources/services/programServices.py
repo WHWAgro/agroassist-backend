@@ -796,7 +796,7 @@ def getFieldMarketFilter(programs,companies,species):
 				left join plots as pl on pl.id_field= fi._id
                 where pl.id_program in """+ str(programs)+"""
                 and fi.company_id in """+ str(companies)+"""
-                and pl.id_species in """+ str(species)+"""
+                and pl.id_species = """+ str(species)+"""
 
 
                 
