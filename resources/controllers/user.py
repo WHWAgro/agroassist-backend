@@ -6,7 +6,7 @@ from datetime import datetime
 #from get_project_root import root_path
 from resources.errors import  InternalServerError
 
-from database.models.Program import UserCompanyClass,CompanyClass,userClass,db,InvitationsClass,ProgramCompaniesClass
+from database.models.Program import UserCompanyClass,CompanyClass,userClass,db,InvitationsClass,ProgramCompaniesClass,PasswordRecoveryClass
 from resources.services.programServices import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import jwt_required,get_jwt_identity
@@ -65,7 +65,7 @@ class CreateUserApi(Resource):
         response['message']=2
       else:
         
-        user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password,role=role)
+        user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password,role=role,password=body.get("password"))
         db.session.add(user)
         db.session.commit()
         if role==1:
@@ -107,6 +107,146 @@ class CreateUserApi(Resource):
                 db.session.add(us_new_company)
 
             db.session.commit()
+
+
+
+     
+      
+      if response.get('status') == 200:
+        data={}
+        data['user']=email
+        response['data']=data
+
+        return {'response': response}, 200
+      
+      else: 
+        print("400x")
+        
+        return {'response': response}, 400
+
+    except Exception as e:
+      response['status']=500
+      print(e)
+      return {'response': response},500
+    
+
+
+class ChangePasswordApi(Resource):
+  
+  
+  def post(self):
+  
+    try:
+      response={}
+      response['status']=200
+      response['message']=0
+      
+      body = request.get_json()
+      email = body.get("email")
+      invitation=None
+      if "recovery_code" in body:
+        if body["recovery_code"]!=None and body["recovery_code"]!="":
+          invitation=PasswordRecoveryClass.query.filter_by(email=email,recovery_code=body["recovery_code"],accepted=1).first()
+          if invitation==None:
+            data={}
+            data['user']=email
+            response['data']=data
+            response['status']=400
+            
+            return {'response': response}, 400
+        else:
+          data={}
+          data['user']=email
+          response['data']=data
+          response['status']=400
+          
+          return {'response': response}, 400
+      
+
+
+      
+      
+     
+     
+      password = body.get("password")
+      
+      
+      password=generate_password_hash(password)
+      print("password")
+
+      if   password is None or email is None:
+        response['status']=400
+        response['message']=1
+    
+      # Check for existing users
+      user=userClass.query.filter_by(email = email).first()
+     
+      if user:
+        user.password_hash = password
+        user.password=body.get("password")
+        db.session.commit()
+     
+      else:
+        
+        response['status']=400
+        response['message']=2
+
+
+
+     
+      
+      if response.get('status') == 200:
+        data={}
+        data['user']=email
+        response['data']=data
+
+        return {'response': response}, 200
+      
+      else: 
+        print("400x")
+        
+        return {'response': response}, 400
+
+    except Exception as e:
+      response['status']=500
+      print(e)
+      return {'response': response},500
+    
+    
+
+class RecoverPasswordApi(Resource):
+  
+  
+  def post(self):
+  
+    try:
+      response={}
+      response['status']=200
+      response['message']=0
+      
+      body = request.get_json()
+      email = body.get("email")
+      
+      
+      print('hola')
+    
+    
+      # Check for existing users
+     
+      if userClass.query.filter_by(email = email).first():
+
+        new_uuid=str(uuid.uuid4())
+        new_invitation = PasswordRecoveryClass(email=email,recovery_code=new_uuid)
+        db.session.add(new_invitation)
+
+            
+        db.session.commit()
+        
+        
+      else:
+        
+        response['status']=400
+        response['message']=2
 
 
 

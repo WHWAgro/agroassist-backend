@@ -1,6 +1,6 @@
 from .controllers.editProgram import EditProgramApi
 from .controllers.programSelection import ProgramSendApi,ProgramFileApi,ProgramSelectionApi,ProgramApi,ProgramPublishApi
-from .controllers.user import CreateUserApi,LoginUserApi
+from .controllers.user import CreateUserApi,LoginUserApi,RecoverPasswordApi,ChangePasswordApi
 from .controllers.tryc import CreationApi
 from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,TaskOrderTimeApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
 from .controllers.quoter import QuoterProductsApi,QuoterApi,QuoterInitApi,QuoterSelectionApi,PurchaseOrderApi,DowloadPurchaseOrderApi
@@ -84,6 +84,10 @@ def initialize_routes(api):
  api.add_resource(VisitTaskApi,'/api/v1.0/visit/task')
  api.add_resource(VisitPublishApi,'/api/v1.0/visit/publish')
  api.add_resource(CompanyVisibilityApi,'/api/v1.0/company/visibility')
+
+
+ api.add_resource(RecoverPasswordApi,'/api/v1.0/recover_password')
+ api.add_resource(ChangePasswordApi,'/api/v1.0/change_password')
  
 
  

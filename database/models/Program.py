@@ -26,6 +26,18 @@ class InvitationsClass(db.Model):
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
   
+class PasswordRecoveryClass(db.Model):
+
+  __tablename__ = 'password_recovery'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  accepted= db.Column(db.Integer, nullable=False,default=1)
+  email=db.Column(db.String(100), nullable=False)
+  recovery_code=db.Column(db.String(100), nullable=False)
+  to_send = db.Column(db.Boolean, nullable=False,default=False)
+  created_at = db.Column(db.DateTime, default=db.func.now())
+  updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+
+
 
 class WeatherLocationsClass(db.Model):
 
@@ -402,6 +414,7 @@ class userClass(db.Model):
   __tablename__ = 'users'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   password_hash = db.Column(db.String(102), nullable=False)
+  password = db.Column(db.String(102), nullable=True)
   
   user_name = db.Column(db.String(80), nullable=False)
   email= db.Column(db.String(80), nullable=True)
