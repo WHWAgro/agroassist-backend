@@ -330,22 +330,20 @@ def updateVisitTask(task_id,body):
             PlotTasksClass.task_id.in_(repeating_task_ids),
             PlotTasksClass.from_program == False
         ).delete()
+      
 
         VisitTaskClass.query.filter(VisitTaskClass._id.in_(repeating_task_ids)).delete()
 
         #----------- deleting repeating tasks
 
-        plot_tasks=PlotTasksClass.query.filter_by(task_id=task._id)
+        plot_tasks=PlotTasksClass.query.filter(
+            PlotTasksClass.task_id==task._id,
+            PlotTasksClass.from_program == False
+        ).delete()
 
         plots=body.get('plots')
         plots_with_task=[]
-        for plot_task in plot_tasks:
-            if plot_task.plot_id not in plots:
-                db.session.delete(plot_task)
-                db.session.commit()
-
-                continue
-            plots_with_task.append(plot_task.plot_id)
+        
 
 
 
@@ -387,6 +385,9 @@ def updateVisitTask(task_id,body):
             task.observations=body.get('observations')
             task.plots=str(body.get('plots'))
             task.is_repeatable=body.get('is_repeatable')
+            task.repeat_frequency= None
+            task.repeat_unit= None
+            task.repeat_until= None
 
             
                 
