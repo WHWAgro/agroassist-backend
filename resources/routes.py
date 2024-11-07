@@ -2,7 +2,7 @@ from .controllers.editProgram import EditProgramApi
 from .controllers.programSelection import ProgramSendApi,ProgramFileApi,ProgramSelectionApi,ProgramApi,ProgramPublishApi
 from .controllers.user import CreateUserApi,LoginUserApi,RecoverPasswordApi,ChangePasswordApi
 from .controllers.tryc import CreationApi
-from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,PlotListApi, TaskOrderApi,TaskOrderTimeApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
+from .controllers.others import TemplatesApi,OnboardingApi,MailApi,FieldsApi,FieldsListApi,TaskApi,TriggerTaskApi,PlotListApi, TaskOrderApi,TaskOrderTimeApi,DowloadTaskOrderApi,MachineryListApi,WorkersListApi
 from .controllers.quoter import QuoterProductsApi,QuoterApi,QuoterInitApi,QuoterSelectionApi,PurchaseOrderApi,DowloadPurchaseOrderApi
 from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 from .controllers.fieldbook import FieldBookApi,FieldBookExportApi,FieldBookFullApi
@@ -23,12 +23,15 @@ def initialize_routes(api):
  api.add_resource(ProgramPublishApi, '/api/v1.0/program/publish')
 
 
+
+
  api.add_resource(FieldsListApi, '/api/v1.0/company/fields')
  
  
  api.add_resource(ProgramApi, '/api/v1.0/program')
 
  api.add_resource(TaskApi, '/api/v1.0/moment')
+ api.add_resource(TriggerTaskApi, '/api/v1.0/moment/trigger')
  
 
  api.add_resource(CreateUserApi, '/api/v1.0/user')

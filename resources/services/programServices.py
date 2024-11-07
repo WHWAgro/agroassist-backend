@@ -1698,6 +1698,54 @@ def updateMomentTasks(moment_id,body):
         print(e)
         return False
     
+
+def updatePlotTasksTrigger(moment_id,id_company,date_start,date_end):
+    
+    try:
+    
+        
+
+       
+        
+        tasks=TaskClass.query.filter_by(id_moment=moment_id,id_company=id_company)
+        if tasks is None:
+            return False
+        
+        for task in tasks:
+            print(task)
+            
+            plot_tasks=PlotTasksClass.query.filter_by(task_id=task._id,date_start=None,from_program=True)
+            if plot_tasks is None:
+                return False
+            
+            for p_task in plot_tasks:
+                print(p_task._id)
+
+                new_plot_task = PlotTasksClass(
+                    
+                    plot_id=p_task.plot_id,  # Replace with actual field names to copy
+                    task_id=p_task.task_id,  # Replace as needed
+                    status_id=1,
+                    from_program=True,
+
+                    # Set the new start and end dates
+                    date_start=date_start,
+                    date_end=date_end
+                )
+
+                # Add the new instance to the session
+                db.session.add(new_plot_task)
+            
+                
+            
+
+                
+            db.session.commit()
+        return moment_id
+    except Exception as e:
+        print(e)
+        return False
+    
 def createTasksNewUser(program_id,assigned_company):
     try:
         

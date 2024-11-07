@@ -499,6 +499,62 @@ class FieldsApi(Resource):
       response['message']=2
       response['status']=500
       return {'response': response},500
+    
+
+class TriggerTaskApi(Resource):
+   
+  @jwt_required()
+  def post(self):
+  
+    try:
+        response={}
+        response['status']=200
+        response['message']=0
+        body = request.get_json()
+
+        
+
+         
+        
+        ####
+        
+        program_id=body.get('program_id')
+        moment_id=body.get('moment_id')
+        date_start=body.get('date_start')
+        date_end=body.get('date_end')
+        user_id =  get_jwt_identity()
+        
+
+        company_id=getUserCompanies(user_id)[0]["_id"]
+
+        print(company_id)
+        updatePlotTasksTrigger(moment_id,company_id,date_start,date_end)
+    
+         
+
+        ##create_tasks =  createTasks(id_program,body_update)
+        #####
+      
+        data={}
+        data['id_moment']=moment_id
+        response['data']=data
+        
+        if response.get('status') == 200:
+
+            return {'response': response}, 200
+        
+        else: 
+            
+            return {'response': response}, 400
+
+    except Exception as e:
+      print(e)
+      response['message']=2
+      response['status']=500
+      return {'response': response},500
+    
+
+   
   
 
 class TaskApi(Resource):
