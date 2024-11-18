@@ -258,8 +258,8 @@ class QuoterInitApi(Resource):
 
       data={}
       data["hectares"]=total_hectares
-      data["usd2clp"]=963.1
-      data["clp2usd"]=0.0011
+      #data["usd2clp"]=963.1
+      #data["clp2usd"]=0.0011
       data["products"]=final_list
 
       #TO DO revisar como se consolidan los productos para el total hectareas
@@ -453,7 +453,7 @@ class QuoterApi(Resource):
       
       data={}
      
-      data["usd2clp"]=963.09
+      data["usd2clp"]=974.51
       data["clp2usd"]=0.0011
 
       
