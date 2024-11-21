@@ -57,8 +57,14 @@ class CalendarApi(Resource):
       print("-------")
 
       visit_tasks=getVisitTasks(company[0]['company_id'],field)
+      additional_tasks=getAdditionalTasks(company[0]['company_id'],field)
+      print('----0')
       print(visit_tasks)
-      tasks=tasks+visit_tasks
+      print("-------1")
+      print(additional_tasks)
+      tasks=tasks+visit_tasks+additional_tasks
+
+      
         
       for task in tasks:
         result={}
@@ -69,10 +75,11 @@ class CalendarApi(Resource):
         result['time_indicator']= task['time_indicator']
         result['id_status']= task['id_status']
         result['from_program']= task['from_program']
+        result['task_source']= task['task_source']
         
         task_plots=[]
         
-        aux_plots=getTaskPlots2(task['_id'],task['from_program'])
+        aux_plots=getTaskPlots2(task['_id'],task['from_program'],task['task_source'])
         
         if aux_plots !=False and len(aux_plots)>0:
            
@@ -133,6 +140,8 @@ class TaskInsApi(Resource):
 
         task_info=getTask(task)
         data={}
+        print(task_info)
+        print(len(task_info))
         if len(task_info)>0:
             task_details=task_info[0]
          
@@ -143,10 +152,15 @@ class TaskInsApi(Resource):
               
               tasks=getTaskDetails(task_details['id_moment'])
             else:
-               tasks=getVisitTaskDetails(task_details['id_moment'])
+                print(task_details)
+                if task_details['task_source']==2:
+                  tasks=getVisitTaskDetails(task_details['id_moment'])
+                else:
+                   tasks = getAdditionalTaskDetails(task_details['id_moment'])
+                    
 
 
-            
+            print('hola')
 
             dic_result = {}
             if tasks==False:
@@ -219,6 +233,7 @@ class TaskInsApi(Resource):
                 else:
                     if task_details['from_program']==True:
                       dic_result[id]={}
+                      
                       dic_result[id]["id_program"] = task['id_program']
                       dic_result[id]["id_moment_type"] = task["id_moment_type"] 
                       dic_result[id]["start_date"] = str(task['start_date'])
@@ -249,9 +264,11 @@ class TaskInsApi(Resource):
                       
                       
                       dic_result[id]["moment_value"] = task['moment_value']
-
+                      dic_result[id]["reentry"] = 0
                       print('is not from program2')
-                      if dic_result[id]["id_moment_type"] ==1:
+                      if task["task_type_id"] ==1:
+                        print('tiene phis')
+
                         dic_result[id]["objectives"] = objectives
                         dic_result[id]["objectives_name"] = objectives_name
                         dic_result[id]["products"] = products
@@ -259,9 +276,12 @@ class TaskInsApi(Resource):
                         dic_result[id]["products_ingredients"] = products_ingredients
                         dic_result[id]["products_phis"] = products_phis
                         dic_result[id]["dosage"] = dosage
+                        if task_details['task_source']==3:
+                          dic_result[id]["reentry"] = task['reentry']
                         
                         dic_result[id]["dosage_parts_per_unit"]=dosage_parts_per_unit
                       else:
+                        print('no tiene phis')
                         dic_result[id]["objectives"] = []
                         dic_result[id]["objectives_name"] = []
                         dic_result[id]["products"] = []
@@ -274,7 +294,7 @@ class TaskInsApi(Resource):
                       print('is not from program3')
                       dic_result[id]["wetting"] = task['wetting']
                       dic_result[id]["phi"] = 0
-                      dic_result[id]["reentry"] = 0
+                      
                       dic_result[id]["observations"] = task['observations']
 
         
@@ -296,12 +316,13 @@ class TaskInsApi(Resource):
             result['id_program']=None
             result['id_species']=None
             result['from_program']=task_details['from_program']
+            result['task_source']=task_details['task_source']
             task_plots=[]
 
             print('paso 3')
            
             
-            aux_plots=getTaskPlots2(task_details['_id'],task_details['from_program'])
+            aux_plots=getTaskPlots2(task_details['_id'],task_details['from_program'],task_details['task_source'])
             if aux_plots !=False and len(aux_plots)>0:
 
               result['id_program']= aux_plots[0]['id_program']
@@ -335,7 +356,7 @@ class TaskInsApi(Resource):
 
       
       # id,id_user,program_name,species_name,market_name
-
+        print(data)
         products_list=data['task_details']['products']
         products_name=data['task_details']['products_name']
         data['task_details']['products_alt']=getProductsAlt(products_list,products_name,products_phis)

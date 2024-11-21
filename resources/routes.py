@@ -8,6 +8,7 @@ from .controllers.calendar import CalendarApi,TaskInsApi,WeatherApi
 from .controllers.fieldbook import FieldBookApi,FieldBookExportApi,FieldBookFullApi
 from .controllers.visits import VisitApi,VisitListApi,VisitTaskApi,VisitPublishApi
 from .controllers.company import CompanyVisibilityApi
+from .controllers.additionalTasks import AdditionalTaskApi
 
 
 def initialize_routes(api):
@@ -48,6 +49,8 @@ def initialize_routes(api):
  api.add_resource(CalendarApi,'/api/v1.0/calendar/info')
  api.add_resource(TaskInsApi,'/api/v1.0/calendar/task')
  api.add_resource(WeatherApi,'/api/v1.0/calendar/forecast')
+ api.add_resource(AdditionalTaskApi,'/api/v1.0/additional_task')
+
 
  api.add_resource(PlotListApi,'/api/v1.0/field/plot')
 

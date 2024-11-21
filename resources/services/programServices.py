@@ -580,13 +580,52 @@ def getTaskDetails(id_moment):
         print(e)
         return False
     
+
+
+def getAdditionalTaskDetails(id_task):
+    
+    try:
+        
+        
+        query_tasks="""SELECT pt._id as _id, 0 as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date, Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit,objectives as objective_name,products as products_name,
+products as products_ingredients,products_phis,task_type_id,reentry
+              
+                from additional_tasks as pt 
+                left join additional_task_objectives as tp on pt._id= tp.additional_task_id
+                where pt._id = """+ str(id_task)+"""
+                
+             """
+        
+        
+        
+        rows_tasks=[]
+        with db.engine.begin() as conn:
+            
+            result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+            
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_tasks.append(dict(row_as_dict))
+        
+        
+        return rows_tasks
+
+    except Exception as e:
+        print(e)
+        return False
+
+
 def getVisitTaskDetails(id_task):
     
     try:
         
         
         query_tasks="""SELECT pt._id as _id,visit_id as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date,Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit,objectives as objective_name,products as products_name,
-products as products_ingredients
+products as products_ingredients,task_type_id
               
                 from visit_tasks as pt 
                 left join visit_task_objectives as tp on pt._id= tp.visit_task_id
@@ -1073,32 +1112,49 @@ def getTask(id_task):
         task = PlotTasksClass.query.get(id_task)
         print('///////')
         print(task.from_program)
+        print(task.task_source)
         
         
         query_tasks="""select pt._id as _id, pt.date_start,pt.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status, 
-                        t.id_company as id_company,t.id_moment as id_moment, pt.from_program
+                        t.id_company as id_company,t.id_moment as id_moment, pt.from_program,pt.task_source
                 from plot_tasks as pt
                 left join tasks as t on pt.task_id = t._id
                 left join plots as p on pt.plot_id = p._id
 
                 WHERE pt._id = """+ str(id_task)+"""
                 and pt.from_program = True
+                and pt.task_source = 1
                 
              """
         
         query_tasks2="""select pt._id as _id, pt.date_start,pt.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status, 
-                         t._id as id_moment, pt.from_program, t.visit_id as id_program
+                         t._id as id_moment, pt.from_program, t.visit_id as id_program,pt.task_source
                 from plot_tasks as pt
                 left join visit_tasks as t on pt.task_id = t._id
                 left join plots as p on pt.plot_id = p._id
 
                 WHERE pt._id = """+ str(id_task)+"""
                 and pt.from_program = False
+                and pt.task_source = 2
+                
+             """
+        
+        query_tasks3="""select pt._id as _id, pt.date_start,pt.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status, 
+                         t._id as id_moment, pt.from_program, 0 as id_program,pt.task_source
+                from plot_tasks as pt
+                left join additional_tasks as t on pt.task_id = t._id
+                left join plots as p on pt.plot_id = p._id
+
+                WHERE pt._id = """+ str(id_task)+"""
+                and pt.from_program = False
+                and pt.task_source = 3
                 
              """
         
         if task.from_program==False:
             query_tasks=query_tasks2
+            if task.task_source==3:
+                query_tasks=query_tasks3
         
         
         
@@ -1727,6 +1783,7 @@ def updatePlotTasksTrigger(moment_id,id_company,date_start,date_end):
                     task_id=p_task.task_id,  # Replace as needed
                     status_id=1,
                     from_program=True,
+                    task_source=1,
 
                     # Set the new start and end dates
                     date_start=date_start,
@@ -2619,7 +2676,7 @@ def getTasks2(company_id,field_id):
        
         
         query="""SELECT pt._id as _id, pt.date_start,pt.date_end, t.id_task_type, p.name as time_indicator, pt.status_id as id_status,
-         t.id_company as id_company,t.id_moment as id_moment,pt.from_program
+         t.id_company as id_company,t.id_moment as id_moment,pt.from_program, pt.task_source
                 from plot_tasks as pt
                 left join tasks as t on pt.task_id = t._id
                 left join plots as p on pt.plot_id = p._id
@@ -2653,7 +2710,7 @@ def getVisitTasks(company_id,field_id):
        
         
         query="""SELECT pt._id as _id, pt.date_start,pt.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status,
-        pt.from_program
+        pt.from_program, pt.task_source
                 from plot_tasks as pt
                 left join visit_tasks as t on pt.task_id = t._id
                 left join plots as p on pt.plot_id = p._id
@@ -2661,7 +2718,45 @@ def getVisitTasks(company_id,field_id):
 
                 where p.id_field = """+ str(field_id)+"""
                 and pt.from_program = False
+                and pt.task_source = 2
                 and v.published = True
+                
+                
+             """
+        
+        
+        rows=[]
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query)).fetchall()
+            print(result)
+            for row in result:
+                row_as_dict = row._mapping
+                print(row_as_dict)
+                rows.append(dict(row_as_dict))
+            return rows
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
+def getAdditionalTasks(company_id,field_id):
+    
+    try:
+
+       
+        
+        query="""SELECT pt._id as _id, pt.date_start,pt.date_end, t.task_type_id as id_task_type, p.name as time_indicator, pt.status_id as id_status,
+        pt.from_program, pt.task_source
+                from plot_tasks as pt
+                left join additional_tasks as t on pt.task_id = t._id
+                left join plots as p on pt.plot_id = p._id
+                
+
+                where p.id_field = """+ str(field_id)+"""
+                and pt.from_program = False
+                and pt.task_source = 3
+                
                 
                 
              """
@@ -2711,7 +2806,7 @@ def getTaskPlots(id_task):
         return False
 
 
-def getTaskPlots2(id_task,from_program):
+def getTaskPlots2(id_task,from_program,source):
         
 
     try:
@@ -2721,6 +2816,7 @@ def getTaskPlots2(id_task,from_program):
                     left join plots as p on p._id =pt.plot_id
                     WHERE task_id = (SELECT task_id FROM plot_tasks WHERE _id = """+ str(id_task)+""")
                     and pt.from_program = """+ str(from_program)+"""
+                    and pt.task_source = """+ str(source)+"""
                 
              """
         

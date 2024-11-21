@@ -114,7 +114,41 @@ class VisitTaskObjectivesClass(db.Model):
   products = db.Column(db.String(400), nullable=True)
   dosage=db.Column(db.String(400), nullable=True)
   dosage_parts_per_unit=db.Column(db.String(400), nullable=True)
-  
+
+
+class AdditionalTaskClass(db.Model):
+
+  __tablename__ = 'additional_tasks'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  user_id = db.Column(db.Integer, nullable=False)
+  user_name = db.Column(db.String(200), nullable=False)
+  company_id = db.Column(db.Integer, nullable=False )
+  field_id = db.Column(db.Integer, nullable=False )
+  task_type_id = db.Column(db.Integer, nullable=False)
+  date_start=db.Column(db.DateTime, nullable=False)
+  date_end=db.Column(db.DateTime, nullable=False)
+  wetting=db.Column(db.Integer, nullable=True)
+  observations=db.Column(db.String(500), nullable=True)
+  plots=db.Column(db.String(500), nullable=True)
+  objectives = db.relationship('AdditionalTaskObjectivesClass', backref='additional_task')  
+  is_repeatable = db.Column(db.Boolean, nullable=False, default=False)
+  repeat_frequency =db.Column(db.Integer, nullable=True)
+  repeat_unit =db.Column(db.Integer, nullable=True)
+  repeat_until= db.Column(db.DateTime, nullable=True)
+  main_additional_task_id = db.Column(db.Integer, nullable=True)
+  created_at=db.Column(db.DateTime, default=db.func.now())
+
+class AdditionalTaskObjectivesClass(db.Model):
+
+  __tablename__ = 'additional_task_objectives'
+  _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  additional_task_id = db.Column(db.Integer,db.ForeignKey('additional_tasks._id'), nullable=False)
+  objectives = db.Column(db.String(400), nullable=True)
+  products = db.Column(db.String(400), nullable=True)
+  dosage=db.Column(db.String(400), nullable=True)
+  dosage_parts_per_unit=db.Column(db.String(400), nullable=True)
+  products_phis=db.Column(db.String(400), nullable=True)
+  reentry = db.Column(db.Double, nullable=True,default=0)
 class VisitClass(db.Model):
 
   __tablename__ = 'visits'
@@ -283,6 +317,7 @@ class PlotTasksClass(db.Model):
   from_program=db.Column(db.Boolean, nullable=False,default=True)
   date_start=db.Column(db.DateTime, nullable=True)
   date_end=db.Column(db.DateTime, nullable=True)
+  task_source=db.Column(db.Integer, nullable=False,default=True)
   
   
 
