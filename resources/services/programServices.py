@@ -877,7 +877,8 @@ def getFieldBookData(fields):
     try:
         
         
-        query_tasks="""SELECT pl_t.status_id as id_status,ta._id,ta.date_start,ta.date_end, com.company_name,field._id as f_id,field.sag_code,field.location as locat,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, task_orders.application_date
+        query_tasks="""SELECT pl_t.status_id as id_status,ta._id,ta.date_start,ta.date_end, com.company_name,field._id as f_id,field.sag_code,field.location as locat,plot.variety,t_o._id as to_id,t_o.id_product,t_o.dosage,t_o.dosage_parts_per_unit,o.objective_name, task_orders.wetting, 
+        task_orders.application_date,task_orders.time_start,task_orders.time_end,task_orders.application_date_end
 FROM plot_tasks as pl_t
 left join tasks as ta on pl_t.task_id= ta._id
 left join program_tasks as pt on pt._id=ta.id_moment
@@ -924,7 +925,7 @@ def getFieldBookDataFull(fields,species):
         query_tasks="""SELECT com.company_name,field._id as f_id,field.sag_code,field.location as locat,f_w.weather_locations_id as f_w_location,
                     plot._id as plot_id,plot.id_species as plot_species_id,plot.variety as plot_variety,plot.name as plot_name,plot.size as plot_size,
                     pl_t._id as plot_task_id,pl_t.status_id as plot_task_status_id,
-                    task_orders._id as t_o_id, task_orders.wetting as t_o_wetting, task_orders.application_date as t_o_application_date,
+                    task_orders._id as t_o_id, task_orders.wetting as t_o_wetting, task_orders.application_date_end as t_o_application_date,
                     task_orders.time_start as t_o_time_start,task_orders.time_end as t_o_time_end,
                     task_orders.products as t_o_products,task_orders.objectives as t_o_objectives,task_orders.ingredients as t_o_ingredients,
                     task_orders.dosage as t_o_dosage,task_orders.dosage_unit as t_o_dosage_unit,
@@ -1329,7 +1330,7 @@ def getTaskOrdersNewFormat(id_task):
         plot_task=PlotTasksClass.query.get(id_task)
         
         query="""
-                    SELECT _id,file_name,plots,time_start ,time_end ,alias
+                    SELECT _id,file_name,plots,time_start ,time_end ,alias,application_date_end
                     FROM task_orders
                     WHERE task_orders.id_task = """+ str(id_task)+"""
                 
@@ -1344,7 +1345,7 @@ def getTaskOrdersNewFormat(id_task):
             for row in result:
                 row_as_dict = dict(row._mapping)
                 
-                
+                row_as_dict['application_date_end'] = str(row_as_dict['application_date_end'])
                 
                 if row_as_dict['plots'] != None and (plot_task.plot_id in ast.literal_eval(row_as_dict['plots'])):
                     del(row_as_dict["plots"])
@@ -1361,7 +1362,7 @@ def getTaskOrdersFull(id_task):
         plot_task=PlotTasksClass.query.get(id_task)
         
         query="""
-                    SELECT _id,file_name,plots,application_date
+                    SELECT _id,file_name,plots,application_date,application_date_end
                     FROM task_orders
                     WHERE task_orders.id_task = """+ str(id_task)+"""
                     
@@ -1971,7 +1972,7 @@ def updateTaskIns(task_id, body):
                         
                         for npt in adjacent_next_plot_tasks:
                             npt_updated = PlotTasksClass.query.get(npt['_id'])
-                            new_date=task_order['application_date']+ datetime.timedelta(days=company_task['moment_value'])
+                            new_date=task_order['application_date_end']+ datetime.timedelta(days=company_task['moment_value'])
                             npt_updated.date_start=new_date 
                             npt_updated.date_end=new_date
                             db.session.add(npt_updated)
@@ -2026,6 +2027,9 @@ def updateTaskOrder(to_id, body):
 
             if key=="time_end":
                 task.time_end = value
+
+            if key=="application_date_end":
+                task.application_date_end = value
                 
             #if key=="time_indicator":
             #       print("cambio de tiempo")

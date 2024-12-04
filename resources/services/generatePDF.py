@@ -787,7 +787,7 @@ def generateTaskOrder(body):
                 apt_id=apt['_id']
                 real_task_id=apt_id
                        
-                new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=apt_id,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=max(final_phis)
+                new_task_order = TaskOrderClass( application_date=application_date,application_date_end=application_date,wetting=wetting,id_company=company_id,id_task=apt_id,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias,reentry=body["reentry"],phi=max(final_phis)
                 ,objectives=str(objetivos),products=str(productos),ingredients=str(ingredientes),dosage=str(dosis),dosage_unit=str(dosis_unidad),application_method=application_method
                 ,dosage_responsible=str(dosis_responsible),operators=str(operators),sprayer=str(sprayer),tractor=str(tractor),volumen_total=volumen_total,field_id=body['id_field'])
 
@@ -797,7 +797,7 @@ def generateTaskOrder(body):
                         
             db.session.commit()
         else:
-            new_task_order = TaskOrderClass( application_date=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias)
+            new_task_order = TaskOrderClass( application_date=application_date,application_date_end=application_date,wetting=wetting,id_company=company_id,id_task=id_task,file_name=doc_name,order_number=order_number,plots=str(body['id_plots']),alias=alias)
 
         
         
