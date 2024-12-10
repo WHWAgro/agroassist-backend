@@ -58,6 +58,8 @@ class OnboardingApi(Resource):
                id_species=5
             if row['id_species']=="Frambuesas":
                id_species=6
+            if row['id_species']=="Vides":
+               id_species=7
 
             new_data = PlotClass(
                   id_field=row['id_field'],
