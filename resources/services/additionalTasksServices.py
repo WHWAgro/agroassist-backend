@@ -73,7 +73,7 @@ def createAdditionalTask(body,user_id):
             db.session.commit()
             print(task._id)
             
-            taskObjective=   AdditionalTaskObjectivesClass(additional_task_id=task._id, objectives=str(body.get('objectives')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')),reentry=body.get('reentry'),products_phis=str(body.get('products_phis')))
+            taskObjective=   AdditionalTaskObjectivesClass(additional_task_id=task._id, objectives=str(body.get('objectives')),objectives_name=str(body.get('objectives_name')),products_name=str(body.get('products_name')),products_ingredients=str(body.get('products_ingredients')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')),reentry=body.get('reentry'),products_phis=str(body.get('products_phis')))
             db.session.add(taskObjective)
             db.session.commit()
 

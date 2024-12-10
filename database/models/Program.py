@@ -149,6 +149,9 @@ class AdditionalTaskObjectivesClass(db.Model):
   dosage_parts_per_unit=db.Column(db.String(400), nullable=True)
   products_phis=db.Column(db.String(400), nullable=True)
   reentry = db.Column(db.Double, nullable=True,default=0)
+  objectives_name = db.Column(db.String(400), nullable=True)
+  products_name = db.Column(db.String(400), nullable=True)
+  products_ingredients = db.Column(db.String(400), nullable=True)
 class VisitClass(db.Model):
 
   __tablename__ = 'visits'

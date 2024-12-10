@@ -587,8 +587,8 @@ def getAdditionalTaskDetails(id_task):
     try:
         
         
-        query_tasks="""SELECT pt._id as _id, 0 as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date, Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit,objectives as objective_name,products as products_name,
-products as products_ingredients,products_phis,task_type_id,reentry
+        query_tasks="""SELECT pt._id as _id, 0 as id_program,2 as id_moment_type,pt.date_end as end_date,pt.date_start as start_date, Null as moment_value, wetting,observations,objectives as id_objective,products as id_product,dosage,dosage_parts_per_unit,objectives_name as objective_name,products_name as products_name,
+products_ingredients as products_ingredients,products_phis,task_type_id,reentry
               
                 from additional_tasks as pt 
                 left join additional_task_objectives as tp on pt._id= tp.additional_task_id

@@ -420,7 +420,7 @@ class FieldBookFullApi(Resource):
 
                 application_date=row["t_o_application_date"]
 
-                harvest_date=application_date+timedelta(days=int(row["t_o_phi"]))
+                harvest_date=application_date+timedelta(days=int(row["t_o_phi"])+1)
 
                 method="Bomba de espalda"
                 maquina=""
@@ -477,7 +477,7 @@ class FieldBookFullApi(Resource):
                                                                 "Dosis/100 L":dosage,
                                                                 "Dosis/Há":dosage_hectare,
                                                                 "Mojamiento (L/Há )":wetting,
-                                                                "Volumen Total (L)":str(row["t_o_volumen"]),
+                                                                "Volumen Total (L)":str(int(row["t_o_volumen"])),
                                                                 "Horas Reingreso":str(row["t_o_reentry"]),
                                                                 "Dias Carencia":str(row["t_o_phi"]),
                                                                 "Fecha Viable de Cosecha":harvest_date.strftime("%Y-%m-%d"),
