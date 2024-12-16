@@ -830,7 +830,7 @@ def getFieldMarketFilter(programs,companies,species):
     try:
         
         
-        query_tasks="""SELECT distinct(fi._id),sag_code
+        query_tasks="""SELECT distinct(fi._id),sag_code,field_name
                 FROM field as fi
 				left join plots as pl on pl.id_field= fi._id
                 where pl.id_program in """+ str(programs)+"""
