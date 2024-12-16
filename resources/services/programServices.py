@@ -922,7 +922,7 @@ def getFieldBookDataFull(fields,species):
     try:
         
         
-        query_tasks="""SELECT com.company_name,field._id as f_id,field.sag_code,field.location as locat,f_w.weather_locations_id as f_w_location,
+        query_tasks="""SELECT com.company_name,field._id as f_id,field.sag_code,field.field_name,field.location as locat,f_w.weather_locations_id as f_w_location,
                     plot._id as plot_id,plot.id_species as plot_species_id,plot.variety as plot_variety,plot.name as plot_name,plot.size as plot_size,
                     pl_t._id as plot_task_id,pl_t.status_id as plot_task_status_id,
                     task_orders._id as t_o_id, task_orders.wetting as t_o_wetting, task_orders.application_date_end as t_o_application_date,

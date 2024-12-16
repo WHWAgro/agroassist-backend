@@ -230,7 +230,7 @@ class FieldBookFullApi(Resource):
         field_fb={
         }
         for field in fields:
-            field_fb[str(field)]={"data":[],"company":"","CSG_code":"","location":"","size":0,"weather_location":""}
+            field_fb[str(field)]={"data":[],"company":"","field_name":"","CSG_code":"","location":"","size":0,"weather_location":""}
             
 
         products=getTableDict("Products")
@@ -247,6 +247,7 @@ class FieldBookFullApi(Resource):
             if row['f_id'] not in checked_fields:
                 checked_fields.append(row['f_id'])
                 field_fb[str(row["f_id"])]["company"]=row["company_name"]
+                field_fb[str(row["f_id"])]["field_name"]=row["field_name"]
                 field_fb[str(row["f_id"])]["CSG_code"]=row["sag_code"]
                 field_fb[str(row["f_id"])]["location"]=row["locat"]
                 field_fb[str(row["f_id"])]["weather_location"]=row["f_w_location"]
@@ -596,7 +597,7 @@ class FieldBookFullApi(Resource):
 
 
 
-            cell=new_sheet.cell(row=start_row+0, column=1, value="Compañia: ")
+            cell=new_sheet.cell(row=start_row+0, column=1, value="Razón Social: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+0, column=2, value=" ")
             cell.border=thick_border
@@ -604,6 +605,20 @@ class FieldBookFullApi(Resource):
             cell=new_sheet.cell(row=start_row+0, column=3, value=field_data["company"])
             cell.border = thick_border
 
+            cell=new_sheet.cell(row=start_row+0, column=1, value="Nombre Predio: ")
+            cell.border=thick_border
+            cell=new_sheet.cell(row=start_row+0, column=2, value=" ")
+            cell.border=thick_border
+            new_sheet.merge_cells(start_row=start_row + 0, start_column=1, end_row=start_row + 0, end_column=2)
+            cell=new_sheet.cell(row=start_row+0, column=3, value=field_data["field_name"])
+            cell.border = thick_border
+
+            
+            
+            
+            
+            
+            
             cell=new_sheet.cell(row=start_row+1, column=1, value="Código SAG predio (CSG): ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+1, column=2, value=" ")
