@@ -595,7 +595,7 @@ class FieldBookFullApi(Resource):
                       bottom=Side(style='medium'))
             
 
-
+            print("------ret2")
 
             cell=new_sheet.cell(row=start_row+0, column=1, value="Razón Social: ")
             cell.border=thick_border
@@ -604,12 +604,13 @@ class FieldBookFullApi(Resource):
             new_sheet.merge_cells(start_row=start_row + 0, start_column=1, end_row=start_row + 0, end_column=2)
             cell=new_sheet.cell(row=start_row+0, column=3, value=field_data["company"])
             cell.border = thick_border
+            print("------ret3")
 
             cell=new_sheet.cell(row=start_row+1, column=1, value="Nombre Predio: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+1, column=2, value=" ")
             cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 1, start_column=1, end_row=start_row + 0, end_column=2)
+            new_sheet.merge_cells(start_row=start_row + 1, start_column=1, end_row=start_row + 1, end_column=2)
             cell=new_sheet.cell(row=start_row+1, column=3, value=field_data["field_name"])
             cell.border = thick_border
 
@@ -618,58 +619,59 @@ class FieldBookFullApi(Resource):
             
             
             
-            
+            print("------ret4")
             cell=new_sheet.cell(row=start_row+2, column=1, value="Código SAG predio (CSG): ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+2, column=2, value=" ")
             cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 2, start_column=1, end_row=start_row + 1, end_column=2)
+            new_sheet.merge_cells(start_row=start_row + 2, start_column=1, end_row=start_row + 2, end_column=2)
             cell=new_sheet.cell(row=start_row+2, column=3, value=field_data["CSG_code"])
             cell.border = thick_border
             
-
+            print("------ret5")
             cell=new_sheet.cell(row=start_row+3, column=1, value="Especies: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+3, column=2, value=" ")
             cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 3, start_column=1, end_row=start_row + 2, end_column=2)
+            new_sheet.merge_cells(start_row=start_row + 3, start_column=1, end_row=start_row + 3, end_column=2)
             cell=new_sheet.cell(row=start_row+3, column=3, value=species_final)
             cell.border = thick_border
             
            
-
+            print("------ret6")
             cell=new_sheet.cell(row=start_row+4, column=1, value="Región:")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+4, column=2, value=" ")
             cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 4, start_column=1, end_row=start_row + 3, end_column=2)
+            new_sheet.merge_cells(start_row=start_row + 4, start_column=1, end_row=start_row + 4, end_column=2)
             cell=new_sheet.cell(row=start_row+4, column=3, value="VI")
             cell.border = thick_border
             
-
+            
+            print("------ret7")
             cell=new_sheet.cell(row=start_row+5, column=1, value="Comuna: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+5, column=2, value=" ")
             cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 5, start_column=1, end_row=start_row + 4, end_column=2)
+            new_sheet.merge_cells(start_row=start_row + 5, start_column=1, end_row=start_row + 5, end_column=2)
             cell=new_sheet.cell(row=start_row+5, column=3, value=field_data["location"])
             cell.border = thick_border
-            
+            print("------ret8")
             cell=new_sheet.cell(row=start_row+6, column=1, value="Paises a Exportar: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+6, column=2, value=" ")
             cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 6, start_column=1, end_row=start_row + 5, end_column=2)
+            new_sheet.merge_cells(start_row=start_row + 6, start_column=1, end_row=start_row + 6, end_column=2)
            
             cell=new_sheet.cell(row=start_row+6, column=3, value=markets_final)
             cell.border = thick_border
-          
-
+            print("------ret9")
+           
             cell=new_sheet.cell(row=start_row+7, column=1, value="Superficie Total: ")
             cell.border=thick_border
             cell=new_sheet.cell(row=start_row+7, column=2, value=" ")
             cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 7, start_column=1, end_row=start_row + 6, end_column=2)
+            new_sheet.merge_cells(start_row=start_row + 7, start_column=1, end_row=start_row + 7, end_column=2)
             
             cell=new_sheet.cell(row=start_row+7, column=3, value=str(field_data["size"])+' Há')
             cell.border = thick_border
