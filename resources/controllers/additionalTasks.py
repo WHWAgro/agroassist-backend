@@ -38,14 +38,15 @@ class AdditionalTaskApi(Resource):
       print('creando task de visita')
 
 
-      created=createAdditionalTask(body,user_id)
+      created,rep_task=createAdditionalTask(body,user_id)
       
       if created== False:
         response['status']=400
         response['message']=1
       
       data={}
-      data['task_id']=created
+      data['task_id']=created     
+      data['rep_task_id']=rep_task
       response['data']=data
 
       response['status']=200

@@ -64,6 +64,7 @@ def createAdditionalTask(body,user_id):
         
         
         task=''
+        rep_task=''
         if body.get('task_type_id')==1:
             print('aca')
             task = AdditionalTaskClass(  task_type_id=body.get('task_type_id'),date_start=body.get('date_start'),date_end=body.get('date_end'),plots=str(body.get('plots')),wetting=body.get('wetting'),observations=body.get('observations'),user_id=user_id,user_name=body['user_name'],company_id=body['company_id'],field_id=body['field_id'])
@@ -147,6 +148,7 @@ def createAdditionalTask(body,user_id):
                             task_source=3
                         )
                         db.session.add(plot_task)
+                        rep_task=plot_task
 
                 
             
@@ -162,7 +164,7 @@ def createAdditionalTask(body,user_id):
         
         db.session.commit()
 
-        return task._id
+        return task._id,rep_task._id
     except Exception as e:
         print(e)
         return False
