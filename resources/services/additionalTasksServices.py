@@ -81,6 +81,7 @@ def createAdditionalTask(body,user_id):
             for plot in body.get('plots'):
                 plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'),task_source=3)
                 db.session.add(plot_task)
+                rep_task=plot_task
         
     
         else:
@@ -160,6 +161,7 @@ def createAdditionalTask(body,user_id):
                 for plot in body.get('plots'):
                     plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'),task_source=3)
                     db.session.add(plot_task)
+                    rep_task=plot_task
 
         
         db.session.commit()
