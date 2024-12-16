@@ -164,7 +164,10 @@ def createAdditionalTask(body,user_id):
         
         db.session.commit()
 
-        return task._id,rep_task._id
+        if rep_task !='':
+
+            return task._id,rep_task._id
+        return task._id,None
     except Exception as e:
         print(e)
         return False
