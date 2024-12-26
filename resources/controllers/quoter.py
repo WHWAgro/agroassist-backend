@@ -237,11 +237,12 @@ class QuoterInitApi(Resource):
               products_list[p_id]["product_needed"]=int(total_product)
               print(total_product)
               print('****')
-           
+            print(products_ids)
             for id in products_ids:
                   
                 
                   print('----1')
+                  print(id)
                 
                 
                   
@@ -261,9 +262,12 @@ class QuoterInitApi(Resource):
                   print('----2')
                   alternatives_pre=[]
                   if can_cast_to_number(id)==True:
-                  
+                    
+                    
                     valid=list(filter(lambda product: product['_id'] == id , elements))
+                    print(valid)
                     compound=valid[0]["chemical_compounds"]
+                    print(compound)
                   
                     alternatives_pre=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
                   unique_products_name = []
