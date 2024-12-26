@@ -190,19 +190,51 @@ def getProductsAlt(products,products_name,products_phis):
 
         return productsAlt
     
-def getMoments(id_program,start,end):
+def getMoments(id_field,start,end):
    
     
     try:
         
-        query="""SELECT pt._id,wetting,id_product,dosage,dosage_parts_per_unit,products_name,products_ingredients,objective_name,id_objective
-                FROM program_tasks  pt
+        query="""SELECT plt._id as plot_task_id,pl.size,pl._id as plot_id,pl.id_field,pt._id,wetting,id_product,dosage,dosage_parts_per_unit,products_name,products_ingredients,objective_name,id_objective
+                FROM plot_tasks plt
+				left join plots  pl
+				on pl._id=plt.plot_id
+				left join tasks tsk
+				on tsk._id=plt.task_id
+				left join program_tasks  pt
+				on pt._id= tsk.id_moment
                 left join task_objectives  ta
                     on pt._id=ta.id_task
-                WHERE id_program = """+ str(id_program)+"""
+                WHERE pl.id_field = """+ str(id_field)+"""
+				and plt.from_program=True
+                and plt.status_id !=2
+                and id_task_type = 1
+                
                 
                 AND (
                     (start_date <= DATE('"""+ end +"""') AND end_date >= DATE('"""+ start +"""'))
+                    )
+                
+             """
+        
+
+        query2="""SELECT plt._id as plot_task_id,pl.size,pl._id as plot_id,pl.id_field,tsk._id, tsk.wetting,products as id_product, dosage , dosage_parts_per_unit,products_name,products_ingredients,objectives_name as objective_name,objectives as id_objective
+                FROM plot_tasks plt
+				left join plots  pl
+				on pl._id=plt.plot_id
+				left join additional_tasks tsk
+				on tsk._id=plt.task_id
+
+                left join additional_task_objectives  ta
+                    on tsk._id=ta.additional_task_id
+                WHERE pl.id_field = """+ str(id_field)+"""
+				and plt.from_program = False
+				and plt.task_source = 3
+				and plt.status_id !=2
+				and task_type_id = 1
+                
+                AND (
+                    (plt.date_start <= DATE('"""+ end +"""') AND plt.date_end >= DATE('"""+ start +"""'))
                     )
                 
              """
@@ -215,8 +247,15 @@ def getMoments(id_program,start,end):
                 row_as_dict = row._mapping
                 
                 rows.append(dict(row_as_dict))
-           
-            return rows
+        add_task_rows=[] 
+        with db.engine.begin() as conn:
+            result = conn.execute(text(query2)).fetchall()
+            for row in result:
+                row_as_dict = row._mapping
+                
+                add_task_rows.append(dict(row_as_dict))
+        
+        return rows,add_task_rows
         
 
     except Exception as e:
@@ -1219,7 +1258,7 @@ def getUserPlots(user_id):
         return False
     
 
-def getUserValidPlots(user_id):
+def getUserValidPlots(user_id,fields):
     try:
 
 
@@ -1236,14 +1275,30 @@ def getUserValidPlots(user_id):
 				left join tasks  as ts on ts._id = pt.task_id
                 
                 where fi.company_id = """+ str(company)+"""
-                and pt.from_program = True
+                and fi._id in ("""+ str(fields)+""")
                 and pt.status_id IS NOT NULL
                 and pt.status_id != 2
+                and from_program=True
+                
+             """
+        
+        query_tasks2="""SELECT pl.*,ts._id as moment_id, pt.status_id
+                FROM plots as pl
+                left join field as fi  on pl.id_field=fi._id
+				left join plot_tasks as pt on pl._id = pt.plot_id
+				left join additional_tasks  as ts on ts._id = pt.task_id
+                
+                where fi.company_id = """+ str(company)+"""
+                and fi._id in ("""+ str(fields)+""")
+                and pt.status_id IS NOT NULL
+                and pt.status_id != 2
+                and task_source=3
                 
              """
         
         
         rows_plots=[]
+        rows_plots_calendar_tasks=[]
         with db.engine.begin() as conn:
             
             result_tasks= conn.execute(text(query_tasks)).fetchall()
@@ -1253,9 +1308,20 @@ def getUserValidPlots(user_id):
                 row_as_dict = row._mapping
                 
                 rows_plots.append(dict(row_as_dict))
+
+            result_tasks= conn.execute(text(query_tasks2)).fetchall()
+            
+            
+            for row in result_tasks:
+                row_as_dict = row._mapping
+                
+                rows_plots_calendar_tasks.append(dict(row_as_dict))
+
+
         
         
-        return rows_plots
+        
+        return rows_plots,rows_plots_calendar_tasks
 
     except Exception as e:
         print(e)
