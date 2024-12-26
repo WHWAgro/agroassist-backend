@@ -261,7 +261,7 @@ class QuoterInitApi(Resource):
                   el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
                   print('----2')
                   alternatives_pre=[]
-                  if can_cast_to_number(id)==True:
+                  if can_cast_to_number(id)==True and id!=0:
                     
                     
                     valid=list(filter(lambda product: product['_id'] == id , elements))
