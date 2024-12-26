@@ -241,7 +241,7 @@ class QuoterInitApi(Resource):
             for id in products_ids:
                   
                 
-               
+                  print('----1')
                 
                 
                   
@@ -258,7 +258,7 @@ class QuoterInitApi(Resource):
                   el["products_needed"]=products_list[str(id)]["product_needed"]
                 
                   el["valid_hectares"]=products_list[str(id)]["valid_hectares"]
-
+                  print('----2')
                   alternatives_pre=[]
                   if can_cast_to_number(id)==True:
                   
@@ -268,7 +268,7 @@ class QuoterInitApi(Resource):
                     alternatives_pre=list(filter(lambda product: product['chemical_compounds'] == compound  and product['product_name'] != valid[0]["product_name"] , elements))
                   unique_products_name = []
                   alternatives=[]
-
+                  print('----3')
                   
                   # Iterate over the list and add entries to the dictionary
                   for product in alternatives_pre:
@@ -276,6 +276,8 @@ class QuoterInitApi(Resource):
                       if product_name not in unique_products_name:
                           unique_products_name.append(product_name)
                           alternatives.append( product)
+
+                  print('----4')
 
                   
                   
@@ -297,7 +299,9 @@ class QuoterInitApi(Resource):
                   el["alternatives"]=alternatives_list
                   
                   objective_list.append(el)
+                  print('----5')
             
+            print('consolidadndo')
             consolidated_products=[]
             used_products=[]
             dict_list={}
