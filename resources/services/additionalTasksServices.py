@@ -108,13 +108,14 @@ def createAdditionalTask(body,user_id):
                         date_start=current_date,
                         date_end=current_date + (end_date - start_date),  # Keep the same duration
                         plots=str(body.get('plots')),
+                        wetting=body.get('wetting'),
                         observations=body.get('observations'),
                         main_additional_task_id=task._id,
                         repeat_frequency=repeat_frequency,
                         repeat_unit=repeat_unit,
                         repeat_until=repeat_until,
-                        is_repeatable=True
-                        ,user_id=user_id,
+                        is_repeatable=True,
+                        user_id=user_id,
                         user_name=body['user_name'],
                         company_id=body['company_id'],
                         field_id=body['field_id']
@@ -144,7 +145,16 @@ def createAdditionalTask(body,user_id):
             
             else:
                 print('aca')
-                task = AdditionalTaskClass(  task_type_id=body.get('task_type_id'),date_start=body.get('date_start'),date_end=body.get('date_end'),plots=str(body.get('plots')),wetting=body.get('wetting'),observations=body.get('observations'),user_id=user_id,user_name=body['user_name'],company_id=body['company_id'],field_id=body['field_id'])
+                task = AdditionalTaskClass(  task_type_id=body.get('task_type_id'),
+                                           date_start=body.get('date_start'),
+                                           date_end=body.get('date_end'),
+                                           plots=str(body.get('plots')),
+                                           wetting=body.get('wetting'),
+                                           observations=body.get('observations'),
+                                           user_id=user_id,
+                                           user_name=body['user_name'],
+                                           company_id=body['company_id'],
+                                           field_id=body['field_id'])
                 db.session.add(task)
 
 
