@@ -153,9 +153,12 @@ class AdditionalTaskApi(Resource):
           del(task_info['repeat_frequency'])
           del(task_info['repeat_unit'])
       else:
-        del(task_info['repeat_until'])
-        del(task_info['repeat_frequency'])
-        del(task_info['repeat_unit'])
+        if task_info['is_repeatable']==True:
+          task_info['repeat_until']=task_info['repeat_until'].strftime('%Y-%m-%d')
+        else:
+          del(task_info['repeat_until'])
+          del(task_info['repeat_frequency'])
+          del(task_info['repeat_unit'])
         task_info['dosage_parts_per_unit']=ast.literal_eval(task_info['dosage_parts_per_unit'])
         task_info['objectives']=ast.literal_eval(task_info['objectives'])
         task_info['products']=ast.literal_eval(task_info['products'])

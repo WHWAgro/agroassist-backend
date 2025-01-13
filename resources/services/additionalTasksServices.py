@@ -66,22 +66,99 @@ def createAdditionalTask(body,user_id):
         task=''
         rep_task=''
         if body.get('task_type_id')==1:
-            print('aca')
-            task = AdditionalTaskClass(  task_type_id=body.get('task_type_id'),date_start=body.get('date_start'),date_end=body.get('date_end'),plots=str(body.get('plots')),wetting=body.get('wetting'),observations=body.get('observations'),user_id=user_id,user_name=body['user_name'],company_id=body['company_id'],field_id=body['field_id'])
-            db.session.add(task)
-
-
-            db.session.commit()
-            print(task._id)
             
-            taskObjective=   AdditionalTaskObjectivesClass(additional_task_id=task._id, objectives=str(body.get('objectives')),objectives_name=str(body.get('objectives_name')),products_name=str(body.get('products_name')),products_ingredients=str(body.get('products_ingredients')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')),reentry=body.get('reentry'),products_phis=str(body.get('products_phis')))
-            db.session.add(taskObjective)
-            db.session.commit()
+            
+            if body.get('is_repeatable'):
 
-            for plot in body.get('plots'):
-                plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'),task_source=3)
-                db.session.add(plot_task)
-                rep_task=plot_task
+
+                start_date = datetime.datetime.strptime(body.get('date_start'), '%Y-%m-%d')
+                end_date = datetime.datetime.strptime(body.get('date_end'), '%Y-%m-%d')
+                repeat_frequency = int(body.get('repeat_frequency'))
+                repeat_unit = int(body.get('repeat_unit'))
+                repeat_until = datetime.datetime.strptime(body.get('repeat_until'), '%Y-%m-%d')
+
+                task = AdditionalTaskClass( repeat_frequency=repeat_frequency,repeat_unit=repeat_unit,repeat_until=repeat_until,is_repeatable=True, task_type_id=body.get('task_type_id'),date_start=start_date,date_end=end_date,plots=str(body.get('plots')),observations=body.get('observations'),user_id=user_id,user_name=body['user_name'],company_id=body['company_id'],field_id=body['field_id'])
+                db.session.add(task)
+                db.session.commit()
+
+                taskObjective=   AdditionalTaskObjectivesClass(additional_task_id=task._id, objectives=str(body.get('objectives')),objectives_name=str(body.get('objectives_name')),products_name=str(body.get('products_name')),products_ingredients=str(body.get('products_ingredients')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')),reentry=body.get('reentry'),products_phis=str(body.get('products_phis')))
+                db.session.add(taskObjective)
+                db.session.commit()
+                for plot in body.get('plots'):
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=start_date,date_end=end_date,task_source=3)
+                    db.session.add(plot_task)
+
+                current_date = start_date
+                while current_date <= repeat_until:
+                    # Calculate the next date based on repeat_frequency and repeat_unit
+                    if repeat_unit == 1:  # Days
+                        current_date += datetime.timedelta(days=repeat_frequency)
+                    elif repeat_unit == 2:  # Weeks
+                        current_date += datetime.timedelta(weeks=repeat_frequency)
+                   
+
+                    # Check if the new date exceeds repeat_until
+                    if current_date > repeat_until:
+                        break
+
+                    # Create a new task for the next occurrence
+                    new_task = AdditionalTaskClass(
+                        
+                        task_type_id=body.get('task_type_id'),
+                        date_start=current_date,
+                        date_end=current_date + (end_date - start_date),  # Keep the same duration
+                        plots=str(body.get('plots')),
+                        observations=body.get('observations'),
+                        main_additional_task_id=task._id,
+                        repeat_frequency=repeat_frequency,
+                        repeat_unit=repeat_unit,
+                        repeat_until=repeat_until,
+                        is_repeatable=True
+                        ,user_id=user_id,
+                        user_name=body['user_name'],
+                        company_id=body['company_id'],
+                        field_id=body['field_id']
+
+                    )
+                    db.session.add(new_task)
+                    db.session.commit()
+
+                    taskObjective=   AdditionalTaskObjectivesClass(additional_task_id=new_task._id, objectives=str(body.get('objectives')),objectives_name=str(body.get('objectives_name')),products_name=str(body.get('products_name')),products_ingredients=str(body.get('products_ingredients')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')),reentry=body.get('reentry'),products_phis=str(body.get('products_phis')))
+                    db.session.add(taskObjective)
+                    db.session.commit()
+
+                    # Create PlotTasks for the new task
+                    for plot in body.get('plots'):
+                        plot_task = PlotTasksClass(
+                            plot_id=plot,
+                            task_id=new_task._id,
+                            status_id=1,
+                            from_program=False,
+                            date_start=current_date,
+                            date_end=current_date + (end_date - start_date),
+                            task_source=3
+                        )
+                        db.session.add(plot_task)
+                        rep_task=plot_task
+            
+            
+            else:
+                print('aca')
+                task = AdditionalTaskClass(  task_type_id=body.get('task_type_id'),date_start=body.get('date_start'),date_end=body.get('date_end'),plots=str(body.get('plots')),wetting=body.get('wetting'),observations=body.get('observations'),user_id=user_id,user_name=body['user_name'],company_id=body['company_id'],field_id=body['field_id'])
+                db.session.add(task)
+
+
+                db.session.commit()
+                print(task._id)
+                
+                taskObjective=   AdditionalTaskObjectivesClass(additional_task_id=task._id, objectives=str(body.get('objectives')),objectives_name=str(body.get('objectives_name')),products_name=str(body.get('products_name')),products_ingredients=str(body.get('products_ingredients')),products=str(body.get('products')),dosage=str(process_nested_list(body.get('dosage'))),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')),reentry=body.get('reentry'),products_phis=str(body.get('products_phis')))
+                db.session.add(taskObjective)
+                db.session.commit()
+
+                for plot in body.get('plots'):
+                    plot_task = PlotTasksClass(plot_id=plot,task_id=task._id,status_id=1,from_program=False,date_start=body.get('date_start'),date_end=body.get('date_end'),task_source=3)
+                    db.session.add(plot_task)
+                    rep_task=plot_task
         
     
         else:

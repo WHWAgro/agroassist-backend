@@ -537,6 +537,7 @@ def getProgramDetails(id_usuario,id_programa):
                 left join program_tasks as pt on p._id=pt.id_program
                 
                 WHERE p._id = """+ str(id_programa)+"""
+                and pt.main_program_task_id  is NULL
                 order by pt.start_date asc,pt._id
              """
         
@@ -591,7 +592,7 @@ def getTaskDetails(id_moment):
         
         
         query_tasks="""SELECT pt._id as _id,id_program,id_moment_type,end_date,start_date,moment_value,wetting,phi,reentry,observations,id_objective,id_product,dosage,dosage_parts_per_unit,objective_name,products_name,products_ingredients
-                ,products_phis
+                ,products_phis,is_repeatable,repeat_frequency,repeat_unit,repeat_until
               
                 from program_tasks as pt 
                 left join task_objectives as tp on pt._id=tp.id_task
@@ -1659,6 +1660,8 @@ def createTask(body):
         print("hola")
         task=""
         max_phi=0
+
+        
         if "products_phis" in body:
        
             for m in body.get('products_phis'):
@@ -1668,24 +1671,30 @@ def createTask(body):
                         if o>max_phi:
                             max_phi=o
 
+        is_repeatable=False,
+        repeat_frequency=None,
+        repeat_unit=None,
+        repeat_until=None
         
-            task = ProgramTaskClass(phi=max_phi,reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
-        elif "phi" in body:
-            task = ProgramTaskClass(phi=body.get('phi'),reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        if "is_repeatable" in body:
+            is_repeatable=body["is_repeatable"]
+            repeat_frequency=body['repeat_frequency']
+            repeat_unit=body['repeat_unit']
+            repeat_until=body['repeat_until']
+
         
-        else:    
-            task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        task = ProgramTaskClass(main_program_task_id=None,repeat_until=repeat_until,repeat_unit=repeat_unit,is_repeatable=is_repeatable,repeat_frequency=repeat_frequency,phi=max_phi,reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        #elif "phi" in body:
+         #   task = ProgramTaskClass(phi=body.get('phi'),reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
+        
+        #else:    
+         #   task = ProgramTaskClass( id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
        
        
        
         db.session.add(task)
-        program=ProgramClass.query.get(body.get('id_program'))
-        program.updated_at=db.func.now()
-        db.session.add(program)
-        
-        
        
-
+        
         db.session.commit()
         print(task._id)
         for idx, objective in enumerate(body.get('objectives')):
@@ -1693,6 +1702,66 @@ def createTask(body):
           taskObjective=   TaskObjectivesClass(id_task=task._id, id_objective=objective,objective_name=str(body.get('objectives_name')[idx]),products_ingredients=str(body.get('products_ingredients')[idx]),products_phis=str(body.get('products_phis')[idx]),products_name=str(body.get('products_name')[idx]),id_product=str(body.get('products')[idx]),dosage=str(process_nested_list(body.get('dosage')[idx])),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
           db.session.add(taskObjective)
         db.session.commit()
+
+        if is_repeatable:
+                print('repeatable')
+
+                start_date = datetime.datetime.strptime(body.get('start_date'), '%Y-%m-%d')
+                end_date = datetime.datetime.strptime(body.get('end_date'), '%Y-%m-%d')
+                repeat_frequency = int(body.get('repeat_frequency'))
+                repeat_unit = int(body.get('repeat_unit'))
+                repeat_until = datetime.datetime.strptime(body.get('repeat_until'), '%Y-%m-%d')
+
+                current_date = start_date
+                while current_date <= repeat_until:
+                    # Calculate the next date based on repeat_frequency and repeat_unit
+                    if repeat_unit == 1:  # Days
+                        current_date += datetime.timedelta(days=repeat_frequency)
+                    elif repeat_unit == 2:  # Weeks
+                        current_date += datetime.timedelta(weeks=repeat_frequency)
+                   
+
+                    # Check if the new date exceeds repeat_until
+                    if current_date > repeat_until:
+                        break
+                    
+                        
+                    # Create a new task for the next occurrence
+                    new_task =  ProgramTaskClass(main_program_task_id=task._id,
+                                                 repeat_until=repeat_until,
+                                                 repeat_unit=repeat_unit,
+                                                 is_repeatable=is_repeatable,
+                                                 repeat_frequency=repeat_frequency,
+                                                 phi=max_phi,reentry=body.get('reentry'), 
+                                                 id_program=body.get('id_program'), 
+                                                 id_moment_type=body.get('id_moment_type'),
+                                                 start_date=current_date,
+                                                 moment_value=body.get('moment_value'),
+                                                 wetting=body.get('wetting'),
+                                                 observations=body.get('observations'),
+                                                 end_date=current_date + (end_date - start_date))
+                    db.session.add(new_task)
+                    db.session.commit()  
+
+                    for idx, objective in enumerate(body.get('objectives')):
+          
+                        taskObjective=   TaskObjectivesClass(id_task=new_task._id, id_objective=objective,objective_name=str(body.get('objectives_name')[idx]),products_ingredients=str(body.get('products_ingredients')[idx]),products_phis=str(body.get('products_phis')[idx]),products_name=str(body.get('products_name')[idx]),id_product=str(body.get('products')[idx]),dosage=str(process_nested_list(body.get('dosage')[idx])),dosage_parts_per_unit=str(body.get('dosage_parts_per_unit')[idx]))
+                        db.session.add(taskObjective)
+                    db.session.commit()
+
+                
+                
+        
+
+
+
+        program=ProgramClass.query.get(body.get('id_program'))
+        program.updated_at=db.func.now()
+        db.session.add(program)
+        
+        db.session.commit()
+
+
         return task._id
     except Exception as e: 
         print(e)

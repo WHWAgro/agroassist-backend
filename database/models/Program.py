@@ -260,6 +260,11 @@ class ProgramTaskClass(db.Model):
   observations=db.Column(db.String(400), nullable=True)
   objectives = db.relationship('TaskObjectivesClass', backref='task')  
   ignore = db.Column(db.Boolean, nullable=True, default=False)
+  is_repeatable = db.Column(db.Boolean, nullable=False, default=False)
+  repeat_frequency =db.Column(db.Integer, nullable=True, default=None)
+  repeat_unit =db.Column(db.Integer, nullable=True, default=None)
+  repeat_until= db.Column(db.DateTime, nullable=True, default=None)
+  main_program_task_id = db.Column(db.Integer, nullable=True, default=None)
   
   def __repr__(self):
         return '<task %r>' % self.program_name

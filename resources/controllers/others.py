@@ -636,11 +636,23 @@ class TaskApi(Resource):
                 dic_result[id]["reentry"] = task['reentry']
                 dic_result[id]["phi"] = task['phi']
                 dic_result[id]["observations"] = task['observations']
+                dic_result[id]["is_repeatable"] = task['is_repeatable']
+                dic_result[id]["repeat_frequency"] = task['repeat_frequency']
+                dic_result[id]["repeat_unit"] = task['repeat_unit']
+                if task['repeat_until'] is None:
+                   dic_result[id]["repeat_until"] = None
+                else:
+                  dic_result[id]["repeat_until"] = str(task['repeat_until'])
+                
+
 
       
         
         data={}
-        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'end_date': dict["end_date"],'moment_value': dict["moment_value"] ,'objectives': dict["objectives"],"objectives_name":dict["objectives_name"],"products_name":dict["products_name"],"products_ingredients":dict["products_ingredients"],"products_phis":dict["products_phis"]   ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'reentry': dict["reentry"],'phi': dict["phi"],'observations':dict['observations']} for id, dict in dic_result.items()]
+        tasks_format= [{'_id': id,'id_program': dict["id_program"],'id_moment_type': dict["id_moment_type"],'start_date': dict["start_date"],'end_date': dict["end_date"],'moment_value': dict["moment_value"] ,'objectives': dict["objectives"],"objectives_name":dict["objectives_name"],"products_name":dict["products_name"],"products_ingredients":dict["products_ingredients"],"products_phis":dict["products_phis"]   ,'products': list(filter(None,dict["products"])),'dosage': list(filter(None,dict["dosage"])),'dosage_parts_per_unit': list(filter(None,dict["dosage_parts_per_unit"])),'wetting': dict["wetting"],'reentry': dict["reentry"],'phi': dict["phi"],'observations':dict['observations'],"is_repeatable": dict['is_repeatable']
+                ,"repeat_frequency":dict['repeat_frequency']
+                ,"repeat_unit" :dict['repeat_unit']
+               ,"repeat_until": dict['repeat_until']} for id, dict in dic_result.items()]
         
         
         if len(tasks_format)==0:
