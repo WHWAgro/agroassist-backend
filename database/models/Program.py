@@ -325,7 +325,7 @@ class PlotTasksClass(db.Model):
   from_program=db.Column(db.Boolean, nullable=False,default=True)
   date_start=db.Column(db.DateTime, nullable=True)
   date_end=db.Column(db.DateTime, nullable=True)
-  task_source=db.Column(db.Integer, nullable=False,default=True)
+  task_source=db.Column(db.Integer, nullable=False,default=1)
   
   
 

@@ -1988,7 +1988,7 @@ def createTasksNewUser(program_id,assigned_company):
                     print(task_instance._id)
                     program_plots=PlotClass.query.filter_by(id_program=program_id)
                     for plot in program_plots:
-                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1,date_start=task["start_date"],date_end=task["end_date"])
+                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1,date_start=task["start_date"],date_end=task["end_date"],task_source=1)
                         db.session.add(plot_task)
                     db.session.commit()
                     
@@ -2058,7 +2058,7 @@ def createTasks(program_id, body):
                     program_plots=PlotClass.query.filter_by(id_program=program_id)
                     for plot in program_plots:
                         print('plot-task')
-                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1,date_start=task["start_date"],date_end=task["end_date"])
+                        plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1,date_start=task["start_date"],date_end=task["end_date"],task_source=1)
                         db.session.add(plot_task)
                         db.session.commit()
                     
@@ -2504,7 +2504,7 @@ def add_program_tasks_plot(program_id,plot_id,user_id):
     
     
     for task in rows:
-        plot_task=PlotTasksClass( plot_id=plot_id,task_id=task["_id"],status_id=1,date_start=task["date_start"],date_end=task["date_end"])
+        plot_task=PlotTasksClass( plot_id=plot_id,task_id=task["_id"],status_id=1,date_start=task["date_start"],date_end=task["date_end"],task_source=1)
         db.session.add(plot_task)
         
     db.session.commit()
