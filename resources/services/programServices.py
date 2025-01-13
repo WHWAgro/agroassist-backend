@@ -1671,18 +1671,19 @@ def createTask(body):
                         if o>max_phi:
                             max_phi=o
 
-        is_repeatable=False,
-        repeat_frequency=None,
-        repeat_unit=None,
+        is_repeatable=False
+        repeat_frequency=None
+        repeat_unit=None
         repeat_until=None
-        
+        print('holasssss')
         if "is_repeatable" in body:
+            print('chao')
             is_repeatable=body["is_repeatable"]
             repeat_frequency=body['repeat_frequency']
             repeat_unit=body['repeat_unit']
             repeat_until=body['repeat_until']
 
-        
+        print('hola1')
         task = ProgramTaskClass(main_program_task_id=None,repeat_until=repeat_until,repeat_unit=repeat_unit,is_repeatable=is_repeatable,repeat_frequency=repeat_frequency,phi=max_phi,reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
         #elif "phi" in body:
          #   task = ProgramTaskClass(phi=body.get('phi'),reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
@@ -2002,6 +2003,8 @@ def createTasksNewUser(program_id,assigned_company):
     
 def createTasks(program_id, body):
     try:
+
+        print('creating tasks for fields')
         program_details = body.get('program_details')
 
         if program_details is None:
@@ -2030,28 +2033,35 @@ def createTasks(program_id, body):
             tasks[el['_id']]  =el
           
         
-
+        print(assigned_companies)
         for company_id in assigned_companies:
             created = [dicc for dicc in rows if dicc['id_company'] ==company_id]
             created_tasks={}
             for el in created:
                 created_tasks[el['_id']]  =el
   
- 
+            print(created_tasks)
             for moment_id,task in tasks.items():
+                print('new moment')
+                print(moment_id)
+                
                 if 'end_date' not in task:
                     task['end_date']=task['start_date']
 
                 if moment_id not in created_tasks:
+                    print('task-')
                     task_instance = TaskClass(id_moment =moment_id,id_task_type =1,date_start=task['start_date'],date_end=task['end_date'],time_indicator='AM' ,id_status=1,id_company=company_id)
                     db.session.add(task_instance)
                     db.session.commit()
+                    print(task_instance._id)
                     
                     program_plots=PlotClass.query.filter_by(id_program=program_id)
                     for plot in program_plots:
+                        print('plot-task')
                         plot_task=PlotTasksClass( plot_id=plot._id,task_id=task_instance._id,status_id=1,date_start=task["start_date"],date_end=task["end_date"])
                         db.session.add(plot_task)
-                    db.session.commit()
+                        db.session.commit()
+                    
                     
         db.session.commit()                       
 
