@@ -1677,11 +1677,12 @@ def createTask(body):
         repeat_until=None
         print('holasssss')
         if "is_repeatable" in body:
-            print('chao')
-            is_repeatable=body["is_repeatable"]
-            repeat_frequency=body['repeat_frequency']
-            repeat_unit=body['repeat_unit']
-            repeat_until=body['repeat_until']
+
+            if body["is_repeatable"]==True:
+                is_repeatable=body["is_repeatable"]
+                repeat_frequency=body['repeat_frequency']
+                repeat_unit=body['repeat_unit']
+                repeat_until=body['repeat_until']
 
         print('hola1')
         task = ProgramTaskClass(main_program_task_id=None,repeat_until=repeat_until,repeat_unit=repeat_unit,is_repeatable=is_repeatable,repeat_frequency=repeat_frequency,phi=max_phi,reentry=body.get('reentry'), id_program=body.get('id_program'), id_moment_type=body.get('id_moment_type'),start_date=body.get('start_date'),moment_value=body.get('moment_value'),wetting=body.get('wetting'),observations=body.get('observations'),end_date=body.get('end_date'))
