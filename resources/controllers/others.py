@@ -524,13 +524,15 @@ class TriggerTaskApi(Resource):
         moment_id=body.get('moment_id')
         date_start=body.get('date_start')
         date_end=body.get('date_end')
+        
+        plots=body.get('plots')
         user_id =  get_jwt_identity()
         
 
         company_id=getUserCompanies(user_id)[0]["_id"]
 
         print(company_id)
-        updatePlotTasksTrigger(moment_id,company_id,date_start,date_end)
+        updatePlotTasksTrigger(moment_id,company_id,date_start,date_end,plots)
     
          
 

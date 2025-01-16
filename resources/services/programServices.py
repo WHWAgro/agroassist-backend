@@ -1893,7 +1893,7 @@ def updateMomentTasks(moment_id,body):
         return False
     
 
-def updatePlotTasksTrigger(moment_id,id_company,date_start,date_end):
+def updatePlotTasksTrigger(moment_id,id_company,date_start,date_end,plots):
     
     try:
     
@@ -1914,6 +1914,8 @@ def updatePlotTasksTrigger(moment_id,id_company,date_start,date_end):
             
             for p_task in plot_tasks:
                 print(p_task._id)
+                if p_task.plot_id not in plots:
+                    continue
 
                 new_plot_task = PlotTasksClass(
                     
