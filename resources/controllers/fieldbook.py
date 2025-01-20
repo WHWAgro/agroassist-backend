@@ -72,7 +72,7 @@ class FieldBookApi(Resource):
         
 
     
-        
+        print(markets_format)
         programs=getProgramsMarketFilter(user_id,companies,markets_format)
 
         progrmas_format="( "

@@ -323,7 +323,7 @@ class LoginUserApi(Resource):
             data["task_status"]=[{'_id':1,'status_name':'Pendiente'},{'_id':3,'status_name':'Orden Generada'},{'_id':4,'status_name':'En Proceso'},{'_id':5,'status_name':'Omitida'},{'_id':2,'status_name':'Finalizada'}]
             data["worker_type"]=[{'_id':1,'worker_type_name':'Administrador'},{'_id':2,'worker_type_name':'Asesor Agrícola'},{'_id':3,'worker_type_name':'En Terreno'}]
             data["machinery_type"]=[{'_id':1,'machinery_type_name':'Tractor'},{'_id':2,'machinery_type_name':'Nebulizador'},{'_id':3,'machinery_type_name':'Bomba de espalda'}]
-            data["task_type"]=[{'_id':1,'task_type_name':'Fitosanitario'},{'_id':2,'task_type_name':'Otras'},{'_id':3,'task_type_name':'Riego'},{'_id':4,'task_type_name':'Cosecha'}]
+            data["task_type"]=[{'_id':1,'task_type_name':'Aplicación'},{'_id':2,'task_type_name':'Otras'},{'_id':3,'task_type_name':'Riego'},{'_id':4,'task_type_name':'Cosecha'}]
             
             data["event_type"]=[{'_id':1,'event_type_name':'Lluvia'},{'_id':2,'event_type_name':'Plaga'},{'_id':3,'event_type_name':'Helada'},{'_id':4,'event_type_name':'Poda'},{'_id':5,'event_type_name':'Cosecha'}]
             #for product in data['products']:

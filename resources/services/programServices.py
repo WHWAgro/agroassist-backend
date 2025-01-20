@@ -437,6 +437,8 @@ def getPrograms(id_usuario,company_id):
 def getProgramsMarketFilter(id_usuario,company_id,markets):
     
     try:
+
+
         #p.id_user = """+ str(id_usuario)+""" deberia ir primero en caso de que los usuarios acepten 
         query="""SELECT distinct(p._id)  FROM programs as p
                 left join species as s on p.id_species= s._id
@@ -449,7 +451,18 @@ def getProgramsMarketFilter(id_usuario,company_id,markets):
                 
                 
              """
-        
+        if markets=='(  )':
+             query="""SELECT distinct(p._id)  FROM programs as p
+                left join species as s on p.id_species= s._id
+                left join market_program as mp on p._id=mp.program_id
+                left join program_companies as pc on p._id=pc.id_program
+                WHERE (p.id_user = """+ str(id_usuario)+"""
+                or pc.id_company in """+ str(company_id)+""") 
+               
+
+                
+                
+             """
         
         rows=[]
         with db.engine.begin() as conn:
