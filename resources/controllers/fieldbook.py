@@ -72,7 +72,7 @@ class FieldBookApi(Resource):
         
 
     
-        print(markets_format)
+        
         programs=getProgramsMarketFilter(user_id,companies,markets_format)
 
         progrmas_format="( "
@@ -136,7 +136,7 @@ class FieldBookFullApi(Resource):
         companies="( "
         for company in user_company:
             companies=companies+str(company["_id"])+","
-
+       
         #esta seccion consigue el valor de markets
         markets_dict=getTableDict("market")
         markets_final=""
@@ -145,15 +145,22 @@ class FieldBookFullApi(Resource):
         markets = request.args.get('markets').split(",")
        
         markets_format="( "
+             
         for market in markets:
+            if market=='':
+                markets_final='Todos  '
+                continue
             markets_final=markets_final+str(markets_dict[int(market)]["market_name"])+", "
             markets_format=markets_format+str(market)+","
        
+        
         markets_format = markets_format[:-1]
         markets_format=markets_format+" )"
         markets_final = markets_final[:-2]
-        print(companies)
-        print(markets_format)
+
+
+       
+      
         
         #---------------------
         
