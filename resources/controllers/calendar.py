@@ -203,6 +203,7 @@ class TaskInsApi(Resource):
                     products_phis=replace_values_ast(products_name, task["phi"])
                   else:
                     products_phis=ast.literal_eval(task['products_phis'])
+                  print(products_phis)
                   print('products_phis fin')
                   
                   dosage_parts_per_unit=ast.literal_eval(task['dosage_parts_per_unit'])
