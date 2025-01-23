@@ -247,6 +247,7 @@ class TaskInsApi(Resource):
                       dic_result[id]["products"] = [products]
                       dic_result[id]["products_name"] = [products_name]
                       dic_result[id]["products_phis"] = [products_phis]
+                      products_phis=[products_phis]
                       dic_result[id]["products_ingredients"] = [products_ingredients]
                       dic_result[id]["dosage"] = [dosage]
                       
