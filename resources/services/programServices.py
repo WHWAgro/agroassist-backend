@@ -179,22 +179,27 @@ def getProductsAlt(products,products_name,products_phis):
                     """
                 
 
-               
+                    print('filas')
+
                     with db.engine.begin() as conn:
                         result = conn.execute(text(query)).fetchall()
                         for row in result:
                             row_as_dict = row._mapping
+                            print(row_as_dict)
                                 
                             alternatives.append(row_as_dict['_id'])
                             phis.append(products_phis[o_index][aa_index][r_index])
                     
-                        
-                    if alternatives not in productsAlt[o_index]:        
-                        productsAltPhis[o_index].append(phis)              
+                    print('termino')
+                    if alternatives not in productsAlt[o_index]:   
+                        print(phis)     
+                        productsAltPhis[o_index].append(phis)  
+                        print(alternatives)            
                         productsAlt[o_index].append(alternatives)
+                    print('agregado')
                 
 
-
+        print('fin')
         return productsAlt,productsAltPhis
     
 def getMoments(id_field,start,end):
