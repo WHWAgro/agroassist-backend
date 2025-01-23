@@ -359,7 +359,9 @@ class TaskInsApi(Resource):
         print(data)
         products_list=data['task_details']['products']
         products_name=data['task_details']['products_name']
-        data['task_details']['products_alt']=getProductsAlt(products_list,products_name,products_phis)
+        products_alt,products_alt_phis=getProductsAlt(products_list,products_name,products_phis)
+        data['task_details']['products_alt']=products_alt
+        data['task_details']['products_alt_phis']=products_alt_phis
         
    
       

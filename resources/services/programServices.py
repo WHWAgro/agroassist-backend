@@ -128,28 +128,34 @@ def can_cast_to_number(value):
     
 def getProductsAlt(products,products_name,products_phis):
         productsAlt=[]
+        productsAltPhis=[]
 
         print("getting alternatives")
 
         for o_index,objective in enumerate(products):
-            
+            print('new objective')
             productsAlt.append([])
+            productsAltPhis.append([])
             for aa_index,and_alt in enumerate(objective):
                 
                 
                 alternatives=[]
+                phis=[]
                 and_alt_format='('
                 for r_index,market in enumerate(and_alt):
                     print(market)
                     if market==0:
                         alternatives.append(products_name[o_index][aa_index][r_index])
+                        phis.append(products_phis[o_index][aa_index][r_index])
             
-                    and_alt_format=and_alt_format+str(market)+","
-                and_alt_format = and_alt_format[:-1]
-                and_alt_format=and_alt_format+" )"
-                
-                
-                query="""WITH RankedProducts AS (
+                    #and_alt_format=and_alt_format+str(market)+","
+                #and_alt_format = and_alt_format[:-1]
+                #and_alt_format=and_alt_format+" )"
+                    print(phis)
+                    print(alternatives)
+                    print('-----')
+                     
+                    query="""WITH RankedProducts AS (
                                     SELECT 
                                         p2._id,
                                         p2.product_name,
@@ -161,7 +167,7 @@ def getProductsAlt(products,products_name,products_phis):
                                     ON 
                                         p1.chemical_compounds = p2.chemical_compounds
                                     WHERE 
-                                        p1._id IN """ + str(and_alt_format) + """
+                                        p1._id IN (""" + str(market) + """)
                                 )
                                 SELECT 
                                     _id
@@ -174,21 +180,22 @@ def getProductsAlt(products,products_name,products_phis):
                 
 
                
-                with db.engine.begin() as conn:
-                    result = conn.execute(text(query)).fetchall()
-                    for row in result:
-                        row_as_dict = row._mapping
-                            
-                        alternatives.append(row_as_dict['_id'])
-                
+                    with db.engine.begin() as conn:
+                        result = conn.execute(text(query)).fetchall()
+                        for row in result:
+                            row_as_dict = row._mapping
+                                
+                            alternatives.append(row_as_dict['_id'])
+                            phis.append(products_phis[o_index][aa_index][r_index])
                     
                         
-                                
-                productsAlt[o_index].append(alternatives)
+                    if alternatives not in productsAlt[o_index]:        
+                        productsAltPhis[o_index].append(phis)              
+                        productsAlt[o_index].append(alternatives)
                 
 
 
-        return productsAlt
+        return productsAlt,productsAltPhis
     
 def getMoments(id_field,start,end):
    
