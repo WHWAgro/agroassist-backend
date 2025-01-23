@@ -188,6 +188,10 @@ def getProductsAlt(products,products_name,products_phis):
                             print(row_as_dict)
                                 
                             alternatives.append(row_as_dict['_id'])
+                            print(products_phis)
+                            print(o_index)
+                            print(aa_index)
+                            print(r_index)
                             phis.append(products_phis[o_index][aa_index][r_index])
                     
                     print('termino')
