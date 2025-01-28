@@ -428,6 +428,9 @@ class FieldBookFullApi(Resource):
 
                 application_date=row["t_o_application_date"]
 
+                print(application_date)
+                print(row["t_o_phi"])
+
                 harvest_date=application_date+timedelta(days=int(row["t_o_phi"])+1)
 
                 method="Bomba de espalda"
