@@ -131,6 +131,7 @@ def getProductsAlt(products,products_name,products_phis):
         productsAltPhis=[]
 
         print("getting alternatives")
+        print(products_name)
 
         for o_index,objective in enumerate(products):
             print('new objective')
@@ -146,6 +147,9 @@ def getProductsAlt(products,products_name,products_phis):
                     print(market)
                     if market==0:
                         alternatives.append(products_name[o_index][aa_index][r_index])
+                        phis.append(products_phis[o_index][aa_index][r_index])
+                    else:
+                        alternatives.append(market)
                         phis.append(products_phis[o_index][aa_index][r_index])
             
                     #and_alt_format=and_alt_format+str(market)+","
@@ -168,6 +172,7 @@ def getProductsAlt(products,products_name,products_phis):
                                         p1.chemical_compounds = p2.chemical_compounds
                                     WHERE 
                                         p1._id IN (""" + str(market) + """)
+                                        and p1.product_name != p2.product_name
                                 )
                                 SELECT 
                                     _id
