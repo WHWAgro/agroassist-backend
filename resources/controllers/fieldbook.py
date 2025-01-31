@@ -699,15 +699,25 @@ class FieldBookFullApi(Resource):
                       bottom=Side(style='thin'))
             rows = dataframe_to_rows(df)
             row_n=start_row+9
-            for r_idx, row in enumerate(rows, start_row+9):  #starts at 3 as you want to skip the first 2 rows
-                row_n=row_n+1
+            r_idx=row_n
+            for  row in rows:  #starts at 3 as you want to skip the first 2 rows
+                print("Hola")
+                print(row)
+                
+                
+                if row==[None]:
+                    print("chao")
+                    continue
+                if len(row)>2 and row[1]=='No hay ODAs Completadas':
+                    r_idx=r_idx+1
+                r_idx=r_idx+1
                 for c_idx, value in enumerate(row, 1):
                     if c_idx==1:
                         continue
                     
                     cell = new_sheet.cell(row=r_idx, column=c_idx, value=value)
                     # Apply outer border to the cell
-                    if r_idx == start_row + 6 or r_idx == row_n or c_idx == 1:
+                    if r_idx == start_row + 10 :
                         cell.border = thick_border
             
 
