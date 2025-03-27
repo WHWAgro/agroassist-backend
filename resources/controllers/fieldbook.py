@@ -438,13 +438,17 @@ class FieldBookFullApi(Resource):
                 tractor=""
                 responsable=users[row['program_id_user']]['user_name']
                 
-
+                print('hola')
+                print('')
                 if row["t_o_application_method"] == 1:
                     for m in row["t_o_sprayer"]:
                         maquina=maquina+machinery[m]["name"]+";"
                     maquina=maquina[:-1]
                     for m in row["t_o_tractor"]:
-                        tractor=tractor+machinery[m]["name"]+";"
+                        tractor='No Usado'
+                        if m != None and m !='None':
+
+                            tractor=tractor+machinery[m]["name"]+";"
                     tractor=tractor[:-1]
                     method="Nebulizador"
                 else:
