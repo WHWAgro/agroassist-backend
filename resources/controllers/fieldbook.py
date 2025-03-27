@@ -466,10 +466,13 @@ class FieldBookFullApi(Resource):
                     dosificador=dosificador+workers[d]["name"]+";"
                 dosificador=dosificador[:-1]
 
+                print('chao')
+
                 for d in row["t_o_operators"]:
                     print(workers[d])
                     aplicador=aplicador+workers[d]["name"]+";"
                 aplicador=aplicador[:-1]
+                print('fsdfdf')
                 
 
                 
