@@ -444,6 +444,8 @@ def generateTaskOrder(body):
 
         if back_pump:
             application_method=2
+        if other_machinery:
+            application_method=3
 
 
         final_phis=[]

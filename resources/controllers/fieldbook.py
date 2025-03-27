@@ -445,10 +445,12 @@ class FieldBookFullApi(Resource):
                         maquina=maquina+machinery[m]["name"]+";"
                     maquina=maquina[:-1]
                     for m in row["t_o_tractor"]:
-                        tractor='No Usado'
+                        tractor=''
                         if m != None and m !='None':
 
                             tractor=tractor+machinery[m]["name"]+";"
+                        else:
+                            tractor='No Usado'
                     tractor=tractor[:-1]
                     method="Nebulizador"
                 else:
