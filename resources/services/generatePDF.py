@@ -246,6 +246,7 @@ def generateTaskOrder(body):
         data_list = body['asignees']
         print('QQQQWWWWWW')
         back_pump=False
+        other_machinery=False
         if data_list[0]['id_sprayer']==None:
             back_pump=True
             print('hola8')
@@ -348,17 +349,28 @@ def generateTaskOrder(body):
             pdf_content.append(table)
 
         else:
-        
+            
+            
         # Create a list to hold the table data
             table_data = [['Operador','Tractor','Nebulizador']]  # Start with the headers as the first row
+            
 
             # Add the data rows
             workers=getTableDict("workers")
             machinery=getTableDict("machinery")
+            for item in data_list:
+                if machinery[item["id_sprayer"]]["id_machinery_type"] == 4:
+                    other_machinery=True
+
+            if other_machinery==True:
+                table_data = [['Operador','Tractor','Otro']]
             #print('machinery///////////')
             sprayer_size=1
             for item in data_list:
-                row_data = [workers[item["id_operator"]]["name"],machinery[item["id_tractor"]]["name"],machinery[item["id_sprayer"]]["name"]]
+                if item["id_tractor"]==None:
+                    row_data = [workers[item["id_operator"]]["name"],'',machinery[item["id_sprayer"]]["name"]]
+                else:
+                    row_data = [workers[item["id_operator"]]["name"],machinery[item["id_tractor"]]["name"],machinery[item["id_sprayer"]]["name"]]
                 sprayer_size=machinery[item["id_sprayer"]]["size"]
                 table_data.append(row_data)
 
