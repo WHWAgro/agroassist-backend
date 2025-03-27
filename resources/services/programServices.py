@@ -1937,7 +1937,7 @@ def updateMomentTasks(moment_id,body,former_moment_type):
                 db.session.commit()
             if body.get('id_moment_type') != 4 and former_moment_type == 4:
                 print('desde 4 ')
-                print(body['program_id'])
+                
                 PlotTasksClass.query.filter(
                                             PlotTasksClass.date_start.is_(None),
                                             PlotTasksClass.task_id == task._id
