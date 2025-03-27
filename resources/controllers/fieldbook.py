@@ -460,7 +460,8 @@ class FieldBookFullApi(Resource):
                 print("hola")
                 aplicador=""
                 dosificador=""
-
+                print(row["t_o_dosage_responsible"])
+                print('fdf')
                 for d in row["t_o_dosage_responsible"]:
                     print(workers[d])
                     dosificador=dosificador+workers[d]["name"]+";"
