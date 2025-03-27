@@ -1926,10 +1926,10 @@ def updateMomentTasks(moment_id,body,former_moment_type):
             
             if body.get('id_moment_type') == 4 and former_moment_type != 4:
                 print('desde otro ')
-                print(body['program_id'])
+                
 
-                program_plots=PlotClass.query.filter_by(id_program=body['program_id'])
-                print('program_plots')
+                program_plots=PlotClass.query.filter_by(id_program=body['id_program'])
+                
                 for plot in program_plots:
                     print('plot-task')
                     plot_task=PlotTasksClass( plot_id=plot._id,task_id=task._id,status_id=1,date_start=body.get('start_date'),date_end=body.get('end_date'),task_source=1)
@@ -1943,7 +1943,7 @@ def updateMomentTasks(moment_id,body,former_moment_type):
                                             PlotTasksClass.task_id == task._id
                                             ).delete(synchronize_session=False)
                 db.session.commit()
-                program_plots=PlotClass.query.filter_by(id_program=body['program_id'])
+                program_plots=PlotClass.query.filter_by(id_program=body['id_program'])
                 for plot in program_plots:
                     print('plot-task')
                     plot_task=PlotTasksClass( plot_id=plot._id,task_id=task._id,status_id=1,date_start=body.get('start_date'),date_end=body.get('end_date'),task_source=1)

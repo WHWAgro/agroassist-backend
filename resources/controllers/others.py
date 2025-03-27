@@ -767,7 +767,7 @@ class TaskApi(Resource):
         if body.get('id_moment_type') == 4:
            body['start_date'] = None
            body['end_date'] = None  
-
+        print('------******-----')
         id_moment=request.args.get('id_moment')
         moment,former_moment_type = updateMoment(id_moment,body)
         tasks = updateMomentTasks(id_moment,body,former_moment_type)
