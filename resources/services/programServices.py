@@ -1908,9 +1908,10 @@ def updateMomentTasks(moment_id,body,former_moment_type):
         tasks=TaskClass.query.filter_by(id_moment=moment_id)
         if tasks is None:
             return False
+        print('------////-----')
         
         for task in tasks:
-        
+            print('------+++++-----')
             
             task.id_task_type=1
             task.date_start=body.get('start_date')
