@@ -769,8 +769,8 @@ class TaskApi(Resource):
            body['end_date'] = None  
 
         id_moment=request.args.get('id_moment')
-        moment = updateMoment(id_moment,body)
-        tasks = updateMomentTasks(id_moment,body)
+        moment,former_moment_type = updateMoment(id_moment,body)
+        tasks = updateMomentTasks(id_moment,body,former_moment_type)
 
 
       

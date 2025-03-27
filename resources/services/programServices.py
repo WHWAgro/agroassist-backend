@@ -1830,6 +1830,7 @@ def updateMoment(task_id,body):
     try:
     
         task = ProgramTaskClass.query.get(task_id)
+        former_moment_type=task.id_moment_type
 
         if task is None:
             return False
@@ -1890,13 +1891,13 @@ def updateMoment(task_id,body):
           db.session.add(taskObjective)
         db.session.add(task)
         db.session.commit()
-        return task._id
+        return task._id,former_moment_type
     except Exception as e:
         print(e)
         return False
     
 
-def updateMomentTasks(moment_id,body):
+def updateMomentTasks(moment_id,body,former_moment_type):
     
     try:
     
@@ -1920,6 +1921,28 @@ def updateMomentTasks(moment_id,body):
             task.date_end=body.get('end_date')
 
             db.session.add(task)
+
+            
+            if body.get('id_moment_type') == 4 and former_moment_type != 4:
+                
+                program_plots=PlotClass.query.filter_by(id_program=body['program_id'])
+                for plot in program_plots:
+                    print('plot-task')
+                    plot_task=PlotTasksClass( plot_id=plot._id,task_id=task._id,status_id=1,date_start=body.get('start_date'),date_end=body.get('end_date'),task_source=1)
+                    db.session.add(plot_task)
+                db.session.commit()
+            if body.get('id_moment_type') != 4 and former_moment_type == 4:
+                PlotTasksClass.query.filter(
+                                            PlotTasksClass.date_start.is_(None),
+                                            PlotTasksClass.task_id == task._id
+                                            ).delete(synchronize_session=False)
+                db.session.commit()
+                program_plots=PlotClass.query.filter_by(id_program=body['program_id'])
+                for plot in program_plots:
+                    print('plot-task')
+                    plot_task=PlotTasksClass( plot_id=plot._id,task_id=task._id,status_id=1,date_start=body.get('start_date'),date_end=body.get('end_date'),task_source=1)
+                    db.session.add(plot_task)
+                db.session.commit()
         db.session.commit()
         return moment_id
     except Exception as e:
