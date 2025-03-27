@@ -1924,6 +1924,7 @@ def updateMomentTasks(moment_id,body,former_moment_type):
 
             
             if body.get('id_moment_type') == 4 and former_moment_type != 4:
+                print('desde otro ')
                 
                 program_plots=PlotClass.query.filter_by(id_program=body['program_id'])
                 for plot in program_plots:
@@ -1932,6 +1933,7 @@ def updateMomentTasks(moment_id,body,former_moment_type):
                     db.session.add(plot_task)
                 db.session.commit()
             if body.get('id_moment_type') != 4 and former_moment_type == 4:
+                print('desde 4 ')
                 PlotTasksClass.query.filter(
                                             PlotTasksClass.date_start.is_(None),
                                             PlotTasksClass.task_id == task._id
