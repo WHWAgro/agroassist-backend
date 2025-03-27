@@ -440,7 +440,7 @@ class FieldBookFullApi(Resource):
                 
                 print('hola')
                 print('')
-                if row["t_o_application_method"] == 1:
+                if row["t_o_application_method"]  in [1,3]:
                     for m in row["t_o_sprayer"]:
                         maquina=maquina+machinery[m]["name"]+";"
                     maquina=maquina[:-1]
