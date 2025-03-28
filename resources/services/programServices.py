@@ -544,19 +544,19 @@ def getFieldsAlerts(fields):
             fecha_ymd=elem['date'].split('-') 
             fecha=str(fecha_ymd[2])+'-'+str(fecha_ymd[1])+'-'+str(fecha_ymd[0])
             location_alias=WeatherLocationsClass.query.get(elem['weather_locations_id'])
-            print(location_alias.Alias)
+            
             if elem['rain_mm']>0:
                 rain_mm = 1 if 0 < elem['rain_mm'] < 1 else int(elem['rain_mm'])
                 alert=fecha+" Alerta de lluvia sector "+location_alias.Alias+" ("+str(rain_mm)+" mm), probabilidad "+str(int(elem['rain_probability']))+" %"
-                alerts.append(alert)
+                alerts.append({'message':alert})
             if elem['temperature_max']>35:
                 alert=fecha+" Alerta de altas temperaturas sector "+location_alias.Alias+" ("+str(elem['temperature_max'])+"°C)"
-                alerts.append(alert)
+                alerts.append({'message':alert})
 
             if elem['temperature_min']<0:
                 alert=fecha+" Alerta de heladas sector "+location_alias.Alias+" ("+str(elem['temperature_min'])+"°C)"
-                alerts.append(alert)
-            print('hola')
+                alerts.append({'message':alert})
+            
         
         else:
             continue
