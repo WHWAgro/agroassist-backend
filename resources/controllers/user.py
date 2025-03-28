@@ -314,6 +314,15 @@ class LoginUserApi(Resource):
             data["phenological_stages"] =getTable("phenological_stages")
             data["moment_types"]=getTable("task_types")
             data["company"]=getUserCompanies(user_dict["_id"])
+            
+            if  data["company"] != False and len(data["company"])>0 :
+                  fields=getFields(data["company"][0]["_id"])
+                  
+                  fields_ids=[]
+                  for field in fields:
+                    fields_ids.append(field["_id"])
+
+                  data['alerts']=getFieldsAlerts(fields_ids)
             data["products"]=sorted_data = sorted(getTable("products"), key=lambda x: x['product_name'])
             data["objectives"]=getTable("objectives")
             data["container_units"]=getTable("container_units")

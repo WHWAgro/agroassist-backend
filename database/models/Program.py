@@ -46,6 +46,7 @@ class WeatherLocationsClass(db.Model):
   location_key = db.Column(db.Integer, nullable=False)
   location_long=db.Column(db.String(50), nullable=False)
   location_lat=db.Column(db.String(50), nullable=False)
+  Alias=db.Column(db.String(200), nullable=False)
 
 class FieldWeatherLocationsAssignClass(db.Model):
 

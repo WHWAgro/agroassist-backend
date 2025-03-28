@@ -1,5 +1,5 @@
 import json
-from database.models.Program import UserCompanyClass,InvitationsClass,TaskOrderClass,PlotTasksClass,FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
+from database.models.Program import WeatherLocationsClass,UserCompanyClass,InvitationsClass,TaskOrderClass,PlotTasksClass,FieldWeatherLocationsAssignClass,QuoteRowClass,QuoterProductClass,PlotClass,TaskClass,QuoterClass,QuoteClass,ProgramCompaniesClass,MarketProgramClass,ProgramClass,userClass,SpeciesClass,FieldClass,ProgramTaskClass,TaskObjectivesClass, db,auth
 from sqlalchemy import  text,select
 from flask import g
 import jwt
@@ -525,7 +525,45 @@ def getFields(id_company):
         print(e)
         return False
     
+def getFieldsAlerts(fields):
+    alerts=[]
+    fields_formated=''
+    for field in fields:
+        
+        fields_formated=fields_formated+str(field)+','
+       
+    fields_formated=fields_formated[:-1]
+    forecast =getFieldForecast(fields_formated)
 
+    alerts_dupes=[]
+    for elem in forecast:
+        if str(elem['date'])+'-'+str(elem['weather_locations_id']) not in alerts_dupes:
+            alerts_dupes.append(str(elem['date'])+'-'+str(elem['weather_locations_id']))
+            alert=''
+
+            fecha_ymd=elem['date'].split('-') 
+            fecha=str(fecha_ymd[2])+'-'+str(fecha_ymd[1])+'-'+str(fecha_ymd[0])
+            location_alias=WeatherLocationsClass.query.get(elem['weather_locations_id'])
+            print(location_alias.Alias)
+            if elem['rain_mm']>0:
+                rain_mm = 1 if 0 < elem['rain_mm'] < 1 else int(elem['rain_mm'])
+                alert=fecha+" Alerta de lluvia sector "+location_alias.Alias+" ("+str(rain_mm)+" mm), probabilidad "+str(int(elem['rain_probability']))+" %"
+                alerts.append(alert)
+            if elem['temperature_max']>35:
+                alert=fecha+" Alerta de altas temperaturas sector "+location_alias.Alias+" ("+str(elem['temperature_max'])+"°C)"
+                alerts.append(alert)
+
+            if elem['temperature_min']<0:
+                alert=fecha+" Alerta de heladas sector "+location_alias.Alias+" ("+str(elem['temperature_min'])+"°C)"
+                alerts.append(alert)
+            print('hola')
+        
+        else:
+            continue
+    print(alerts)
+    print(fields)
+    print(forecast)
+    return alerts
     
 
 def getPlots(id_field):
@@ -2814,11 +2852,13 @@ def getQuoters(id_usuario):
     
 def getFieldForecast(field):
 
+   
+
     query="""SELECT wd.*
                 from field
                 left join field_weather_location_assign as fw on fw.field_id=field._id
                 left join weather_day as wd on fw.weather_locations_id = wd.weather_locations_id
-                WHERE field._id = """+ str(field)+"""
+                WHERE field._id in ("""+ str(field)+""")
                 and TO_DATE(date, 'YYYY-MM-DD')>=CURRENT_DATE
                 order by date asc
              """
@@ -2827,7 +2867,7 @@ def getFieldForecast(field):
     rows=[]
     with db.engine.begin() as conn:
         result = conn.execute(text(query)).fetchall()
-        print(result)
+        
         for row in result:
             row_as_dict = row._mapping
             rows.append(dict(row_as_dict))
