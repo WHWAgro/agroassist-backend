@@ -62,6 +62,14 @@ class OnboardingApi(Resource):
                id_species=7
             if row['id_species']=="Manzanas":
                id_species=8
+            if row['id_species']=="Nogales":
+               id_species=9
+            if row['id_species']=="Avellanos":
+               id_species=10
+            if row['id_species']=="Almendros":
+               id_species=11
+            if row['id_species']=="Castaños":
+               id_species=12
 
             new_data = PlotClass(
                   id_field=row['id_field'],
