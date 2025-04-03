@@ -233,10 +233,12 @@ def getMoments(id_field,start,end):
                 
                 
                 AND (
-                    (start_date <= DATE('"""+ end +"""') AND end_date >= DATE('"""+ start +"""'))
+                    (plt.date_start <= DATE('"""+ end +"""') AND plt.date_end >= DATE('"""+ start +"""'))
                     )
                 
              """
+        
+        query3=""
         
 
         query2="""SELECT plt._id as plot_task_id,pl.size,pl._id as plot_id,pl.id_field,tsk._id, tsk.wetting,products as id_product, dosage , dosage_parts_per_unit,products_name,products_ingredients,objectives_name as objective_name,objectives as id_objective
