@@ -517,6 +517,7 @@ class UserCompanyClass(db.Model):
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   company_id = db.Column(db.Integer, nullable=False)
   user_id=db.Column(db.Integer, nullable=False)
+  role=db.Column(db.Integer, nullable=False, default=2)
   
 class MarketProgramClass(db.Model):
 

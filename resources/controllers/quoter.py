@@ -509,7 +509,7 @@ class QuoterApi(Resource):
       
       data={}
      
-      data["usd2clp"]=983.25
+      data["usd2clp"]=1000.01
       data["clp2usd"]=0.0011
 
       

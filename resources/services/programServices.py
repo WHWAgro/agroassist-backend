@@ -506,7 +506,9 @@ def getFields(id_company):
     
     try:
         
-        
+        access = UserCompanyClass.query.filter_by(user_id=user_id, company_id=id_company).first()
+        if not access:
+            return False
         
         results = FieldClass.query.filter_by(company_id=id_company).all()
 
@@ -526,6 +528,72 @@ def getFields(id_company):
     except Exception as e:
         print(e)
         return False
+    
+def getFieldsWithUserAccess(id_company,access):
+    
+    try:
+
+        user_id=access.user_id
+        
+        user_mail = userClass.query.get(user_id).email
+
+
+        results = []
+
+        
+        if access.role in (1,2):
+            results = FieldClass.query.filter_by(company_id=id_company).all()
+            
+        
+        
+        else:
+        
+            query_tasks="""
+
+                    SELECT DISTINCT ON (field._id) field.*
+                    FROM field
+                    LEFT JOIN workers AS wr ON wr.id_field = field._id
+                    WHERE wr.email = '"""+ str(user_mail)+"""' 
+                    AND field.company_id = """+ str(id_company)+""" 
+                    AND wr.id_worker_type IN (1, 2);
+                    
+                """
+            rows_tasks=[]
+            with db.engine.begin() as conn:
+                
+                result_tasks= conn.execute(text(query_tasks)).fetchall()
+
+                
+                for row in result_tasks:
+                    row_as_dict = row._mapping
+                    
+                    rows_tasks.append(dict(row_as_dict))
+            results=rows_tasks
+
+        result_list = []
+        for result in results:
+            result_dict = {}
+            if isinstance(result, dict):
+                source_dict = result
+            else:
+                source_dict = result.__dict__
+            
+            for key, value in source_dict.items():
+                if (not key.startswith('_')) and key not in ('latitude', 'longitude'):
+                    result_dict[key] = value
+                elif key == '_id':
+                    result_dict[key] = value
+            result_list.append(result_dict)
+        #print(result_list)
+
+        
+        return result_list
+
+    except Exception as e:
+        print(e)
+        return False
+    
+
     
 def getFieldsAlerts(fields):
     alerts=[]

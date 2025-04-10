@@ -5,7 +5,8 @@ from datetime import datetime
 #import pandas as pd
 #from get_project_root import root_path
 from resources.errors import  InternalServerError
-from database.models.Program import ProgramClass,FieldClass,PlotClass,PlotTasksClass,MachineryClass,WorkersClass,db
+from database.models.Program import userClass,UserCompanyClass,ProgramClass,FieldClass,PlotClass,PlotTasksClass,MachineryClass,WorkersClass,db
+
 from resources.services.programServices import *
 from resources.services.generatePDF import *
 from flask_jwt_extended import jwt_required,get_jwt_identity,current_user
@@ -116,9 +117,18 @@ class FieldsListApi(Resource):
       response['status']=200
       response['message']=0
       program_id=request.args.get('id_company')
-
+      user_id =  get_jwt_identity()
       
-      fields = getFields(program_id)
+      
+      
+
+      access = UserCompanyClass.query.filter_by(user_id=user_id, company_id=program_id).first()
+      if not access:
+        response['status']=400
+        response['message']=0
+        return {'response': response}, 400
+      
+      fields = getFieldsWithUserAccess(program_id,access)
       
       if fields== False:
         response['status']=400 
