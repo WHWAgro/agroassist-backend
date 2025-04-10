@@ -506,9 +506,7 @@ def getFields(id_company):
     
     try:
         
-        access = UserCompanyClass.query.filter_by(user_id=user_id, company_id=id_company).first()
-        if not access:
-            return False
+        
         
         results = FieldClass.query.filter_by(company_id=id_company).all()
 
