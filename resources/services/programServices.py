@@ -363,7 +363,7 @@ def getUserCompanies(user):
     try:
         
 
-        query="""SELECT c._id,c.company_name as company_name ,c.visible
+        query="""SELECT c._id,c.company_name as company_name ,c.visible,uc.role
                     FROM user_company as  uc
                     left join company as c
                     on c._id=uc.company_id
