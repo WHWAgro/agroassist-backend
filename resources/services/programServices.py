@@ -2933,6 +2933,8 @@ def getFieldForecast(field):
         
         
     rows=[]
+    if field==None  or field=='':
+        return rows
     with db.engine.begin() as conn:
         result = conn.execute(text(query)).fetchall()
         
