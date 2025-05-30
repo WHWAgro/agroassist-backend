@@ -308,6 +308,7 @@ class PlotClass(db.Model):
 
   __tablename__ = 'plots'
   _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  csg_code = db.Column(db.String(100), nullable=True)
   name = db.Column(db.String(100), nullable=True)
   id_field = db.Column(db.Integer, nullable=False)
   id_program = db.Column(db.Integer, nullable=True)

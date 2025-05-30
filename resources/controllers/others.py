@@ -42,7 +42,7 @@ class OnboardingApi(Resource):
            print("existe")
            file=request.files['file']
            df = pd.read_excel(file, dtype=str)
-           df.rename(columns = {df.columns[0]:'name',df.columns[1]:'size',df.columns[2]:'id_species',df.columns[3]:'variety'}, inplace = True)
+           df.rename(columns = {df.columns[0]:'csg_code',df.columns[1]:'name',df.columns[2]:'size',df.columns[3]:'id_species',df.columns[4]:'variety'}, inplace = True)
            df['id_field']=int(id_field)
            
            print(df)
@@ -71,13 +71,18 @@ class OnboardingApi(Resource):
                id_species=11
             if row['id_species']=="Castaños":
                id_species=12
+            if row['id_species']=="Duraznos":
+               id_species=13
+            if row['id_species']=="Kiwis":
+               id_species=14
 
             new_data = PlotClass(
                   id_field=row['id_field'],
                   name=row['name'],
                   size=float(str(row['size']).replace(',','.')),
                   id_species=id_species,
-                  variety=row['variety']
+                  variety=row['variety'],
+                  csg_code=row['csg_code']
                   # Add more columns as needed
               )
             print(new_data)
@@ -219,20 +224,25 @@ class FieldsApi(Resource):
             for plot in body["plots"] :
                 _id=None
                 
-                print("hola")
+                print("plot")
                 if '_id' in plot:
                   _id=plot['_id']
                
                 user_id =  get_jwt_identity()
-                print("hola")
+                
                 if _id is None:
-                   print("no existe")
+                   print("nuevo plot")
                    if ("id_program" not in plot) or (plot["id_program"]==""):
                       plot["id_program"]=None
                    size=float(str(plot['size']).replace(',','.'))
-                      
-                   plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=size,id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'],id_phenological_stage=plot['id_phenological_stage'])
 
+                   if 'csg_code' in plot:
+                    print('csg_code')
+                    plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=size,id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'],id_phenological_stage=plot['id_phenological_stage'],csg_code=plot['csg_code'])
+                   else:
+                    print('no csg_code')
+                    plot_instance = PlotClass(id_field=id_field,name =plot['name'],size=size,id_species=plot['id_species'],variety=plot['variety'],id_program=plot['id_program'],id_phenological_stage=plot['id_phenological_stage'])
+                   
                    db.session.add(plot_instance)
                    db.session.commit()
                    if plot["id_program"]!=None:
@@ -240,7 +250,7 @@ class FieldsApi(Resource):
                     add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id)
                    
                 elif _id not in id_current:
-                   print("hola")
+                   print("no existte")
                    continue
                 else:
                    print("existe")
@@ -253,6 +263,9 @@ class FieldsApi(Resource):
                       plot_instance.name=plot.get('name')
                       plot_instance.size = size
                       plot_instance.id_species=plot.get('id_species')
+                      if 'csg_code' in plot:
+                        
+                        plot_instance.csg_code=plot.get('csg_code')
                       print(plot_instance.id_program)
                       print(plot.get('id_program'))
                       print("----")

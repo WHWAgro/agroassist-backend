@@ -981,7 +981,7 @@ def getFieldPlotsDetails(id_field):
     try:
         
         
-        query_tasks="""SELECT _id,name,size,id_species,variety,id_program,id_phenological_stage
+        query_tasks="""SELECT _id,name,size,id_species,variety,id_program,id_phenological_stage,csg_code
                 FROM plots 
                 
                 where id_field = """+ str(id_field)+"""
