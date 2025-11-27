@@ -10,9 +10,25 @@ import uuid
 import datetime
 import math
 import os
+from openpyxl.utils import get_column_letter
 
 
 
+def autofit_columns(ws):
+            for col in ws.columns:
+                max_length = 0
+                col_letter = get_column_letter(col[0].column)
+
+                for cell in col:
+                    try:
+                        cell_len = len(str(cell.value)) if cell.value else 0
+                        if cell_len > max_length:
+                            max_length = cell_len
+                    except:
+                        pass
+
+                # Adjust width (+2 for padding)
+                ws.column_dimensions[col_letter].width = max_length + 2
 
 
 

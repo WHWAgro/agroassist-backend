@@ -13,6 +13,7 @@ import xlsxwriter
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Border, Side
+from copy import copy
 
 
 
@@ -365,10 +366,13 @@ class FieldBookFullApi(Resource):
 
         print("hola")
         print(f_w_location_format)
-        print("----------*********")
+        print("----------********1")
 
-        field_weather=getFieldWeather(f_w_location_format)
+        field_weather=[]
         
+        if f_w_location_format != "( )":
+            field_weather=getFieldWeather(f_w_location_format)
+        print("----------********2")
 
         for row in field_book_data_full:
             
@@ -635,13 +639,127 @@ class FieldBookFullApi(Resource):
             images.append(img)
 
         # Create a new workbook
+        legacy_wb = load_workbook("files/fieldbooks/nutrisco_historico.xlsx")
         
+        legacy_fieldbooks = {
+    "2": [
+        "ALTO LOS OLMOS",
+        "ALTO NILAHUE",
+        "ASQUE",
+        "COIQUE",
+        "COLCHAMAULE",
+        "CUN CUN",
+        "DAÑICALQUI",
+        "DEMAIHUE",
+        "EL CASTILLO",
+        "EL PATAGUAL",
+        "EL TORREON",
+        "EUSKADI",
+        "HIGUERA ORIENTE",
+        "HUIFQUENCO",
+        "LA AGUADA",
+        "LA TORRE",
+        "LAS VIÑAS",
+        "LOS PINOS",
+        "LUIS URETA",
+        "PALQUIBUDIS",
+        "PAREDONES ABAJO",
+        "PUMANQUE",
+        "ROBERTO FARIAS",
+        "SAN SEBASTIAN",
+        "SANTA RITA",
+        "SUIZA",
+        "VICENTE JEREZ",
+    ],
+    "6": [
+        "ANDES BERRIES",
+        "COIQUE",
+        "COLCHAMAULE",
+        "EL AMANECER",
+        "EL PALENQUE",
+        "FRAMPARQUE",
+        "IDELIO BECERRA",
+        "JOSE LUIS YAÑEZ LEON",
+        "LAS VERTIENTES",
+        "LOS PINOS",
+        "SANTA ISABEL",
+    ],
+    "4": [
+        "AGRICOLA OCTAVIO BUSTOS",
+        "AGROFARIAS EL CONVENTO",
+        "CIELO ABIERTO",
+        "COLCHAMAULE",
+        "EL CARMEN",
+        "EL COPIHUE",
+        "EL ERMITAÑO",
+        "EL MAITEN/ SAN SEBASTIAN",
+        "LAS VIÑAS",
+        "LOS PINOS",
+        "LUIS URETA",
+        "PALQUIBUDIS",
+        "PAREDONES ABAJO",
+        "PUMANQUE",
+        "ROBERTO FARIAS",
+        "SAN SEBASTIAN",
+        "SANTA RITA",
+        "SUIZA",
+        "VICENTE JEREZ",
+    ],
+    "5": [
+        "COLCHAMAULE",
+        "EL CARMEN",
+        "LA UNION",
+        "PARCELA 10-13",
+        "PARCELA 22",
+    ]}
         
         for idx, field_id in enumerate(list(field_fb.keys()), start=0):
             print("new_sheet")
-            print(idx)
             
+            print(field_id)
+            thick_border = Border(left=Side(style='medium'), 
+                      right=Side(style='medium'), 
+                      top=Side(style='medium'), 
+                      bottom=Side(style='medium'))
+            
+            if int(field_id) <=0:
+                
+                positive_field_id = int(field_id) * -1
+                if species_id in legacy_fieldbooks:
+                    src_ws = legacy_wb[legacy_fieldbooks[species_id][positive_field_id]]
+                    dest_ws = wb.create_sheet(legacy_fieldbooks[species_id][positive_field_id])
+                    print("Loaded sheets:", wb.sheetnames)
 
+                    for row in src_ws.iter_rows():
+                        for cell in row:
+                            new_cell = dest_ws.cell(row=cell.row, column=cell.column, value=cell.value)
+
+                            if cell.has_style:
+                                new_cell.font = copy(cell.font)
+                                orig_border = copy(cell.border)
+
+                                new_border = Border(
+                                    left=Side(style=("medium" if orig_border.left and orig_border.left.style == "thin" else orig_border.left.style),
+                                            color=orig_border.left.color if orig_border.left else None),
+                                    right=Side(style=("medium" if orig_border.right and orig_border.right.style == "thin" else orig_border.right.style),
+                                            color=orig_border.right.color if orig_border.right else None),
+                                    top=Side(style=("medium" if orig_border.top and orig_border.top.style == "thin" else orig_border.top.style),
+                                            color=orig_border.top.color if orig_border.top else None),
+                                    bottom=Side(style=("medium" if orig_border.bottom and orig_border.bottom.style == "thin" else orig_border.bottom.style),
+                                                color=orig_border.bottom.color if orig_border.bottom else None),
+                                )
+
+                                new_cell.border = new_border
+                                new_cell.fill = copy(cell.fill)
+                                new_cell.number_format = copy(cell.number_format)
+                                new_cell.protection = copy(cell.protection)
+                                new_cell.alignment = copy(cell.alignment)
+                
+
+
+                    autofit_columns(dest_ws)  
+                print("skip")
+                continue
             field_data=field_fb[field_id]
             if len(field_data["data"])==0:
                 print('este campo no tiene ODAs')
@@ -700,29 +818,24 @@ class FieldBookFullApi(Resource):
             print("------ret1")
             
 
-            thick_border = Border(left=Side(style='medium'), 
-                      right=Side(style='medium'), 
-                      top=Side(style='medium'), 
-                      bottom=Side(style='medium'))
+            
             
 
             print("------ret2")
 
             cell=new_sheet.cell(row=start_row+0, column=1, value="Razón Social: ")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+0, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 0, start_column=1, end_row=start_row + 0, end_column=2)
-            cell=new_sheet.cell(row=start_row+0, column=3, value=field_data["company"])
+            
+            
+            cell=new_sheet.cell(row=start_row+0, column=2, value=field_data["company"])
             cell.border = thick_border
             print("------ret3")
 
             cell=new_sheet.cell(row=start_row+1, column=1, value="Nombre Predio: ")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+1, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 1, start_column=1, end_row=start_row + 1, end_column=2)
-            cell=new_sheet.cell(row=start_row+1, column=3, value=field_data["field_name"])
+            
+            
+            cell=new_sheet.cell(row=start_row+1, column=2, value=field_data["field_name"])
             cell.border = thick_border
 
             
@@ -733,58 +846,47 @@ class FieldBookFullApi(Resource):
             print("------ret4")
             cell=new_sheet.cell(row=start_row+2, column=1, value="Código SAG predio (CSG): ")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+2, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 2, start_column=1, end_row=start_row + 2, end_column=2)
-            cell=new_sheet.cell(row=start_row+2, column=3, value=field_data["CSG_code"])
+            
+            
+            cell=new_sheet.cell(row=start_row+2, column=2, value=field_data["CSG_code"])
             cell.border = thick_border
             
             print("------ret5")
             cell=new_sheet.cell(row=start_row+3, column=1, value="Especies: ")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+3, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 3, start_column=1, end_row=start_row + 3, end_column=2)
-            cell=new_sheet.cell(row=start_row+3, column=3, value=species_final)
+            
+            cell=new_sheet.cell(row=start_row+3, column=2, value=species_final)
             cell.border = thick_border
             
            
             print("------ret6")
             cell=new_sheet.cell(row=start_row+4, column=1, value="Región:")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+4, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 4, start_column=1, end_row=start_row + 4, end_column=2)
-            cell=new_sheet.cell(row=start_row+4, column=3, value="VI")
+            
+            cell=new_sheet.cell(row=start_row+4, column=2, value="VI")
             cell.border = thick_border
             
             
             print("------ret7")
             cell=new_sheet.cell(row=start_row+5, column=1, value="Comuna: ")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+5, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 5, start_column=1, end_row=start_row + 5, end_column=2)
-            cell=new_sheet.cell(row=start_row+5, column=3, value=field_data["location"])
+            
+            cell=new_sheet.cell(row=start_row+5, column=2, value=field_data["location"])
             cell.border = thick_border
             print("------ret8")
             cell=new_sheet.cell(row=start_row+6, column=1, value="Paises a Exportar: ")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+6, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 6, start_column=1, end_row=start_row + 6, end_column=2)
+            
            
-            cell=new_sheet.cell(row=start_row+6, column=3, value=markets_final)
+            cell=new_sheet.cell(row=start_row+6, column=2, value=markets_final)
             cell.border = thick_border
             print("------ret9")
            
             cell=new_sheet.cell(row=start_row+7, column=1, value="Superficie Total: ")
             cell.border=thick_border
-            cell=new_sheet.cell(row=start_row+7, column=2, value=" ")
-            cell.border=thick_border
-            new_sheet.merge_cells(start_row=start_row + 7, start_column=1, end_row=start_row + 7, end_column=2)
             
-            cell=new_sheet.cell(row=start_row+7, column=3, value=str(field_data["size"])+' Há')
+            
+            cell=new_sheet.cell(row=start_row+7, column=2, value=str(field_data["size"])+' Há')
             cell.border = thick_border
             
             print("----datos inciales")
@@ -820,13 +922,10 @@ class FieldBookFullApi(Resource):
                     # Apply outer border to the cell
                     if r_idx == start_row + 10 :
                         cell.border = thick_border
-            
+            autofit_columns(new_sheet) 
 
             
-            
-
-
-            
+      
             
             
         print("file closing")
@@ -1160,7 +1259,22 @@ class FieldBookExportApi(Resource):
             
 
 
-            
+        legacy_wb = load_workbook("files/fieldbooks/nutrisco_historico.xlsx")
+        src_ws = legacy_wb["CUN CUN"]
+        dest_ws = wb.create_sheet("Copied_Sheet1")
+        print("Loaded sheets:", wb.sheetnames)
+
+        for row in src_ws.iter_rows():
+            for cell in row:
+                new_cell = dest_ws.cell(row=cell.row, column=cell.column, value=cell.value)
+                if cell.has_style:
+                    new_cell.font = cell.font
+                    new_cell.border = cell.border
+                    new_cell.fill = cell.fill
+                    new_cell.number_format = cell.number_format
+                    new_cell.protection = cell.protection
+                    new_cell.alignment = cell.alignment
+    
             
             
         print("file closing")
