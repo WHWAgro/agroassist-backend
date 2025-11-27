@@ -169,9 +169,9 @@ class FieldBookApi(Resource):
             print ("entro aca")
             fieldsToAdd = legacy_fieldbooks[str(species)]
 
-            for field in fieldsToAdd:
+            for i,field in enumerate(fieldsToAdd):
                
-                fields.append({"_id":-1,"sag_code":"","field_name":str(field)})
+                fields.append({"_id":-i,"sag_code":str(field),"field_name":""})
             
             
         
