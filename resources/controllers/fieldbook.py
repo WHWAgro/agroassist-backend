@@ -41,12 +41,15 @@ class FieldBookApi(Resource):
         
         
         companies="( "
+        companiesNumeric=[]
         for i,company in enumerate(user_company):
             if i==0:
                 companies=companies+str(company["_id"])+","
+                companiesNumeric.append(str(company["_id"]))
             else:
                 if company['visible']:
                     companies=companies+str(company["_id"])+","
+                    companiesNumeric.append(str(company["_id"]))
             
         companies = companies[:-1]
         companies=companies+" )"
@@ -82,9 +85,95 @@ class FieldBookApi(Resource):
         progrmas_format=progrmas_format+" )"
         
         
-
-        print(programs)
+        print("cuadernos de campo")
+        print(progrmas_format)
+        print(companies)
+        print(species)
         fields = getFieldMarketFilter(progrmas_format,companies,species)
+
+        legacy_fieldbooks = {
+    "2": [
+        "ALTO LOS OLMOS",
+        "ALTO NILAHUE",
+        "ASQUE",
+        "COIQUE",
+        "COLCHAMAULE",
+        "CUN CUN",
+        "DAÑICALQUI",
+        "DEMAIHUE",
+        "EL CASTILLO",
+        "EL PATAGUAL",
+        "EL TORREON",
+        "EUSKADI",
+        "HIGUERA ORIENTE",
+        "HUIFQUENCO",
+        "LA AGUADA",
+        "LA TORRE",
+        "LAS VIÑAS",
+        "LOS PINOS",
+        "LUIS URETA",
+        "PALQUIBUDIS",
+        "PAREDONES ABAJO",
+        "PUMANQUE",
+        "ROBERTO FARIAS",
+        "SAN SEBASTIAN",
+        "SANTA RITA",
+        "SUIZA",
+        "VICENTE JEREZ",
+    ],
+    "6": [
+        "ANDES BERRIES",
+        "COIQUE",
+        "COLCHAMAULE",
+        "EL AMANECER",
+        "EL PALENQUE",
+        "FRAMPARQUE",
+        "IDELIO BECERRA",
+        "JOSE LUIS YAÑEZ LEON",
+        "LAS VERTIENTES",
+        "LOS PINOS",
+        "SANTA ISABEL",
+    ],
+    "4": [
+        "AGRICOLA OCTAVIO BUSTOS",
+        "AGROFARIAS EL CONVENTO",
+        "CIELO ABIERTO",
+        "COLCHAMAULE",
+        "EL CARMEN",
+        "EL COPIHUE",
+        "EL ERMITAÑO",
+        "EL MAITEN/ SAN SEBASTIAN",
+        "LAS VIÑAS",
+        "LOS PINOS",
+        "LUIS URETA",
+        "PALQUIBUDIS",
+        "PAREDONES ABAJO",
+        "PUMANQUE",
+        "ROBERTO FARIAS",
+        "SAN SEBASTIAN",
+        "SANTA RITA",
+        "SUIZA",
+        "VICENTE JEREZ",
+    ],
+    "5": [
+        "COLCHAMAULE",
+        "EL CARMEN",
+        "LA UNION",
+        "PARCELA 10-13",
+        "PARCELA 22",
+    ],
+        }
+        
+        
+        if (("1" in companiesNumeric or "25" in companiesNumeric or "30" in companiesNumeric) and (str(species) in legacy_fieldbooks) ):
+            print ("entro aca")
+            fieldsToAdd = legacy_fieldbooks[str(species)]
+
+            for field in fieldsToAdd:
+               
+                fields.append({"_id":-1,"sag_code":"","field_name":str(field)})
+            
+            
         
         if fields== False:
             response['status']=400 
