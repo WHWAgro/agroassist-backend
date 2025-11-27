@@ -59,23 +59,44 @@ class CreateUserApi(Resource):
     
       # Check for existing users
      
-      if userClass.query.filter_by(email = email).first():
+      user=userClass.query.filter_by(email = email).first()
+      
+      if user and body.get("add_companies")==False:
         
         response['status']=400
         response['message']=2
       else:
-        
-        user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password,role=role,password=body.get("password"))
-        db.session.add(user)
-        db.session.commit()
+        print("holag")
+
+        if user==None:
+          user = userClass(user_name = user_name,email=email,phone_number=phone,password_hash = password,role=role,password=body.get("password"))
+          db.session.add(user)
+          db.session.commit()
         if role==1:
-          company_info=body.get("company_info")
-          company = CompanyClass( company_name= company_info['company_name'],rut=company_info['rut'],business_activity=company_info['business_activity'])
-          db.session.add(company)
-          db.session.commit()
-          user_company = UserCompanyClass( company_id=company._id,user_id=user._id)
-          db.session.add(user_company)
-          db.session.commit()
+
+          print("holags")
+
+          for company_info in body.get("company_info"):
+
+            company_exists=CompanyClass.query.filter_by(rut = company_info['rut']).first()
+            
+            if company_exists!=None:
+            
+             
+
+              if UserCompanyClass.query.filter_by(user_id=user._id,company_id=company_exists._id).first()==None:
+                user_company = UserCompanyClass( company_id=company_exists._id,user_id=user._id,role=1)
+                db.session.add(user_company)
+                db.session.commit()
+            else:
+              company = CompanyClass( company_name= company_info['company_name'],rut=company_info['rut'],business_activity=company_info['business_activity'])
+              db.session.add(company)
+              db.session.commit()
+
+              
+              user_company = UserCompanyClass( company_id=company._id,user_id=user._id,role=1)
+              db.session.add(user_company)
+              db.session.commit()
 
         if "invitation_code" in body:
           if body["invitation_code"]!=None and body["invitation_code"]!="":
