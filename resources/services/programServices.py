@@ -2663,7 +2663,7 @@ def delete_program_tasks_plot(plot_id):
     db.session.commit()
 
 
-def add_program_tasks_plot(program_id,plot_id,user_id):
+def add_program_tasks_plot(program_id,plot_id,user_id,current_company_id):
     
     companies=getUserCompanies(user_id)
     user_company_id=companies[0]['_id']
@@ -2674,7 +2674,7 @@ def add_program_tasks_plot(program_id,plot_id,user_id):
                 from tasks as t
                 left join program_tasks as pt on pt._id=id_moment
                 left join programs as p on p._id=pt.id_program
-                where t.id_company = """+ str(user_company_id)+"""
+                where t.id_company = """+ str(current_company_id)+"""
                 and p._id="""+ str(program_id)+"""
                 and pt.ignore = False
                 and t.ignore = False

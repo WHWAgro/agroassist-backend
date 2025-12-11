@@ -189,6 +189,7 @@ class FieldsApi(Resource):
         data['id_field']=id_field
 
         if "general" in body:
+          
          
           field = FieldClass.query.get(id_field)
           print("Es general")
@@ -210,7 +211,7 @@ class FieldsApi(Resource):
         if "plots" in body:
           print("plots")
           field_plots=getFieldPlotsDetails(id_field)
-          
+          current_company=body["company_id"]
           if field_plots!=False: 
             id_current = [d["_id"] for d in field_plots]
             id_new =[d["_id"] for d in body["plots"]]
@@ -247,7 +248,7 @@ class FieldsApi(Resource):
                    db.session.commit()
                    if plot["id_program"]!=None:
                     print("no hay problema willy")
-                    add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id)
+                    add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id,current_company)
                    
                 elif _id not in id_current:
                    print("no existte")
@@ -272,7 +273,7 @@ class FieldsApi(Resource):
                       if plot_instance.id_program != plot.get('id_program'):
                          delete_program_tasks_plot(plot_instance._id)
                          #hay que ver que pasa con las tasks ya completadas
-                         add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id)
+                         add_program_tasks_plot(plot["id_program"],plot_instance._id,user_id,current_company)
                       
                       plot_instance.variety=plot.get('variety')
                       plot_instance.id_program=plot.get('id_program')
