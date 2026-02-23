@@ -94,6 +94,7 @@ class FieldBookApi(Resource):
 
         legacy_fieldbooks = {
   "1": [
+    "PARCELA 1 FUNDO LA RAMADA",
     "SANTA RITA DE QUINCHAMALI"
   ],
   "2": [
@@ -109,6 +110,10 @@ class FieldBookApi(Resource):
     "Frutícola Higuera Oriente Ltda.",
     "Fundo Vista Hermosa",
     "Fundo Asque",
+    "Campo Santa Laura",
+    "SANTA LAURA PARCELA 11",
+    "LA HIGUERA PARCELAS 27-28-29",
+    "SAN MANUEL PARCELAS 7-6-2-1",
     "VEGA DE LA CONCORDIA",
     "Inmobiliaria e Inversiones Los ",
     "Nicolas José De La Fuente Labbé",
@@ -187,6 +192,7 @@ class FieldBookApi(Resource):
     "LA UNION"
   ],
   "6": [
+    "Agrícola Pidihuinco Ltda",
     "Campo Centro",
     "SANTA ISABEL",
     "LAS VERTIENTES",
